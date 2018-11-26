@@ -1,0 +1,55 @@
+<!--污水处理厂面板-->
+<div class="telemetryStation_detailed_list"  data-bind="wastewaterplantInitHandler">
+    <div class="telemetryStation_detailed_list_con">
+        <div class="telemetryStation_query_c">
+            <h3>查询</h3>
+            <div class="telemetryStation_query_com_sttp">
+                <label><input name="ptype" type="radio" value="0"/>进水口</label>
+                <label><input name="ptype" type="radio" value="1"/>出水口</label>
+            </div>
+            <div class="telemetryStation_query_com">
+                <p id="timeTypes">
+                    <span class="telemetryStation_query_name">时间类型:</span>
+                    <span style="margin-left: 5px;">
+                    <label><input name="time_type" type="radio" value="real"/>实时</label> 
+                    <label><input name="time_type" type="radio" value="day"/>日均</label>
+                    </span>                    
+                </p>
+                <p id="plantTime" class="date-type">
+                    <span class="telemetryStation_query_name">时间:</span>
+                    <span><input type="text" data-bind="value: search().date,click:$root.clickDate"/></span>
+                </p>
+                <p id="plantDate" style="display: none"  class="date-type">
+                    <span class="telemetryStation_query_name">日期:</span>
+                    <span><input type="text" data-bind="value: search().dayDate,click:$root.clickDayDate"/></span>
+                </p>
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchBtn;">查询</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickResetBtn;">重置</button>                          
+                </p> 
+            </div>
+
+            <h3><span class="icon_title">图例</span></h3>
+            <div class="telemetryStation_query_com_icon">
+            <label class="label_for_shuizhi"><b class="shuizhimark"></b>出水口水质监测点</label>
+                <label class="label_for_shuizhi"><b class="shuizhimark2"></b>进水口水质监测点</label>
+            </div>
+
+            <div class="telemetryStation_query_com">
+                <p><span class="telemetryStation_query_name">站名/站号:</span>
+                <span><input type="text" data-bind="value:search().stnm"></span></p>
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchByNameBtn;">搜索</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickClearSearchBtn;">清除</button>                          
+                </p>
+                <p><span class="telemetryStation_query_name">行政区:</span>
+                <span><select data-bind="value: search().xzq, event:{change:$root.clickXZQBtn}, options: search().xzqList, optionsText : 'title', optionsValue : 'value'">
+                </select></span></p>
+            </div>          
+        </div>
+        <div class="telemetryStation_condition_c">
+            <div id="wastewaterplantList"  class="table_list"></div>
+            <div id="wastewaterplantListPager" class="list-datagroup-pager"></div>
+        </div>
+    </div>
+</div>

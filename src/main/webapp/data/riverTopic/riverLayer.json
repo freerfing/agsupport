@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "content":{ 
+    "topic":[
+      {
+         "id": "layer-1",
+          "text": "720度全景",
+          "title": "720度全景",
+          "viewUrl": "view/app/watermap/river/generalView/generalView",
+          "subtopic": null,
+          "hasMap": true,
+          "hover": false,
+          "view": "",
+          "enabled": true,
+          "dirLayerId": "11b61106-581d-4222-81a4-f0e5d81ca4da",
+          "serviceUrl": "http://10.194.170.71/proxy/da5125e6ad70adfa/4dfa4360488bfc42",
+          "layerTable": "0",
+          "annoFieldCN": "全景720"
+      },{
+         "id": "layer-2",
+          "text": "无人机巡飞",
+          "title": "无人机巡飞",
+          "viewUrl": "view/app/watermap/river/uav/videoView",
+          "subtopic": null,
+          "hasMap": true,
+          "hover": false,
+          "view": "",
+          "enabled": true,
+          "dirLayerId": "e8a0c00a-67b1-43f4-9798-899726bdb344",
+          "serviceUrl": "http://10.194.170.71/proxy/c3f40254a5329f98/4dfa4360488bfc42",
+          "layerTable": "0",
+          "annoFieldCN": "无人机巡飞"
+      }
+    ]}
+
+}

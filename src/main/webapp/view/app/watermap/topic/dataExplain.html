@@ -1,0 +1,37 @@
+<div class="dataExplainBox dataExplainBox_height" data-bind="dataExplainInitHandler">
+    <div class="title" data-bind="text:itemTitle" ></div>
+    <div class="content" data-bind="html:htmlContent"></div>
+</div>
+
+<style>
+    .dataExplainBox{
+        padding: 0;
+        margin: 0;
+        width: 310px;
+        position: absolute;
+        top:12px;
+        left: 305px;
+        background-color: #fff;
+        display: block;
+
+    }
+    .dataExplainBox_height{
+        height: 350px;
+    }
+   .dataExplainBox .title{
+       margin:0;
+       padding: 0;
+       font-size: 10px;
+       border-bottom: 1px solid #DEDEDE;
+       display: flex;
+       text-align: left;
+       align-items: center;
+       height:38px;
+      /* background-color: #D9ECF6;*/
+   }
+
+    .dataExplainBox .content{
+        padding: 6px 4px;
+        text-align: left;
+    }
+</style>

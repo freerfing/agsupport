@@ -1,0 +1,33 @@
+<div class="waterquality-container" data-bind="waterqualityInitHandler">
+    <div class="reservoir_detailed_list_con">
+        <div class="reservoir_query_c">
+            <h3>查询</h3>
+            <div class="reservoir_query_com">
+                <p><span class="reservoir_query_name">行政区：</span><span>
+                    <select id="district">
+                        <option selected value=""></option>
+                    </select>
+                </span></p>
+                <p><span class="reservoir_query_name">监测点：</span><span>
+                    <input id="taskNumber" type="text">
+                </span></p>
+                <p class="reservoir_btn_c">
+                    <button class="reservoir_btn_01" data-bind="click:$root.clickResetBtn;">重置</button>
+                    <button class="reservoir_btn_02" data-bind="click:$root.clickSearchBtn;">查询</button>
+                </p>
+            </div>
+        </div>
+        <!-- <div class="reservoir_condition_c">
+            <h3>条件选择</h3>
+            <div class="reservoir_condition_com">
+                <label><input name="drainage_type" type="checkbox" value="y" checked/>雨水 </label>
+                <label><input name="drainage_type" type="checkbox" value="w" checked/>污水 </label>
+                <label><input name="drainage_type" type="checkbox" value="yw" checked/>雨污 </label>
+            </div>
+        </div> -->
+        <div class="reservoir_table">
+            <div id="reserviorList"></div>
+        </div>
+        <div class="list-datagroup-pager"></div>
+    </div>
+</div>

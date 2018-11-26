@@ -1,0 +1,54 @@
+<div class="drainagedetail-container" data-bind="drainagedetailInitHandler">
+    <div class="row first-row">
+        <div class="col-sm-6">
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a>管网流速</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-3">
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a>CCTV视频</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-3">
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a>管道水位剖面图</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row second-row">
+        <div class="col-sm-6">
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="speed">
+                    <div class="form-inline pull-right">
+                        <div class="form-group">
+                            <label for="drainagedetail_date">选择日期: </label>
+                            <input type="text" style="height: 24px;width: 110px;" class="form-control" id="drainagedetail_date" >
+                        </div>
+                    </div>
+                    <br>
+                    <div id="speed_line_chart" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="video" style="text-align: center;">
+                    <video src="style/asip/common/css/video/demo.mp4" style="margin-top: 20px;" width="80%"
+                           preload="auto" controls="controls">
+                        your browser does not support the video tag
+                    </video>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="view" style="text-align: center;">
+                    <!--<img style="margin-top: 10px;width: 80%;border-top: 1px solid #C9C9C9"-->
+                         <!--src="style/asip/common/css/images/icon/sectional_view.png">-->
+                    <div id="shape_div" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

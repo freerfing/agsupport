@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>水雨情</title>
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+    <style>
+        a{cursor:pointer}
+    </style>
+</head>
+
+<body>
+
+<!--标题-->
+<div class="title">
+    <img src="img/title_syq.png"/>
+</div>
+
+<div class="main">
+
+    <!--左-->
+    <div class="left">
+        <div class="content">
+            <h4>雨情</h4><span
+                style="position: absolute;top:-15px;right: 20px;display: block;float: right;line-height: 30px;background-color: #000;"><a
+                onclick="javascript:topNavigateTo('syq')" class="titleMore f12" target="_blank"
+                style="font-size: 15px;">更多</a></span>
+            <div class="area-3-1" style="overflow:hidden;margin:0;padding:0">
+                    <iframe src="yq.html" style="width:100%;height:100%;padding-top:20px;margin:0;" frameborder="0"></iframe>
+            </div>
+        </div>
+
+        <div class="clear"></div>
+
+        <div class="content-c">
+            <h4>雨情</h4><span
+                style="position: absolute;right:20px;display: block;float: right;line-height: 30px;background-color: #000;"><a
+                onclick="javascript:topNavigateTo('syq')" class="titleMore f12" target="_blank"
+                style="font-size: 15px;">更多</a></span>
+            <div class="area-3-1">
+                <table cellpadding="0" id="pptn" cellspacing="0" style="width: 96%;margin: 10px 2% 0 2%;">
+                    <tr>
+                        <td>站名</td>
+                        <td>雨量(mm)</td>
+                        <td>站名</td>
+                        <td>雨量(mm)</td>
+                    </tr>
+                    <!--
+                    <tr>
+                        <td><span class="nub-red">三坑</span></td>
+                        <td><span class="nub-red">30.0</span></td>
+                        <td><span class="nub-red">派潭</span></td>
+                        <td><span class="nub-red">8.5</span></td>
+                    </tr>
+                    <tr>
+                        <td>金坑</td>
+                        <td>30.0</td>
+                        <td>派潭镇测站</td>
+                        <td>5.5</td>
+                    </tr>
+                    <tr>
+                        <td>金坑</td>
+                        <td>30.0</td>
+                        <td>派潭镇测站</td>
+                        <td>5.5</td>
+                    </tr>
+                    <tr>
+                        <td>金坑</td>
+                        <td>30.0</td>
+                        <td>派潭镇测站</td>
+                        <td>5.5</td>
+                    </tr>
+                    <tr>
+                        <td>金坑</td>
+                        <td>30.0</td>
+                        <td>派潭镇测站</td>
+                        <td>5.5</td>
+                    </tr>
+-->
+                </table>
+                <div style="width: 96%;text-align: center;margin: 1% 2%;">
+                    <img src="img/pre.png" style="float: left;" onclick="paGing('pptn','shang');"/>
+                    <span><span class="nub-red" id="pptnCount">  </span></span>
+                    <img src="img/next.png" style="float: right;" onclick="paGing('pptn','xia');"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="clear"></div>
+
+        <div class="content-c">
+            <h4>天气预报</h4>
+            <div class="area-3-1">
+                <div class="syq-tqyb">
+                    <p id="tqyb">
+                        <!--3日08时-23日20时目前，广州市各区<span class="nub-green">多云</span>。预计<span class="nub-green">19-21时</span>，广州市各区<span class="nub-green">多云</span>，气温<span class="nub-green">14到18℃</span>，吹和缓的偏北风。-->
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--中-->
+    <div class="center" style="position: relative">
+        <div class="top" style="height:40px; position: absolute;z-index:10">
+            <h1>降雨分布图</h1>
+            <h1 style="font-size: 14px;color:red" id="rainDesc"></h1>
+        </div>
+        <div style="width:100%;height:100%;position:absolute;top:0px; ">
+            <iframe src="./syqMap.html" frameborder="0" style="width:100%;height:100%"></iframe>
+        </div>
+    </div>
+
+    <!--右-->
+    <div class="right">
+        <div class="content">
+            <h4>水情</h4><span
+                style="position: absolute;top:-15px;right: 20px;display: block;float: right;line-height: 30px;background-color: #000;"><a
+                onclick="javascript:topNavigateTo('syq')" class="titleMore f12" target="_blank"
+                style="font-size: 15px;">更多</a></span>
+            <div class="area-3-1" style="margin-top: 0;">
+
+                <div class="right-content" style="width:100%;padding:0;margin:0">
+                    <table cellpadding="0" cellspacing="0" id="rsvrTab" style="width:100%">
+                        <tr class="thead">
+                            <td colspan="3">水库站超汛限/超警戒 <span class="nub-red" id="rsvrCountss"></span></td>
+                        </tr>
+                        <tr>
+                            <td>站名</td>
+                            <td>当前水位(m)</td>
+                            <td>汛限/警戒值</td>
+                        </tr>
+                        <!--
+                        <tr>
+                            <td>大封门水库</td>
+                            <td>23.84</td>
+                            <td class="nub-red">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>流溪河水库</td>
+                            <td>149.01</td>
+                            <td class="nub-red">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>乌涌</td>
+                            <td>111.30</td>
+                            <td class="nub-red">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>禾龙水库</td>
+                            <td>0.20</td>
+                            <td class="nub-red">10.00</td>
+                        </tr>
+                        -->
+                    </table>
+                    <div style="width: 96%;text-align: center;margin: 1% 2%;">
+                        <img src="img/pre.png" style="float: left;" onclick="paGing('rsvrTab','shang');"/>
+                        <img src="img/next.png" style="float: right;" onclick="paGing('rsvrTab','xia');"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="area-no">
+
+            <div class="content-half">
+                <h4>重点水库</h4><span
+                    style="position: absolute;top:-15px;right: 20px;display: block;float: right;line-height: 30px;background-color: #000;"><a
+                    onclick="javascript:topNavigateTo('syq')" class="titleMore f12" target="_blank"
+                    style="font-size: 15px;">更多</a></span>
+                <div class="area-half">
+                    <table cellpadding="0" cellspacing="0" style="width: 96%;margin: 0 2%;" id="rsvr">
+
+                        <tr>
+                            <td>站名</td>
+                            <td>当前水位(m)</td>
+                            <td>汛限值</td>
+                        </tr>
+                        <!--
+                        <tr>
+                            <td><span class="nub-red">金坑</span></td>
+                            <td><span class="nub-red">59.20</span><img src="img/red-up.png"/></td>
+                            <td><span class="nub-red">59.00</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="nub-red">联安</span></td>
+                            <td><span class="nub-red">58.62</span><img src="img/red-down.png"/></td>
+                            <td><span class="nub-red">58.50</span></td>
+                        </tr>
+                        <tr>
+                            <td>深湾水库</td>
+                            <td>33.29<img src="img/blue-up.png"/></td>
+                            <td><span class="nub-red">33.61</span></td>
+                        </tr>
+                        <tr>
+                            <td>白灰田水库</td>
+                            <td>62.98<img src="img/blue-up.png"/></td>
+                            <td><span class="nub-red">63.55</span></td>
+                        </tr>
+                        <tr>
+                            <td>大井水库</td>
+                            <td>62.98<img src="img/-.png"/></td>
+                            <td><span class="nub-red">63.55</span></td>
+                        </tr>
+                        -->
+                    </table>
+                    <div style="width: 96%;text-align: center;margin: 1% 2%;">
+                        <img src="img/pre.png" style="float: left;" onclick="paGing('rsvr','shang');"/>
+                        <span><span class="nub-red" id="rsvrCount">  </span></span>
+                        <img src="img/next.png" style="float: right;" onclick="paGing('rsvr','xia');"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-half" style="float: right;">
+                <h4>重点河道</h4><span
+                    style="position: absolute;top:-15px;right: 20px;display: block;float: right;line-height: 30px;background-color: #000;"><a
+                    onclick="javascript:topNavigateTo('syq')" class="titleMore f12" target="_blank"
+                    style="font-size: 15px;">更多</a></span>
+                <div class="area-half">
+                    <table id="river" cellpadding="0" cellspacing="0" style="width: 96%;margin: 0 2%;">
+                        <tr>
+                            <td>站名</td>
+                            <td>当前水位(m)</td>
+                            <td>警戒值</td>
+                        </tr>
+                        <!--
+                        <tr>
+                            <td><span class="nub-red">金坑</span></td>
+                            <td><span class="nub-red">59.20</span><img src="img/red-up.png"/></td>
+                            <td><span class="nub-red">59.00</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="nub-red">联安</span></td>
+                            <td><span class="nub-red">58.62</span><img src="img/red-down.png"/></td>
+                            <td><span class="nub-red">58.50</span></td>
+                        </tr>
+                        <tr>
+                            <td>深湾水库</td>
+                            <td>33.29<img src="img/blue-up.png"/></td>
+                            <td><span class="nub-red">33.61</span></td>
+                        </tr>
+                        <tr>
+                            <td>白灰田水库</td>
+                            <td>62.98<img src="img/blue-up.png"/></td>
+                            <td><span class="nub-red">63.55</span></td>
+                        </tr>
+                        <tr>
+                            <td>大井水库</td>
+                            <td>62.98<img src="img/-.png"/></td>
+                            <td><span class="nub-red">63.55</span></td>
+                        </tr>
+                        -->
+                    </table>
+                    <div style="width: 96%;text-align: center;margin: 1% 2%;">
+                        <img src="img/pre.png" style="float: left;" onclick="paGing('river','shang');"/>
+                        <span><span class="nub-red" id="riverCount">  </span></span>
+                        <img src="img/next.png" style="float: right;" onclick="paGing('river','xia');"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="content-c">
+            <h4>易涝点</h4>
+            <div class="area-3-1">
+                <div class="left-content" style="width: 30%;height:100%">
+                    <table cellpadding="0" cellspacing="0" class="yilaodian">
+                        <tr class="thead">
+                            <td colspan="3">2016易涝点 <span class="nub-red">72个</span></td>
+                        </tr>
+                        <tr>
+                            <td>区域</td>
+                            <td>个数</td>
+                        </tr>
+                        <tr>
+                            <td>白云区</td>
+                            <td>17</td>
+                        </tr>
+                        <tr>
+                            <td>海珠区</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>黄埔区</td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td>荔湾区</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>天河区</td>
+                            <td>24</td>
+                        </tr>
+                        <tr>
+                            <td>越秀区</td>
+                            <td>7</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="right-content" style="width: 70%;height:100%">
+                    <div id="yldChart" style="float:left;width: 100%;height: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/echarts/jquery.min.js"></script>
+<script src="../../../lib/3rdparty/echarts3.8.4/echarts.common.min.js"></script>
+<script type="text/javascript" src="js/yilaodian.js"></script>
+<script type="text/javascript" src="js/resourceContainer.js"></script>
+<script type="text/javascript" src="js/commons.js"></script>
+</html>

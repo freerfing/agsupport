@@ -1,0 +1,26 @@
+<!-- （井）农污 -->
+<div class="rivers-container"  data-bind="wellInitHandler"  style="height:100%">
+    <div class="rivers_detailed_list_con">
+        <div class="rivers_query_c search_panel">
+            <h3>查询</h3>
+            <div class="rivers_query_com" style="text-align: left;">
+                <span class="rivers_query_name">
+                    <div style="margin-top:5px">
+                        行政区:&nbsp;&nbsp;&nbsp;&nbsp;
+                        <select data-bind="value: search().xzq, event:{change:$root.clickXZQBtn}, options: search().xzqList, optionsText : 'title', optionsValue : 'value'"></select>
+                    </div>
+                </span>
+            </div>
+            <h3>图例</h3>
+            <div class="telemetryStation_query_com">
+                <label><b class="wellicon1"></b>雨污合流</label>
+                <label><b class="wellicon2"></b>污水</label>
+                <label><b class="wellicon3"></b>雨水</label>
+            </div>
+        </div>
+        <div class="rivers_condition_c" style="margin-top:5px">
+            <div id="wellList"></div>
+            <div id="wellPager" class="list-datagroup-pager"></div>
+        </div>
+    </div>
+</div>

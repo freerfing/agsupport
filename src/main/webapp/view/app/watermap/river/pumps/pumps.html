@@ -1,0 +1,70 @@
+<!--泵站面板 -->
+<div class="pumps-container" data-bind="pumpsInitHandler" style="height:100%">
+
+
+    <div id="pumps-flow-chart" class="pumps_detailed_list_con">
+            <div class="pumps_query_c">
+            	<h3>查询</h3>
+                <div class="pumps_query_com" style="text-align: left;">
+
+                    <span class="pumps_query_name NormalPanel" data-bind="visible: !IsMax()">
+                        名称 / 编码：
+                        <input type="text" class="InputTextTop" data-bind="textInput: search().idstcdnm, event:{ keypress:function(data, event){ if(event.keyCode == 13){ clickSearchBtn(); }  return true; } }">
+                        &nbsp;
+                        <button class="searchBtn" data-bind="click:$root.clickSearchBtn;">查询</button>
+                        &nbsp;
+                        <button class="resetBtn" data-bind="click:$root.clickResetBtn;">重置</button> 
+
+                    </span>
+
+                    <span class="pumps_query_name NormalPanel" data-bind="visible: !IsMax()">
+                        <div style="margin-top:5px">
+                        所属行政区：
+                            <select class="InputTextTop" data-bind="value: search().xzq, event:{change:$root.clickSearchBtn}, options: search().xzqList, optionsText : 'text', optionsValue : 'value'">
+                            </select>
+                        </div>
+                    </span>
+
+                    <span class="pumps_query_name MaxPanel" data-bind="visible:IsMax()">泵站编码：
+                        <input type="text" class="InputTextTopMax" data-bind="value: search().idstcd">
+                    </span>
+
+                    <span class="pumps_query_name MaxPanel" data-bind="visible:IsMax()">泵站名称：
+                        <input type="text" class="InputTextTopMax" data-bind="value: search().idstnm">
+                    </span>                
+
+                    <span class="pumps_query_name MaxPanel" data-bind="visible:IsMax()">所属行政区：
+                        <select class="InputTextTopMax" data-bind="value: search().xzq, options: search().xzqList, optionsText : 'text', optionsValue : 'value'">
+                        </select>
+                    </span>                    
+
+                    <span class="pumps_btn_c MaxPanel" data-bind="visible:IsMax()">
+                        &nbsp;
+                        &nbsp;
+                        <button id="btnPumpsQueryMore" class="searchBtn" data-bind="click:$root.clickSearchBtn;">查询</button>
+                        &nbsp;
+                        &nbsp;
+                        <button class="resetBtn" data-bind="click:$root.clickResetBtn;">重置</button>
+                        &nbsp;
+                        &nbsp;
+                    </span>
+                </div>
+                <div class="rivers_query_c search_panel" style="margin-top:4px">
+                    <h3>图例</h3>
+                    <div class="rivers_query_com" style="text-align: left;">
+                        <b class="legend-bengzhan" />泵站
+                    </div>
+                </div>  
+            </div>
+            <div class="pumps_condition_c">
+
+                <div id="pumpsList"></div>
+                <div id="pumpsPager" class="list-datagroup-pager"></div>
+
+            </div>
+        </div>
+
+	
+
+</div>
+<!-- 泵站面板 -->

@@ -1,0 +1,2412 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.asip.watermap.mapper.SubjectMapper">
+
+    <!-- 查询河道列表 -->
+    <select id="listStRiverRPage" resultType="StRiverR">
+        select t.* from st_river_r
+    </select>
+
+
+
+    <!-- 查询水库列表__修改后 -->
+    <select id="listReservoirPage" resultType="map" parameterType="map">
+        select t.* from
+        (select
+        t1.STCD,t1.STNM,t1.usfl,t1.COOX x,t1.COOY y,t1.STLC,t1.ADDVCD,t1.STTP,t1.STSYS,
+        t2.tm,t2.RWPTN,t2.rz,t3.FSLTDZ jjsw,nvl(t4.RSVRTP,1) RSVRTP,nvl(FSLTDZ,999)-nvl(rz,0) diff,
+        CASE
+        WHEN t3.FSLTDZ &gt;t2.rz and T3.FSLTDZ &lt;0 THEN 1
+        ELSE 0 END state
+        from
+        (select * from ST_STBPRP_B where usfl=1 and sttp='RR'
+            <if test="stnm != null and stnm != ''">
+                and (t.stnm like '%' || #{stnm} || '%' or t.STCD like '%' || #{stnm} || '%')
+            </if>
+            <if test="null !=stsysList  and stsysList.size > 0">
+                <foreach collection="stsysList" item="item" open=" and (" close=")" separator="or">
+                    stsys = #{item}
+                </foreach>
+            </if>
+            <if test="xzq!=null and xzq !=''">
+                and addvcd = #{xzq}
+            </if>
+        ) t1  left join
+        (select tm,RWPTN,rz,stcd from ST_RSVR_R s where s.tm=
+          (select max(tm) from ST_RSVR_R where s.stcd=stcd
+          <if test="date!=null and date !=''">
+              and tm &gt;= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss')
+              and tm &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+          </if>)
+        ) t2
+        on t1.stcd=t2.stcd
+        left join ST_RSVRFSR_B  t3
+        on t1.stcd=t3.stcd
+        left join ST_RSVRFCCH_B t4
+        on t1.stcd=t4.stcd
+        order by state desc,diff) t
+        where 1=1
+        <if test="rsvrtps!=null">
+            and  rsvrtp in (${rsvrtps})
+        </if>
+
+    </select>
+
+    <!-- 根据id获取一个水库信息 -->
+    <select id="getReservoirById" resultType="map">
+        select s.*, b.COOX x, b.COOY y, b.stnm from st_rsvr_r_view s, ST_STBPRP_B b where s.czbm = b.stcd(+) and s.id = #{id}
+    </select>
+
+    <select id="listYLByTime" resultType="map">
+        select realvalue.drp drp,realvalue.tm tm,b.stnm stnm,b.ADDVCD  addvcd from
+ (
+ select s.* from ST_PPTN_R s,(
+select stcd,tm from ST_PPTN_R where tm  BETWEEN to_date(#{start},'yyyy-MM-dd hh24:mi:ss') and to_date(#{end},'yyyy-MM-dd hh24:mi:ss')
+) mt
+ where s.stcd=mt.stcd and s.tm=mt.tm
+ ) realvalue
+ inner join ST_STBPRP_B b on realvalue.stcd=b.stcd and REALVALUE.drp is not null order by stnm , tm desc
+    </select>
+    <!-- 查询雨量列表-->
+    <select id="listStPptnRPage" resultType="map" parameterType="map">
+        select s1.stcd, nvl(s2.sum_drp, 0) sum_drp, s1.coox x, s1.cooy y, s1.stnm,s1.stsys
+        from
+        (select b1.stcd, b2.coox , b2.cooy , b2.stnm, b2.sttp,b2.stsys,b2.usfl
+        from (select distinct stcd from ST_STITEM_B where mnit = 3) b1
+           join
+          (
+          select * from ST_STBPRP_B where usfl=1 and COOX is not null and COOY is not null
+            <if test="stnm != null and stnm != ''">
+              and (stnm like '%' || #{stnm} || '%' or STCD like '%' || #{stnm} || '%')
+            </if>
+            <if test="xzq!=null and xzq !=''">
+                and addvcd = #{xzq}
+            </if>
+            <if test="stsys != null and stsys != ''">
+                and  stsys = #{stsys}
+            </if>
+            <if test="null !=stsysList  and stsysList.size > 0">
+                <foreach collection="stsysList" item="item" open=" and (" close=")" separator="or">
+                    stsys = #{item}
+                </foreach>
+            </if>
+          ) b2 on b1.stcd = b2.stcd
+
+        ) s1
+        left join
+        (select stcd, sum(drp) sum_drp from st_pptn_r where 1=1
+        <if test="startTime != null and startTime != ''">
+            and tm &gt;= to_date(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tm &lt; to_date(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        group by stcd) s2
+        on s1.stcd=s2.stcd
+        WHERE   1=1
+
+        <if test="rainfallList != null">
+            <foreach collection="rainfallList" item="map" open=" and (" close=")" separator="or">
+                (nvl(s2.sum_drp, 0) &gt;= #{map.start} and nvl(s2.sum_drp, 0) &lt;=  #{map.end})
+            </foreach>
+        </if>
+        order by nvl(s2.sum_drp, 0) desc
+    </select>
+    <!-- 根据id查询降雨量信息 -->
+    <select id="getStPptnRById" resultType="map">
+        select s.*, b.COOX x, b.COOY y, b.stnm from st_pptn_r s, ST_STBPRP_B b where s.stcd = b.stcd(+) and s.id = #{id}
+    </select>
+
+    <!-- 查询过去一周的水库水位情况 -->
+    <select id="queryLastweekWaterStage" parameterType="map" resultType="map">
+        select * from skxx where zm = #{zm} and sbsj in
+        <foreach collection="dateList" item="item" open="(" separator="," close=")">
+            to_date(#{item}, 'yyyy-mm-dd')
+        </foreach>
+        order by sbsj desc
+    </select>
+
+    <!-- 查询测站点近五天的降雨情况 -->
+    <select id="queryRecentRainfall" parameterType="map" resultType="map">
+        select * from st_pptn_r where stcd = #{stcd} and tm in
+        <foreach collection="dateList" item="item" open="(" separator="," close=")">
+            to_date(#{item}, 'yyyy-mm-dd')
+        </foreach>
+        order by tm desc
+    </select>
+
+    <!-- 查询各雨量范围的记录的条数 -->
+    <select id="queryRainfallRecordNum" resultType="map" parameterType="map">
+        select * from
+        (select count(*) as "0" from st_pptn_r where dyp = 0
+        <if test="fw != null and fw !=''">
+            and fw = #{fw}
+        </if>
+        <if test="ly != null and ly !=''">
+            and ly = #{ly}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and tm &gt;= to_date(#{startTime}, 'yyyy-mm-dd')
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tm &lt; to_date(#{endTime}, 'yyyy-mm-dd')
+        </if>
+        ),
+        (select count(*) as "01-1.0" from st_pptn_r where dyp between 0.1 and 1.0
+        <if test="fw != null and fw !=''">
+            and fw = #{fw}
+        </if>
+        <if test="ly != null and ly !=''">
+            and ly = #{ly}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and tm &gt;= to_date(#{startTime}, 'yyyy-mm-dd')
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tm &lt; to_date(#{endTime}, 'yyyy-mm-dd')
+        </if>
+        ),
+        (select count(*) as "1.0-25" from st_pptn_r where dyp between 1.0 and 25
+        <if test="fw != null and fw !=''">
+            and fw = #{fw}
+        </if>
+        <if test="ly != null and ly !=''">
+            and ly = #{ly}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and tm &gt;= to_date(#{startTime}, 'yyyy-mm-dd')
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tm &lt; to_date(#{endTime}, 'yyyy-mm-dd')
+        </if>
+        ),
+        (select count(*) as "25.1-50" from st_pptn_r where dyp between 25.1 and 50
+        <if test="fw != null and fw !=''">
+            and fw = #{fw}
+        </if>
+        <if test="ly != null and ly !=''">
+            and ly = #{ly}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and tm &gt;= to_date(#{startTime}, 'yyyy-mm-dd')
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tm &lt; to_date(#{endTime}, 'yyyy-mm-dd')
+        </if>
+        ),
+        (select count(*) as "50.1-100" from st_pptn_r where dyp between 50.1 and 100
+        <if test="fw != null and fw !=''">
+            and fw = #{fw}
+        </if>
+        <if test="ly != null and ly !=''">
+            and ly = #{ly}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and tm &gt;= to_date(#{startTime}, 'yyyy-mm-dd')
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tm &lt; to_date(#{endTime}, 'yyyy-mm-dd')
+        </if>
+        ),
+        (select count(*) as "100.1-200" from st_pptn_r where dyp between 100.1 and 200
+        <if test="fw != null and fw !=''">
+            and fw = #{fw}
+        </if>
+        <if test="ly != null and ly !=''">
+            and ly = #{ly}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and tm &gt;= to_date(#{startTime}, 'yyyy-mm-dd')
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tm &lt; to_date(#{endTime}, 'yyyy-mm-dd')
+        </if>
+        ),
+        (select count(*) as "200.1-220" from st_pptn_r where dyp between 200.1 and 220
+        <if test="fw != null and fw !=''">
+            and fw = #{fw}
+        </if>
+        <if test="ly != null and ly !=''">
+            and ly = #{ly}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and tm &gt;= to_date(#{startTime}, 'yyyy-mm-dd')
+        </if>
+        <if test="endTime != null and endTime !=''">
+            and tm &lt; to_date(#{endTime}, 'yyyy-mm-dd')
+        </if>
+        )
+    </select>
+
+    <!--查询一天24小时雨量__修改后-->
+    <select id="queryRainfallOneDay" parameterType="map" resultType="map">
+        select t.stcd, to_char(t.tm, 'hh24:mi') tm, t.drp, t.intv, t.pdr, t.dyp, t.wth from st_pptn_r t
+        where t.stcd = #{stcd} and t.tm in
+        <foreach collection="hourList" item="tm" open="(" separator="," close=")">
+            #{tm}
+        </foreach>
+        order by tm
+    </select>
+
+    <!--查询一个时间段雨量-->
+    <select id="queryRainfallOneTime" parameterType="map" resultType="map">
+        select t.stcd, to_char(t.tm, 'yyyy-mm-dd hh24:mi:ss') tm, t.drp, t.intv, t.pdr, t.dyp, t.wth from st_pptn_r t
+        where t.stcd = #{stcd}
+        <if test="startTime != null">
+            and t.tm &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            and t.tm &lt;= #{endTime}
+        </if>
+        order by tm
+    </select>
+
+    <!-- 查看时段水库水位情况 -->
+    <select id="queryReservoirPeriod" resultType="map">
+        select
+        to_char(t1.TM,'yyyy-mm-dd hh24:mi:ss') tm,
+        nvl(t1.DRP,0) drp,
+        t1.rz,
+        t2.FSLTDZ xxsw,
+        t3.NORMZ zzsw
+        from
+        (select s1.stcd,s1.tm,S1.rz,s2.drp from
+        ST_RSVR_R s1 left join
+        ST_PPTN_R s2 on s1.stcd=s2.stcd and s1.tm=s2.tm
+        ) t1
+        left join ST_RSVRFSR_B t2
+        on t1.stcd=t2.stcd
+        left join ST_RSVRFCCH_B t3
+        on t1.stcd=t3.stcd
+        where t1.stcd = #{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and tm &gt;=  to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and tm &lt;=  to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        order by tm desc
+    </select>
+    <!-- 分页查询设施表 -->
+    <select id="queryFacilities" resultType="map" parameterType="map">
+        select t.* from ST_STBPRP_B t where 1=1
+        <if test="sttp != null and sttp != ''">
+            and t.sttp = #{sttp}
+        </if>
+        <if test="stnm != null and stnm != ''">
+            and t.stnm like '%' || #{stnm} || '%'
+        </if>
+        <if test="addvcd != null and addvcd != ''">
+            and t.addvcd like '%' || #{addvcd} || '%'
+        </if>
+        <if test="tjStr != null and tjStr != ''">
+            and t.usfl in (${tjStr})
+        </if>
+    </select>
+
+    <!-- 查看泵站详情 -->
+    <select id="queryPumpDetail" resultType="map">
+        select t.stcd,
+        t.tm,
+        nvl(t.ppupz,0) ppupz,
+        nvl(t.ppdwz,0) ppdwz,
+        nvl(t.chanb,0) chanb,
+        nvl(t.pumppt,0) pumppt,
+        nvl(t.omcn,0) omcn,
+        nvl(t.ompwr,0) ompwr,
+        nvl(t.pmpq,0) pmpq
+        from ST_PUMP_R t
+        where tm = (select max(tm) from ST_PUMP_R where stcd = t.stcd)
+        and t.stcd = #{stcd}
+    </select>
+
+    <!-- 分页查询水闸设施表 -->
+    <select id="queryPsStbprpPage" resultType="map" parameterType="map">
+        select t.* from (select t1.stcd,t1.COOX x,t1.COOY y,t1.stnm, t1.sttp,t1.stsys,t1.usfl,
+        t2.TM,t2.PPUPZ,T2.PPDWZ,T2.CHANB,t2.PUMPPT from
+        (select * from ST_STBPRP_B where sttp='DP'
+        <if test="stnm != null and stnm != ''">
+            and (t.stnm like '%' || #{stnm} || '%' or t.stcd like '%' || #{stcd} || '%')
+        </if>
+        <if test="xzq!=null and xzq !=''">
+            and addvcd = #{xzq}
+        </if>
+        ) t1 left join
+        (select * from ST_PUMP_R s where tm=(select max(tm) from ST_PUMP_R where s.stcd=stcd
+        <if test="date!=null and date !=''">
+            and tm &gt;= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss')
+            and tm &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>))  t2
+        on t1.stcd=T2.stcd) t
+
+    </select>
+
+
+    <!-- 查看水闸水位情况 -->
+    <select id="queryWasDetail" resultType="map">
+        SELECT TM,nvl(UPZ,0) UPZ,
+        nvl(DWZ,0) DWZ,nvl(TGTQ,0) TGTQ,nvl(SWCHRCD,0) SWCHRCD,
+        nvl(SUPWPTN,0) SUPWPTN,nvl(SDWWPTN,0) SDWWPTN,nvl(MSQMT,0) MSQMT,nvl(CHANB,0) CHANB
+        FROM ST_WAS_R t1
+        WHERE t1.TM = (SELECT max(TM)
+        FROM ST_WAS_R
+        WHERE t1.STCD = ST_WAS_R.STCD)  and t1.stcd = #{stcd}
+    </select>
+
+    <!-- 查看水闸历史水位情况 -->
+    <select id="queryWasHist" resultType="map" parameterType="map">
+        SELECT t.TM,t.UPZ ,t.DWZ, t.CHANB FROM ST_WAS_R t
+        WHERE t.stcd = #{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.TM &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.TM &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        ORDER BY t.TM desc
+    </select>
+
+    <!-- 查看水文遥测站情况 -->
+    <select id="querywaterremotedetectDetail" resultType="map">
+        select 区号 as qh,站号 as zh,站名 as zm,监测指标 as jczb,CODE12 as CODE12,核实 as hs,x as x,y as y, 安装地址 as azdz,所属系统 as ssxt,说明 as sm from sde.遥测站信息表
+    </select>
+
+    <!-- 查看水文遥测站情况 -->
+    <select id="smartwaternet" resultType="map">
+        select czmc,azdz,xzq,jczb,czbm,hcmc as hymc,x,y from sde.znsw
+    </select>
+
+    <!-- 查询排水管网 -->
+    <select id="listStConduitchB" resultType="map" parameterType="map">
+        SELECT * from (
+            SELECT t1.STCD ,t1.STNM ,t1.COOX x,t1.COOY y,t1.STLC,t1.ADDVCD,t1.STTP,t1.STSYS,
+            NVL(to_char(t2.tm,'yyyy-MM-dd hh24:mi:ss'), ' ') tm,decode(t2.Z,null,'无监测值',t2.Z ) z,t3.WNDEP jjsw
+            FROM (select * from ST_STBPRP_B where STTP = 'UP'
+                <if test="stnm != null and stnm != ''">
+                    and (stnm like '%' || #{stnm} || '%' or stcd like '%' || #{stnm} || '%')
+                </if>
+                <if test="xzq != null and xzq != ''">
+                    and addvcd = #{xzq}
+                </if>
+            ) t1  LEFT JOIN
+            (SELECT * FROM ST_CONDUIT_R s WHERE s.TM = (SELECT max(TM) FROM ST_CONDUIT_R WHERE stcd = s.STCD
+            <if test="date!=null and date !=''">
+                and tm &gt;= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss')
+                and tm &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            </if>)) t2
+            ON t1.STCD = t2.STCD
+            LEFT JOIN ST_CONDUITCH_B t3
+            ON t1.stcd=t3.stcd
+			ORDER BY t1.STSYS
+        ) where 1=1
+
+    </select>
+
+    <!--查询一天管网的 流速 和 水位-->
+    <select id="queryDrainageDetailDay" resultType="map" parameterType="map">
+        select t.stcd, to_char(t.tm, 'hh24:Mi') tm, nvl(t.z,0) z from ST_CONDUIT_R t
+        where STCD = #{stcd} and tm &gt;= to_date(#{date},'yyyy-MM-dd')
+        and tm &lt; to_date(#{date},'yyyy-MM-dd')+1
+        order by t.tm asc
+    </select>
+
+
+    <!--获取排水管网历史数据-->
+    <select id="getDrainageHis" resultType="map" parameterType="map">
+        select t.stcd, to_char(t.tm, 'yyyy-MM-dd hh24:mi:ss') tm, nvl(t.z,0) z from ST_CONDUIT_R t where t.stcd=#{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.tm &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.tm &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        order by t.tm desc
+    </select>
+
+
+    <!--积水点列表-->
+    <select id="getFloodPointList" resultType="map" parameterType="map">
+        -- select t.*,nvl(r.z,0) z,to_char(r.tm, 'yyyy-MM-dd hh24:mi:ss') tm from ST_STBPRP_B t left join (SELECT * from ST_SURDEP_R where TM=(SELECT max(t1.TM) from ST_SURDEP_R t1 where t1.STCD=ST_SURDEP_R.STCD))  r on t.stcd=r.stcd where t.sttp='WL'
+        select t.stcd,t.stnm,t.stlc,t.addvcd,t.stsys,t.coox x,t.cooy y,z,to_char(r.tm, 'yyyy-MM-dd hh24:mi') tm
+        from (select * from ST_STBPRP_B  where sttp='WL'
+            <if test="stnm != null and stnm != ''">
+                and (stnm like '%' || #{stnm} || '%' or stcd like '%' || #{stnm} || '%')
+            </if>
+            <if test="xzq!=null and xzq !=''">
+                and addvcd = #{xzq}
+            </if>
+        ) t
+        left join
+        (SELECT * from ST_SURDEP_R t where t.TM=(SELECT max(TM) from ST_SURDEP_R  where t.STCD=STCD
+        <if test="endDate != null">
+            and tm &gt;= #{startDate}
+            and tm &lt;= #{endDate}
+        </if>
+        )) r
+        on t.stcd=r.stcd
+
+    </select>
+
+    <!--积水点历史数据-->
+    <select id="getFloodPointHis" resultType="map" parameterType="map">
+        select to_char(t.tm, 'yyyy-MM-dd hh24:mi:ss') tm,z from ST_SURDEP_R  t
+        where t.stcd=#{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.tm &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.tm &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        order by t.tm desc
+    </select>
+
+    <!--分页获取墒情站列表-->
+    <select id="getMoistureList" resultType="map" parameterType="map">
+        select * from ST_STBPRP_B t left join (select * from (select a.*, max(tm) over(partition by a.stcd) as maxtime
+        from ST_SOIL_R a)where tm = maxtime) r on t.stcd = r.stcd where t.sttp = 'SS'
+        <if test="stnm != null and stnm != ''">
+            and t.stnm like '%' || #{stnm} || '%'
+        </if>
+        <if test="addvcd != null and addvcd != ''">
+            and t.addvcd like '%' || #{addvcd} || '%'
+        </if>
+    </select>
+
+    <!--分页查询排水渠列表-->
+    <select id="getdrainageCanalList" resultType="map" parameterType="map">
+        select t.*,r.z,to_char(r.tm, 'yyyy-MM-dd hh24:mi:ss') tm from ST_STBPRP_B t
+        left join ST_CANAL_R r on t.stcd=r.stcd
+        where t.sttp='UC'
+        and r.tm=(SELECT max(TM)
+        FROM ST_CANAL_R
+        WHERE t.STCD = ST_CANAL_R.STCD)
+        <if test="stnm != null and stnm != ''">
+            and t.stnm like '%' || #{stnm} || '%'
+        </if>
+        <if test="addvcd != null and addvcd != ''">
+            and t.addvcd like '%' || #{addvcd} || '%'
+        </if>
+    </select>
+
+    <!--查询排水渠历史数据-->
+    <select id="getdrainageCanalHis" resultType="map" parameterType="map">
+        select to_char(t.tm, 'yyyy-MM-dd hh24:mi:ss') tm,nvl(t.z,0) z
+        from ST_CANAL_R t where t.stcd=#{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.tm &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.tm &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        order by t.tm desc
+    </select>
+
+    <!--分页查询河道列表-->
+    <select id="getRiverList" resultType="map" parameterType="map">
+        select t.* from
+        (select t1.STCD,t1.STNM,t1.COOX x,t1.COOY y,t1.STLC,t1.ADDVCD,t1.STTP,t1.STSYS,t2.tm,t2.Q,t2.z,t2.WPTN,t3.WRZ jjsw,nvl(WRZ,999)-nvl(z,0) diff,
+        CASE WHEN t3.WRZ&lt;t2.z and T3.WRZ&gt;0 THEN 1
+        ELSE 0 END state
+        from
+        (
+            select * from ST_STBPRP_B where sttp in('ZZ','ZQ') and usfl=1
+            <if test="stnm != null and stnm != ''">
+                and (t.stnm like '%' || #{stnm} || '%' or t.STCD like '%' || #{stnm} || '%')
+            </if>
+            <if test="null !=stsysList  and stsysList.size > 0">
+                <foreach collection="stsysList" item="item" open=" and (" close=")" separator="or">
+                    stsys = #{item}
+                </foreach>
+            </if>
+            <if test="xzq!=null and xzq !=''">
+                and addvcd = #{xzq}
+            </if>
+        )
+        t1  LEFT JOIN
+        (select * from ST_RIVER_R s where s.tm=(select max(tm) from ST_RIVER_R where s.stcd=stcd
+            <if test="date!=null and date !=''">
+                and tm &gt;= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss')
+                and tm &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            </if>
+        )) t2
+        on t1.stcd=t2.stcd
+        left join ST_RVFCCH_B t3
+        on t1.stcd=t3.stcd
+        order by state desc,diff) t
+        where 1=1
+
+
+    </select>
+
+    <!--查询河流历史数据-->
+    <select id="getRiverHis" resultType="map" parameterType="map">
+        select to_char(t.tm, 'yyyy-MM-dd hh24:mi:ss') tm,nvl(t.z,0) z
+        from ST_RIVER_R t
+        where t.stcd=#{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.tm &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.tm &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        order by t.tm desc
+    </select>
+
+    <!--分页查询拦河坝列表
+    select * from ST_STBPRP_B t left join (select t2.*,(case t2.rwwptnu when '4' then 2 when '5' then 3 else 1 end) bsss, (case t2.rwwptnd when '4' then 2 when '5' then 3 else 1 end) bxss from (select t1.stcd,t1.tm,t1.rwz,t1.blrwz,t1.rwwptnu,t1.rwwptnd, max(t1.tm) over(partition by t1.stcd) as maxTm from ST_RVWR_R t1) t2 where t2.tm = t2.maxTm) t3 on t.stcd=t3.stcd where sttp='RW'
+-->
+    <select id="getWeirList" resultType="map" parameterType="map">
+        select t1.stcd,stnm,addvcd,sttp,usfl,coox x,cooy y,stsys,TM,RWZ,BLRWZ,RWWPTND,RWWPTNU,UWRZ,DWRZ from
+        (select * from ST_STBPRP_B where sttp='RW' and usfl=1
+            <if test="stnm != null and stnm != ''">
+                and (stnm like '%' || #{stnm} || '%' or  stcd like '%' || #{stnm} || '%')
+            </if>
+            <if test="xzq != null and xzq != ''">
+                and addvcd =#{xzq}
+            </if>
+        ) t1
+        left join
+        (select * from ST_RVWR_R s where
+            s.tm=(select max(tm) from ST_RVWR_R where s.stcd=stcd
+            <if test="date!=null and date !=''">
+                and tm &gt;= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss')
+                and tm &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            </if>)) t2
+        on t1.stcd=t2.stcd
+        left join  ST_BRGFSR_B t3
+        on t1.stcd=t3.stcd
+    </select>
+
+    <!--分页查询黑臭水体列表-->
+    <select id="getBlackSmellyWaterList" resultType="map" parameterType="map">
+        select t.* from
+        (SELECT
+                t1.STCD,t1.STTP,t1.STNM,t1.COOX x,t1.COOY y,t1.ADDVCD,
+                to_char(t2.SPT,'yyyy-MM-dd hh24:mi') spt,t2.CLAR_ITY,t2.REDOX,t2.ENVT,t2.HUMID,
+                t3.Z,t3.Q2,t4.CODCR,t4.TN,t4.NH3N,t4.TP,t4.DOX,
+        CASE
+        WHEN (CLAR_ITY BETWEEN 10 and 25) or (DOX BETWEEN 0.2 and 2.0 ) or ( REDOX BETWEEN -200 and 50 ) or (NH3N
+        BETWEEN 8.0 and 15) THEN 2
+        WHEN (CLAR_ITY &lt;10 or DOX&lt;2.0 or REDOX&lt;-200 or NH3N>15) THEN 3
+        WHEN t2.spt is not null then 1
+        ELSE 0 END black_Smelly,
+        CASE
+        WHEN (DOX>=7.5) or (NH3N &lt;=0.15) THEN 1
+        WHEN (DOX>=6 and DOX&lt;7.5) or (NH3N >0.15 and NH3N&lt;=0.5) THEN 2
+        WHEN (DOX >=5 and DOX&lt;6) or (NH3N >0.5 and NH3N&lt;=1) THEN 3
+        WHEN (DOX >=3 and DOX&lt;5) or (NH3N >1 and NH3N&lt;=1.5) THEN 4
+        WHEN (DOX >=2 and DOX&lt;3) or (NH3N >1.5 and NH3N&lt;=2) THEN 5
+        WHEN t2.spt is not null then 6
+        ELSE 0 END water_quality
+        FROM (
+            select * from WQ_WQSINF_B where sttp='RQ'
+            <if test="xzq!=null and xzq !=''">
+                and addvcd = #{xzq}
+            </if>
+            <if test="stnm != null and stnm != ''">
+                and (stnm like '%' || #{stnm} || '%' or stcd like '%' || #{stcd} || '%')
+            </if>
+        ) t1
+        LEFT JOIN (
+            SELECT * FROM WQ_PCP_D s WHERE s.SPT = (SELECT max(SPT) FROM WQ_PCP_D WHERE s.STCD = STCD
+            <if test="date!=null and date !=''">
+                and spt &gt;= to_date(#{sdate},'yyyy-MM-dd hh24:mi:ss')
+                and spt &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            </if>)
+        ) t2
+        ON t1.STCD = t2.STCD
+        LEFT JOIN WQ_HYDROE_D t3 ON t1.STCD = t3.STCD AND t3.SPT = t2.SPT
+        LEFT JOIN WQ_NMISP_D t4 ON t1.STCD = t4.STCD AND t4.SPT = t2.SPT)
+        t
+        where 1=1
+        <if test="blackLevelList != null">
+            and black_Smelly in  (${blackLevelList})
+        </if>
+        order by black_Smelly desc,water_quality desc
+    </select>
+
+    <!--分页查询污水处理厂列表 实时-->
+    <select id="listWasteWaterPlant" resultType="map" parameterType="map">
+        SELECT
+        t1.STCD,
+        t1.STTP,
+        t1.STNM,
+        t1.COOX  x,
+        t1.COOY  y,
+        t1.ADDVCD,
+        to_char(t2.SPT,'yyyy-MM-dd hh24:mi') spt,
+        t2.CLAR_ITY,
+        t2.REDOX,
+        t2.ENVT,
+        t2.HUMID,
+        t2.SS,
+        t2.PH,
+        t3.Z,
+        t3.Q2,
+        t4.CODCR,
+        t4.TN,
+        t4.NH3N,
+        t4.TP,
+        t4.DOX
+        FROM (select * from WQ_WQSINF_B where sttp='FQ'
+        <if test="xzq!=null and xzq !=''">
+            and addvcd = #{xzq}
+        </if>
+        <if test="stnm != null and stnm != ''">
+            and (stnm like '%' || #{stnm} || '%' or stcd like '%' || #{stcd} || '%')
+        </if>
+
+        <if test="typeList != null  and typeList.size > 0">
+            <foreach collection="typeList" item="item" open=" and (" close=")" separator="or">
+                type = #{item}
+            </foreach>
+        </if>
+        ) t1
+        LEFT JOIN (
+          SELECT * FROM WQ_PCP_D s WHERE s.SPT = (SELECT max(SPT) FROM WQ_PCP_D WHERE  s.STCD = STCD
+            <if test="date!=null and date !=''">
+                and spt &gt;= to_date(#{sdate},'yyyy-MM-dd hh24:mi:ss')
+                and spt &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            </if>
+          )
+        ) t2
+        ON t1.STCD = t2.STCD
+        LEFT JOIN WQ_HYDROE_D t3 ON t1.STCD = t3.STCD AND t3.SPT = t2.SPT
+        LEFT JOIN WQ_NMISP_D t4 ON t1.STCD = t4.STCD AND t4.SPT = t2.SPT
+
+    </select>
+<!--分页查询污水处理厂列表 日均-->
+    <select id="listWasteWaterPlantDay" resultType="map" parameterType="map">
+        SELECT t1.STCD,t1.STTP,t1.STNM,t1.COOX  x,t1.COOY  y,t1.ADDVCD,
+        to_char(t2.DATATIME,'yyyy-MM-dd') SPT,
+        t2.ENVTAVG ENVT,t2.ENHUMIDAVG HUMID,t2.PHAVG PH,t2.Q2AVG Q2,t2.SSAVG ss,t2.CODCRAVG CODCR,t2.TNAVG TN,t2.NH3NAVG NH3N,t2.TPAVG TP
+        FROM (
+            select * from WQ_WQSINF_B where sttp='FQ'
+
+            <if test="xzq!=null and xzq !=''">
+                and addvcd = #{xzq}
+            </if>
+            <if test="stnm != null and stnm != ''">
+                and (stnm like '%' || #{stnm} || '%' or stcd like '%' || #{stcd} || '%')
+            </if>
+
+            <if test="typeList != null  and typeList.size > 0">
+                <foreach collection="typeList" item="item" open=" and (" close=")" separator="or">
+                    type = #{item}
+                </foreach>
+            </if>
+        ) t1
+        LEFT JOIN
+        (
+          SELECT * FROM WQ_DAYSTAT_S s WHERE s.DATATIME = (SELECT max(DATATIME) FROM WQ_DAYSTAT_S WHERE  s.STCD = STCD
+          <if test="date!=null and date !=''">
+              and DATATIME &gt;= to_date(#{sdate},'yyyy-MM-dd hh24:mi:ss')
+              and DATATIME &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+          </if>)
+        ) t2
+        ON t1.STCD = t2.STCD
+
+
+    </select>
+    <!-- 查看拦河坝历史水位情况 -->
+    <select id="queryWeirHist" resultType="map" parameterType="map">
+        SELECT t.TM,  t.rwz, t.blrwz  FROM ST_RVWR_R t
+        WHERE t.stcd = #{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.TM &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.TM &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        ORDER BY t.TM desc
+    </select>
+
+    <!-- 分页水闸设施表 -->
+    <select id="queryPsStbprpWasPage" resultType="map" parameterType="map">
+        select t1.stcd,t1.ADDVCD,t1.coox x, t1.cooy y, t1.stnm, t1.sttp,t1.stsys,t1.usfl,
+        t2.TM,t2.UPZ,T2.DWZ,T2.CHANB,T2.TGTQ,T2.SUPWPTN,T2.SDWWPTN
+        from (
+            select * from ST_STBPRP_B where sttp='DD' and usfl=1
+            <if test="stnm != null and stnm != ''">
+                and (stnm like '%' || #{stnm} || '%' or stcd like '%' || #{stcd} || '%')
+            </if>
+            <if test="xzq!=null and xzq !=''">
+                and addvcd = #{xzq}
+            </if>
+            <if test="null !=stsysList  and stsysList.size > 0">
+                <foreach collection="stsysList" item="item" open=" and (" close=")" separator="or">
+                    stsys = #{item}
+                </foreach>
+            </if>
+        ) t1
+        left join
+        (select * from ST_WAS_R s where tm=(select max(tm) from ST_WAS_R where s.stcd=stcd
+        <if test="date!=null and date !=''">
+            and tm &gt;= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss')
+            and tm &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>))  t2
+        on t1.stcd=T2.stcd
+    </select>
+
+    <!-- 查看泵站站上站下历史水位 -->
+    <select id="queryPumpHist" resultType="map" parameterType="map">
+        SELECT t.TM,t.PPDWZ,t.PPUPZ ,t.CHANB,t.PUMPPT FROM ST_PUMP_R t
+        WHERE t.stcd = #{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.TM &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.TM &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        ORDER BY t.TM desc
+    </select>
+
+    <!-- 查看黑臭水体历史监测项 -->
+    <select id="queryItemHis" resultType="map" parameterType="map">
+        SELECT nvl(${field},0) itemVal,to_char(t.SPT, 'yyyy-MM-dd hh24:mi:ss') tm FROM ${tableName} t
+        WHERE t.STCD = #{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.SPT &gt;= to_date(# {fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.SPT &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        ORDER BY t.SPT
+    </select>
+
+    <!-- 查看黑臭水体、污水处理厂 历史监测项 -->
+    <select id="queryAllItemHis" resultType="map" parameterType="map">
+        SELECT s1.STCD,s1.STNM,s1.STTP,to_char(s2.SPT, 'yyyy-MM-dd hh24:mi') spt,
+        s2.PH,s2.SS,HUMID,s2.ENVT,s2.CLAR_ITY,
+        s3.TN,s3.NH3N,s3.TP,s3.CODcr,s3.DOX,
+        s4.Q2,s4.Z
+        FROM WQ_WQSINF_B  s1
+        LEFT JOIN WQ_PCP_D  s2 --理化指标项目数据表
+        on s1.STCD=s2.STCD
+        LEFT JOIN WQ_NMISP_D s3 --非金属无机物项目数据表
+        on s1.STCD = s3.STCD and s2.spt=s3.spt
+        LEFT JOIN WQ_HYDROE_D s4 --水文要素数据表
+        on s1.STCD = s4.STCD and s2.spt=s4.spt
+        WHERE s1.STCD = #{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and s2.SPT &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and s2.SPT &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        ORDER BY s2.SPT desc
+    </select>
+
+    <!-- 污水处理厂 日均历史监测项 -->
+    <select id="queryAllItemHisDay" resultType="map" parameterType="map">
+        SELECT to_char(DATATIME,'yyyy-MM-dd') SPT,
+        ENVTAVG ENVT,ENHUMIDAVG HUMID,PHAVG PH,Q2AVG Q2,SSAVG ss,CODCRAVG CODCR,TNAVG TN,NH3NAVG NH3N,TPAVG TP
+        FROM WQ_DAYSTAT_S  WHERE  STCD = #{stcd}
+        AND DATATIME &gt;= to_date(#{fromDate}, 'yyyy-MM-dd')
+        AND DATATIME &lt;= to_date(#{toDate}, 'yyyy-MM-dd')
+        ORDER BY DATATIME desc
+    </select>
+    <!--分页查询实时水情（遥测站）列表-->
+    <!--<select id="getRealtimeWaterList" resultType="map" parameterType="map">-->
+
+        <!--SELECT * FROM-->
+        <!--(-->
+            <!--SELECT S1.*,nvl(S2.z,0) z,nvl(S2.wptn,0) wptn,S2.tm,-->
+            <!--CASE-->
+            <!--WHEN jjsw &lt;  S2.z and jjsw &gt; 0 THEN 1-->
+            <!--ELSE 0 END state-->
+            <!--FROM (-->
+                <!--select t1.STCD,t1.STNM,t1.usfl,t1.COOX LGTD,t1.COOY LTTD,t1.STLC,t1.ADDVCD,t1.STTP,t1.STSYS,t3.jjsw-->
+                <!--FROM-->
+                <!--(-->
+                  <!--select * from ST_STBPRP_B where usfl=1-->
+                    <!--<if test="stnm != null and stnm != ''">-->
+                        <!--and (stnm like '%' || #{stnm} || '%' or stcd like '%' || #{stnm} || '%')-->
+                    <!--</if>-->
+                    <!--<if test="xzq!=null and xzq !=''">-->
+                        <!--and addvcd = #{xzq}-->
+                    <!--</if>-->
+                    <!--<if test="stsys != null ">-->
+                        <!--and stsys = #{stsys}-->
+                    <!--</if>-->
+                    <!--<if test="sttp != null and sttp!='NRR' ">-->
+                        <!--and sttp = #{sttp}-->
+                    <!--</if>-->
+                    <!--<if test="sttp != null and sttp=='NRR' ">-->
+                        <!--and sttp !='RR'-->
+                    <!--</if>-->
+                <!--) t1-->
+                <!--JOIN ST_HDRST_T_REAL T2-->
+                <!--ON T1.STCD=T2.TSTCD-->
+                 <!--JOIN (select case STTP when 'RR' then-->
+                    <!--(select FSLTDZ from ST_RSVRFSR_B b where b.STCD=a.STCD)-->
+                    <!--else-->
+                    <!--(select WRZ from ST_RVFCCH_B c where c.STCD=a.STCD)-->
+                    <!--end  jjsw,a.stcd from ST_STBPRP_B a-->
+                <!--) t3-->
+                <!--ON T1.STCD=T3.STCD-->
+            <!--) S1-->
+            <!--LEFT JOIN-->
+            <!--(-->
+                <!--select * from ST_HDRST_T t where t.tm=(SELECT max(TM) FROM ST_HDRST_T  WHERE t.TSTCD = TSTCD-->
+                <!--<if test="date!=null and date !=''">-->
+                    <!--and tm &gt;= (to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')-3)-->
+                    <!--and tm &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')-->
+                <!--</if>-->
+                <!--)-->
+
+            <!--) S2-->
+            <!--ON S1.stcd=S2.TSTCD-->
+            <!--ORDER BY STATE DESC-->
+        <!--) t-->
+        <!--WHERE 1=1-->
+        <!--<if test="state!=null and state!='' ">-->
+            <!--and  state = #{state}-->
+        <!--</if>-->
+        <!--<if test="state!=null and state==''">-->
+            <!--and 1=2-->
+        <!--</if>-->
+        <!--<if test="wptnList != null  and wptnList.size > 0">-->
+            <!--<foreach collection="wptnList" item="item" open=" and (" close=")" separator="or">-->
+                <!--wptn = #{item}-->
+            <!--</foreach>-->
+        <!--</if>-->
+    <!--</select>-->
+
+    <select id="getRealtimeWaterList" resultType="map" parameterType="map">
+        select * from (
+        select T1.*,T2.*,T3.JJSW,nvl(jjsw,999)-nvl(z,0) diff,
+        CASE
+        WHEN jjsw &lt; z and jjsw > 0 THEN 1
+        ELSE 0 END state
+        from
+        (
+        select STCD,STNM,COOX x,COOY y,STLC,ADDVCD,STTP,STSYS from ST_STBPRP_B where usfl=1 and sttp in ('DD','ZZ','RR','DP','RW')
+        <if test="stnm != null and stnm != ''">
+            and (stnm like '%' || #{stnm} || '%' or stcd like '%' || #{stnm} || '%')
+        </if>
+        <if test="xzq!=null and xzq !=''">
+            and addvcd = #{xzq}
+        </if>
+        <if test="stsys != null ">
+            and stsys = #{stsys}
+        </if>
+        <!--<if test="sttp != null and sttp!='NRR' ">-->
+            <!--and sttp = #{sttp}-->
+        <!--</if>-->
+        <!--<if test="sttp != null and sttp=='NRR' ">-->
+            <!--and sttp !='RR'-->
+        <!--</if>-->
+        ) T1
+        LEFT JOIN (
+        select case STTP when 'RR' then
+        (select FSLTDZ from ST_RSVRFSR_B b where b.STCD=a.STCD)
+        else
+        (select WRZ from ST_RVFCCH_B c where c.STCD=a.STCD)
+        end JJSW,a.stcd from (SELECT STCD,STTP from ST_STBPRP_B where usfl=1) a
+        ) T3
+        ON T1.STCD=T3.STCD
+        LEFT JOIN
+        (
+        select * from ST_HDRST_T t where t.tm=(SELECT max(TM) FROM ST_HDRST_T  WHERE t.TSTCD = TSTCD
+        <if test="date!=null and date !=''">
+            and tm &gt;= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss')
+            and tm &lt;= to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        )
+
+        ) T2
+        ON T1.STCD=T2.TSTCD
+
+        ORDER BY state DESC,diff
+        )
+        where 1=1
+        <if test="state!=null and state!='' ">
+            AND state=#{state}
+        </if>
+        <if test="state!=null and state==''">
+            and 1=2
+        </if>
+        <if test="wptnList != null  and wptnList.size > 0">
+            <foreach collection="wptnList" item="item" open=" and (" close=")" separator="or">
+                wptn = #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!--获取实时水情（遥测站）历史数据-->
+    <select id="getRealtimeWaterHis" resultType="map" parameterType="map">
+        select to_char(t.tm, 'yyyy-MM-dd hh24:mi:ss') tm,nvl(t.z,0) z
+        from ST_HDRST_T t
+        where t.tstcd=#{stcd}
+        <if test="fromDate != null and fromDate != ''">
+            and t.tm &gt;= to_date(#{fromDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="toDate != null and toDate != ''">
+            and t.tm &lt;= to_date(#{toDate}, 'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        order by t.tm desc
+    </select>
+
+
+    <!--分页查询环保局水质公示-->
+    <select id="getHuanbaoList" resultType="map" parameterType="map">
+        select
+        S2.S_GUID,
+        S2.HCMC,
+        S2.AD,
+        S2.ZL,
+        S2.HXQYL,
+        S2.RJY,
+        S2.TMD,
+        S2.SZZS,
+        S2.SZLB,
+        S2.SFHC,
+        S2.JCNY,
+        s2.SSXZQ,
+        s1.COOX x,S1.COOY y
+        from HUANBAO_ZB s1
+        JOIN
+        (select t.* from HUANBAO t where t.JCNY=
+            (select max(JCNY) from HUANBAO where t.HCMC=hcmc
+              <if test="date != null and date != ''">and JCNY &lt;= #{date}</if>
+              <if test="stnm != null and stnm != ''">and HCMC like '%' || #{stnm} || '%'</if>
+              <if test="xzq != null and xzq != ''">and SSXZQ like '%' || #{xzq} || '%'</if>
+            )
+            <if test="szlb != null and szlb != ''"> and t.SZLB = #{szlb}</if>
+        ) s2
+        on s1.HCMC=S2.HCMC
+    </select>
+
+    <!--环保局水质公示-近六个月趋势-->
+    <select id="getHuanbao6MonthHis" resultType="map" parameterType="map">
+        select *
+        from (select * from HUANBAO  where  HCMC=#{hcmc} and jcny  &lt;=#{date} order by jcny desc)
+        where rownum &lt;=6
+
+    </select>
+
+    <select id="findAllList" resultType="stRealtimeDate">
+        <if test="histTbleName =='ST_RSVR_R'">
+            select www.* from( select a.Rz as rz,a.Rwptn as wptn,b.stnm,b.ADDVCD as addvcd, c.fsltdz,nvl(a.Rz-c.fsltdz,0) as maxData from (
+            (select a.* from ST_RSVR_R a,(select stcd,max(tm) as tm from ST_RSVR_R GROUP BY STCD)b where a.stcd=b.stcd and a.tm=b.tm)a)
+            LEFT JOIN ST_STBPRP_B b on a.stcd=b.stcd
+            LEFT JOIN ST_RSVRFSR_B c on a.stcd = c.stcd where 1=1 
+            <if test="stnm!=null and stnm!=''">
+                and b.stnm like '%' || #{stnm} || '%'
+            </if>
+            <if test="addvcd!=null and addvcd!=''">
+                <if test="addvcd == '荔湾区'"> and b.addvcd = '440103'</if>
+                <if test="addvcd == '越秀区'"> and b.addvcd = '440104'</if>
+                <if test="addvcd == '海珠区'"> and b.addvcd = '440105'</if>
+                <if test="addvcd == '天河区'"> and b.addvcd = '440106'</if>
+                <if test="addvcd == '白云区'"> and b.addvcd = '440111'</if>
+                <if test="addvcd == '黄埔区'"> and b.addvcd = '440112'</if>
+                <if test="addvcd == '番禺区'"> and b.addvcd = '440113'</if>
+                <if test="addvcd == '花都区'"> and b.addvcd = '440114'</if>
+                <if test="addvcd == '南沙区'"> and b.addvcd = '440115'</if>
+                <if test="addvcd == '增城区'"> and b.addvcd = '440183'</if>
+                <if test="addvcd == '从化区'"> and b.addvcd = '440184'</if>
+            </if>
+
+            ) www where 1=1
+
+            order by maxData desc
+        </if>
+        <if test="histTbleName == 'ST_RIVER_R'">
+            select www.* from( select a.z as rz,a.wptn,b.stnm,b.ADDVCD as addvcd, c.fsltdz,nvl(a.z-c.fsltdz,0) as maxData from (
+            (select a.* from ST_RIVER_R a,(select stcd,max(tm) as tm from ST_RIVER_R GROUP BY STCD)b where a.stcd=b.stcd and a.tm=b.tm)a)
+            LEFT JOIN ST_STBPRP_B b on a.stcd=b.stcd
+            LEFT JOIN ST_RSVRFSR_B c on a.stcd = c.stcd  where 1=1
+            <if test="stnm!=null and stnm!=''">
+               and b.stnm = #{stnm} 
+            </if>
+            <if test="addvcd!=null and addvcd!=''">
+                <if test="addvcd == '荔湾区'"> and b.addvcd = '440103'</if>
+                <if test="addvcd == '越秀区'"> and b.addvcd = '440104'</if>
+                <if test="addvcd == '海珠区'"> and b.addvcd = '440105'</if>
+                <if test="addvcd == '天河区'"> and b.addvcd = '440106'</if>
+                <if test="addvcd == '白云区'"> and b.addvcd = '440111'</if>
+                <if test="addvcd == '黄埔区'"> and b.addvcd = '440112'</if>
+                <if test="addvcd == '番禺区'"> and b.addvcd = '440113'</if>
+                <if test="addvcd == '花都区'"> and b.addvcd = '440114'</if>
+                <if test="addvcd == '南沙区'"> and b.addvcd = '440115'</if>
+                <if test="addvcd == '增城区'"> and b.addvcd = '440183'</if>
+                <if test="addvcd == '从化区'"> and b.addvcd = '440184'</if>
+            </if>
+            ) www where 1=1
+
+            order by maxData desc
+        </if>
+        <if test="histTbleName == 'ST_SURDEP_R'">
+            select a.*,b.stnm from (select a.stcd,a.drp from ST_PPTN_R a,(select stcd,max(tm)as tm from ST_PPTN_R GROUP BY stcd)b where a.stcd=b.stcd and a.tm=b.tm)a
+            LEFT JOIN ST_STBPRP_B b on a.STCD=b.stcd
+            where b.stnm is not null
+            <if test="stnm!=null and stnm!=''">
+               and b.stnm like '%' || #{stnm} || '%'
+            </if>
+            <if test="addvcd!=null and addvcd!=''">
+                and b.addvcd=#{addvcd}
+            </if>
+            ORDER BY a.drp desc
+        </if>
+        <if test="histTbleName == 'ST_PPTN_R'">
+            select a.*,b.stnm from (select a.stcd,a.drp from ST_PPTN_R a,(select stcd,max(tm)as tm from ST_PPTN_R GROUP BY stcd)b where a.stcd=b.stcd and a.tm=b.tm)a
+            LEFT JOIN ST_STBPRP_B b on a.STCD=b.stcd
+            where b.stnm is not null and b.sttp = 'PP'
+            <if test="stnm!=null and stnm!=''">
+                and b.stnm like '%' || #{stnm} || '%'
+            </if>
+            <if test="addvcd!=null and addvcd!=''">
+                <if test="addvcd == '荔湾区'"> and b.addvcd = '440103'</if>
+                <if test="addvcd == '越秀区'"> and b.addvcd = '440104'</if>
+                <if test="addvcd == '海珠区'"> and b.addvcd = '440105'</if>
+                <if test="addvcd == '天河区'"> and b.addvcd = '440106'</if>
+                <if test="addvcd == '白云区'"> and b.addvcd = '440111'</if>
+                <if test="addvcd == '黄埔区'"> and b.addvcd = '440112'</if>
+                <if test="addvcd == '番禺区'"> and b.addvcd = '440113'</if>
+                <if test="addvcd == '花都区'"> and b.addvcd = '440114'</if>
+                <if test="addvcd == '南沙区'"> and b.addvcd = '440115'</if>
+                <if test="addvcd == '增城区'"> and b.addvcd = '440183'</if>
+                <if test="addvcd == '从化区'"> and b.addvcd = '440184'</if>
+            </if>
+            ORDER BY a.drp desc
+        </if>
+
+    </select>
+    
+    <select id="findAllListByPage" resultType="stRealtimeDate" parameterType="map">
+        <if test="stRealtimeDate.histTbleName =='ST_RSVR_R'">
+            select hist.* from (
+            select www.*, www.rv rn from( select a.Rz as rz,a.Rwptn as wptn,b.stnm,b.ADDVCD as addvcd ,c.fsltdz,nvl(a.Rz-c.fsltdz,0) as maxData,rownum as rv ,a.tm from (
+            (select a.* from ST_RSVR_R a,(select stcd,max(tm) as tm from ST_RSVR_R GROUP BY STCD)b where a.stcd=b.stcd and a.tm=b.tm)a)
+            LEFT JOIN ST_STBPRP_B b on a.stcd=b.stcd
+            LEFT JOIN ST_RSVRFSR_B c on a.stcd = c.stcd where 1=1 and B.sttp = 'RR'
+            <if test="stRealtimeDate.stnm!=null and stRealtimeDate.stnm!=''">
+                and b.stnm =  #{stRealtimeDate.stnm} 
+            </if>
+            <if test="stRealtimeDate.addvcd!=null and stRealtimeDate.addvcd!=''">
+                <if test="stRealtimeDate.addvcd == '荔湾区'"> and b.ADDVCD = '440103'</if>
+                <if test="stRealtimeDate.addvcd == '越秀区'"> and b.ADDVCD = '440104'</if>
+                <if test="stRealtimeDate.addvcd == '海珠区'"> and b.ADDVCD = '440105'</if>
+                <if test="stRealtimeDate.addvcd == '天河区'"> and b.ADDVCD = '440106'</if>
+                <if test="stRealtimeDate.addvcd == '白云区'"> and b.ADDVCD = '440111'</if>
+                <if test="stRealtimeDate.addvcd == '黄埔区'"> and b.ADDVCD = '440112'</if>
+                <if test="stRealtimeDate.addvcd == '番禺区'"> and b.ADDVCD = '440113'</if>
+                <if test="stRealtimeDate.addvcd == '花都区'"> and b.ADDVCD = '440114'</if>
+                <if test="stRealtimeDate.addvcd == '南沙区'"> and b.ADDVCD = '440115'</if>
+                <if test="stRealtimeDate.addvcd == '增城区'"> and b.ADDVCD = '440183'</if>
+                <if test="stRealtimeDate.addvcd == '从化区'"> and b.ADDVCD = '440184'</if>
+            </if>
+            ) www where 1=1
+
+
+            order by maxData desc
+            ) hist WHERE hist.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_RIVER_R'">
+            select hist.* from (
+            select www.*, www.rv rn  from( select a.z as z,a.wptn,b.stnm,b.ADDVCD as addvcd ,c.fsltdz,nvl(a.z-c.fsltdz,0) as maxData,rownum as rv ,a.tm from (
+            (select a.* from ST_RIVER_R a,(select stcd,max(tm) as tm from ST_RIVER_R GROUP BY STCD)b where a.stcd=b.stcd and a.tm=b.tm)a)
+            LEFT JOIN ST_STBPRP_B b on a.stcd=b.stcd
+            LEFT JOIN ST_RSVRFSR_B c on a.stcd = c.stcd  where 1=1 and B.sttp = 'ZZ'
+            <if test="stRealtimeDate.stnm!=null and stRealtimeDate.stnm!=''">
+                and b.stnm = #{stRealtimeDate.stnm} 
+                
+            </if>
+            <if test="stRealtimeDate.addvcd!=null and stRealtimeDate.addvcd!=''">
+                <if test="stRealtimeDate.addvcd == '荔湾区'"> and b.ADDVCD = '440103'</if>
+                <if test="stRealtimeDate.addvcd == '越秀区'"> and b.ADDVCD = '440104'</if>
+                <if test="stRealtimeDate.addvcd == '海珠区'"> and b.ADDVCD = '440105'</if>
+                <if test="stRealtimeDate.addvcd == '天河区'"> and b.ADDVCD = '440106'</if>
+                <if test="stRealtimeDate.addvcd == '白云区'"> and b.ADDVCD = '440111'</if>
+                <if test="stRealtimeDate.addvcd == '黄埔区'"> and b.ADDVCD = '440112'</if>
+                <if test="stRealtimeDate.addvcd == '番禺区'"> and b.ADDVCD = '440113'</if>
+                <if test="stRealtimeDate.addvcd == '花都区'"> and b.ADDVCD = '440114'</if>
+                <if test="stRealtimeDate.addvcd == '南沙区'"> and b.ADDVCD = '440115'</if>
+                <if test="stRealtimeDate.addvcd == '增城区'"> and b.ADDVCD = '440183'</if>
+                <if test="stRealtimeDate.addvcd == '从化区'"> and b.ADDVCD = '440184'</if>
+            </if>
+
+            ) www where 1=1
+
+            order by maxData desc
+            ) hist WHERE hist.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_SURDEP_R'">
+            select hist.* from (
+            select a.*,b.stnm, a.rv rn
+            from (select a.stcd,a.drp,rownum as rv ,a.tm from ST_PPTN_R a,
+            (select stcd,max(tm)as tm from ST_PPTN_R GROUP BY stcd)b where a.stcd=b.stcd and a.tm=b.tm )a
+            LEFT JOIN ST_STBPRP_B b on a.STCD=b.stcd
+            where b.stnm is not null
+            <if test="stRealtimeDate.stnm!=null and stRealtimeDate.stnm!=''">
+                and b.stnm like '%' || #{stRealtimeDate.stnm} || '%'
+            </if>
+            <if test="stRealtimeDate.addvcd!=null and stRealtimeDate.addvcd!=''">
+                and b.addvcd=#{stRealtimeDate.addvcd}
+            </if>
+            ORDER BY a.drp desc
+            ) hist WHERE hist.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_PPTN_R'">
+            select hist.* from (
+            select a.*,b.stnm, rownum rn,b.addvcd
+            from (select a.stcd,a.drp,rownum as rv ,a.tm from ST_PPTN_R a,
+            (select stcd,max(tm)as tm from ST_PPTN_R GROUP BY stcd)b where a.stcd=b.stcd and a.tm=b.tm )a
+            LEFT JOIN ST_STBPRP_B b on a.STCD=b.stcd
+            where b.stnm is not null and b.sttp='PP'
+            <!-- select hist.* from ( 
+			select www.*, www.rv rn from( 
+			select a.stcd,a.drp,rownum as rv ,a.tm,b.stnm,b.addvcd from(  
+			(select a.* from ST_PPTN_R a,(select stcd,max(tm) as tm from ST_PPTN_R GROUP BY STCD)b where a.stcd=b.stcd and a.tm=b.tm)a)
+			LEFT JOIN ST_STBPRP_B b on a.stcd=b.stcd LEFT JOIN ST_RSVRFSR_B c on a.stcd = c.stcd 
+			where 1=1 and B.sttp='PP' -->
+            <if test="stRealtimeDate.stnm!=null and stRealtimeDate.stnm!=''">
+                and b.stnm like '%' || #{stRealtimeDate.stnm} || '%'
+            </if>
+            <if test="stRealtimeDate.addvcd!=null and stRealtimeDate.addvcd!=''">
+                <if test="stRealtimeDate.addvcd == '荔湾区'"> and b.ADDVCD = '440103'</if>
+                <if test="stRealtimeDate.addvcd == '越秀区'"> and b.ADDVCD = '440104'</if>
+                <if test="stRealtimeDate.addvcd == '海珠区'"> and b.ADDVCD = '440105'</if>
+                <if test="stRealtimeDate.addvcd == '天河区'"> and b.ADDVCD = '440106'</if>
+                <if test="stRealtimeDate.addvcd == '白云区'"> and b.ADDVCD = '440111'</if>
+                <if test="stRealtimeDate.addvcd == '黄埔区'"> and b.ADDVCD = '440112'</if>
+                <if test="stRealtimeDate.addvcd == '番禺区'"> and b.ADDVCD = '440113'</if>
+                <if test="stRealtimeDate.addvcd == '花都区'"> and b.ADDVCD = '440114'</if>
+                <if test="stRealtimeDate.addvcd == '南沙区'"> and b.ADDVCD = '440115'</if>
+                <if test="stRealtimeDate.addvcd == '增城区'"> and b.ADDVCD = '440183'</if>
+                <if test="stRealtimeDate.addvcd == '从化区'"> and b.ADDVCD = '440184'</if>
+            </if>
+           <!--  ) www where 1=1 -->
+            ORDER BY a.drp desc
+            ) hist WHERE hist.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+        </if>
+
+    </select>
+
+    <select id="findHistList" resultType="stRealtimeDate">
+        select COUNT(b.STNM) as tatol from
+        <if test="histTbleName =='ST_RSVR_R'">
+            ST_RSVR_R  a
+        </if>
+        <if test="histTbleName == 'ST_RIVER_R'">
+            ST_RIVER_R a
+        </if>
+        <if test="histTbleName == 'ST_SURDEP_R'">
+            ST_SURDEP_R a
+        </if>
+        <if test="histTbleName == 'ST_PPTN_R'">
+            ST_PPTN_R a
+        </if>
+        LEFT JOIN ST_STBPRP_B b  on a.STCD=b.STCD where	1 = 1
+        <if test="stnm != null and stnm != ''">
+            and b.stnm = #{stnm} 
+        </if>
+        <if test="searchStrat != null and searchStrat != ''">
+            and a.tm &gt;= to_date(#{searchStrat}, 'yyyy-MM-dd')
+        </if>
+        <if test="searchEnd != null and searchEnd != ''">
+            and a.tm &lt; to_date(#{searchEnd}, 'yyyy-MM-dd')+1
+        </if>
+        <if test="timeDate != null and timeDate != ''">
+            and to_char(a.tm, 'yyyy-MM-dd') = #{timeDate}
+        </if>
+        <if test="searchStratPuctureT != null and searchStratPuctureT != ''">
+            and to_char(a.tm, 'yyyy-MM-dd') = #{searchStratPuctureT}
+        </if>
+        <if test="addvcd!=null and addvcd!=''">
+            <if test="addvcd == '荔湾区'"> and b.addvcd = '440103'</if>
+            <if test="addvcd == '越秀区'"> and b.addvcd = '440104'</if>
+            <if test="addvcd == '海珠区'"> and b.addvcd = '440105'</if>
+            <if test="addvcd == '天河区'"> and b.addvcd = '440106'</if>
+            <if test="addvcd == '白云区'"> and b.addvcd = '440111'</if>
+            <if test="addvcd == '黄埔区'"> and b.addvcd = '440112'</if>
+            <if test="addvcd == '番禺区'"> and b.addvcd = '440113'</if>
+            <if test="addvcd == '花都区'"> and b.addvcd = '440114'</if>
+            <if test="addvcd == '南沙区'"> and b.addvcd = '440115'</if>
+            <if test="addvcd == '增城区'"> and b.addvcd = '440183'</if>
+            <if test="addvcd == '从化区'"> and b.addvcd = '440184'</if>
+        </if>
+         order by a.tm desc
+    </select>
+
+    <select id="findAllHistListByPage" resultType="stRealtimeDate" parameterType="map">
+        select his.* from
+        (select hist.*,rownum rn from (
+        select a.*,b.stnm,b.addvcd,decode(c.wrz,null,'9999',c.wrz) as fsltdz from
+        <if test="stRealtimeDate.histTbleName =='ST_RSVR_R'">
+            ST_RSVR_R  a
+            LEFT JOIN ST_STBPRP_B b  on a.STCD=b.STCD
+        	LEFT JOIN ST_RVFCCH_B c  on a.STCD=c.STCD
+        	where b.sttp='RR'
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_RIVER_R'">
+            ST_RIVER_R a
+            LEFT JOIN ST_STBPRP_B b  on a.STCD=b.STCD
+        	LEFT JOIN ST_RVFCCH_B c  on a.STCD=c.STCD
+        	where b.sttp='ZZ'
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_SURDEP_R'">
+            ST_SURDEP_R a
+            LEFT JOIN ST_STBPRP_B b  on a.STCD=b.STCD
+        	LEFT JOIN ST_RSVRFSR_B c  on a.STCD=c.STCD
+        	where b.sttp='ZZ'
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_PPTN_R'">
+            ST_PPTN_R a
+             LEFT JOIN ( select * from ST_STBPRP_B  where usfl=1 and COOX is not null and COOY is not null
+              and stcd in (select distinct stcd from ST_STITEM_B where mnit = 3)  ) b  on a.STCD=b.STCD
+        	LEFT JOIN ST_RVFCCH_B c  on a.STCD=c.STCD
+        	where 1=1
+        </if>
+        <if test="stRealtimeDate.stnm != null and stRealtimeDate.stnm != ''">
+             and b.stnm =  #{stRealtimeDate.stnm} 
+        </if>
+        <if test="stRealtimeDate.searchStrat != null and stRealtimeDate.searchStrat != ''">
+            and a.tm &gt;= to_date(#{stRealtimeDate.searchStrat}, 'yyyy-MM-dd')
+        </if>
+        <if test="stRealtimeDate.searchEnd != null and stRealtimeDate.searchEnd != ''">
+            and a.tm &lt; to_date(#{stRealtimeDate.searchEnd}, 'yyyy-MM-dd')+1
+        </if>
+        <if test="stRealtimeDate.timeDate != null and stRealtimeDate.timeDate != ''">
+            and to_char(a.tm, 'yyyy-MM-dd') = #{stRealtimeDate.timeDate}
+        </if>
+        <if test="stRealtimeDate.searchStratPuctureT != null and stRealtimeDate.searchStratPuctureT != ''">
+            and to_char(a.tm, 'yyyy-MM-dd') = #{stRealtimeDate.searchStratPuctureT}
+        </if>
+        <if test="stRealtimeDate.addvcd!=null and stRealtimeDate.addvcd!=''">
+            <if test="stRealtimeDate.addvcd == '荔湾区'"> and b.addvcd = '440103'</if>
+            <if test="stRealtimeDate.addvcd == '越秀区'"> and b.addvcd = '440104'</if>
+            <if test="stRealtimeDate.addvcd == '海珠区'"> and b.addvcd = '440105'</if>
+            <if test="stRealtimeDate.addvcd == '天河区'"> and b.addvcd = '440106'</if>
+            <if test="stRealtimeDate.addvcd == '白云区'"> and b.addvcd = '440111'</if>
+            <if test="stRealtimeDate.addvcd == '黄埔区'"> and b.addvcd = '440112'</if>
+            <if test="stRealtimeDate.addvcd == '番禺区'"> and b.addvcd = '440113'</if>
+            <if test="stRealtimeDate.addvcd == '花都区'"> and b.addvcd = '440114'</if>
+            <if test="stRealtimeDate.addvcd == '南沙区'"> and b.addvcd = '440115'</if>
+            <if test="stRealtimeDate.addvcd == '增城区'"> and b.addvcd = '440183'</if>
+            <if test="stRealtimeDate.addvcd == '从化区'"> and b.addvcd = '440184'</if>
+        </if>
+        order by a.tm desc
+        ) hist)his WHERE his.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+    </select>
+
+    <select id="findAllHistListByPageChartS" resultType="stRealtimeDate" parameterType="map">
+        select hist.* from (
+        select a.*,b.stnm,b.addvcd ,rownum rn from
+        <if test="stRealtimeDate.histTbleName =='ST_RSVR_R'">
+            ST_RSVR_R  a
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_RIVER_R'">
+            ST_RIVER_R a
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_SURDEP_R'">
+            ST_SURDEP_R a
+        </if>
+        <if test="stRealtimeDate.histTbleName == 'ST_PPTN_R'">
+            ST_PPTN_R a
+        </if>
+        LEFT JOIN ST_STBPRP_B b  on a.STCD=b.STCD   where	1 = 1
+        <if test="stRealtimeDate.stnm != null and stRealtimeDate.stnm != ''">
+            and b.stnm like '%' || #{stRealtimeDate.stnm} || '%'
+        </if>
+        <if test="stRealtimeDate.searchStrat != null and stRealtimeDate.searchStrat != ''">
+            and a.tm &gt;= to_date(#{stRealtimeDate.searchStrat}, 'yyyy-MM-dd')
+        </if>
+        <if test="stRealtimeDate.searchEnd != null and stRealtimeDate.searchEnd != ''">
+            and a.tm &lt;= to_date(#{stRealtimeDate.searchEnd}, 'yyyy-MM-dd')
+        </if>
+        <if test="stRealtimeDate.timeDate != null and stRealtimeDate.timeDate != ''">
+            and to_char(a.tm, 'yyyy-MM-dd') = #{stRealtimeDate.timeDate}
+        </if>
+        <if test="stRealtimeDate.searchStratPuctureT != null and stRealtimeDate.searchStratPuctureT != ''">
+            and to_char(a.tm, 'yyyy-MM-dd') = #{stRealtimeDate.searchStratPuctureT}
+        </if>
+        <if test="stRealtimeDate.addvcd!=null and stRealtimeDate.addvcd!=''">
+            <if test="stRealtimeDate.addvcd == '荔湾区'"> and b.addvcd = '440103'</if>
+            <if test="stRealtimeDate.addvcd == '越秀区'"> and b.addvcd = '440104'</if>
+            <if test="stRealtimeDate.addvcd == '海珠区'"> and b.addvcd = '440105'</if>
+            <if test="stRealtimeDate.addvcd == '天河区'"> and b.addvcd = '440106'</if>
+            <if test="stRealtimeDate.addvcd == '白云区'"> and b.addvcd = '440111'</if>
+            <if test="stRealtimeDate.addvcd == '黄埔区'"> and b.addvcd = '440112'</if>
+            <if test="stRealtimeDate.addvcd == '番禺区'"> and b.addvcd = '440113'</if>
+            <if test="stRealtimeDate.addvcd == '花都区'"> and b.addvcd = '440114'</if>
+            <if test="stRealtimeDate.addvcd == '南沙区'"> and b.addvcd = '440115'</if>
+            <if test="stRealtimeDate.addvcd == '增城区'"> and b.addvcd = '440183'</if>
+            <if test="stRealtimeDate.addvcd == '从化区'"> and b.addvcd = '440184'</if>
+        </if>
+        order by a.tm desc
+        ) hist
+    </select>
+     <select id="getDataTime" resultType="DataTime">
+        select hist.* from (
+        <if test="histTbleName =='ST_RSVR_R'">
+        	select a.*,c.fsltdz from ST_RSVR_R a
+            LEFT JOIN ST_STBPRP_B b  on a.STCD=b.STCD 
+            LEFT JOIN ST_RSVRFSR_B c on a.stcd = c.stcd
+            where b.sttp='RR'
+            <if test="searchStrat != null and searchStrat != ''">
+            	and a.tm &gt;= to_date(#{searchStrat}, 'yyyy-MM-dd')
+	        </if>
+	        <if test="searchEnd != null and searchEnd != ''">
+	            and a.tm &lt; to_date(#{searchEnd}, 'yyyy-MM-dd')+1
+	        </if>
+        </if>
+        <if test="histTbleName == 'ST_RIVER_R'">
+         	select a.*,c.wrz as fsltdz from ST_RIVER_R a
+            LEFT JOIN ST_STBPRP_B b  on a.STCD=b.STCD 
+            LEFT JOIN ST_RVFCCH_B c on a.stcd = c.stcd
+            where b.sttp='ZZ'
+             <if test="searchStrat != null and searchStrat != ''">
+            	and a.tm &gt;= to_date(#{searchStrat}, 'yyyy-MM-dd')
+	        </if>
+	        <if test="searchEnd != null and searchEnd != ''">
+	            and a.tm &lt; to_date(#{searchEnd}, 'yyyy-MM-dd')+1
+	        </if>
+        </if>
+        <if test="histTbleName == 'ST_PPTN_R'">
+         	select a.* from ST_PPTN_R a
+            LEFT JOIN ST_STBPRP_B b  on a.STCD=b.STCD 
+            where b.sttp='PP'
+             <if test="searchStrat != null and searchStrat != ''">
+	            and a.tm &gt;= to_date(#{searchStrat}, 'yyyy-mm-dd hh24:mi:ss')
+	        </if>
+	        <if test="searchEnd != null and searchEnd != ''">
+	            and a.tm &lt; to_date(#{searchEnd}, 'yyyy-mm-dd hh24:mi:ss')
+	        </if>
+        </if>
+        <if test="stnm != null and stnm != ''">
+            and b.stnm = #{stnm} 
+        </if>
+        <if test="timeDate != null and timeDate != ''">
+            and to_char(a.tm, 'yyyy-MM-dd') = #{timeDate}
+        </if>
+        order by a.tm desc
+        ) hist
+    </select>
+
+    <select id="getAddvcd" resultType="stRealtimeDate">
+       select addvcd from ST_STBPRP_B  where addvcd is not null GROUP  BY addvcd ORDER BY addvcd
+    </select>
+
+    <select id="findChild" resultType="stRealtimeDate">
+        <if test="histTbleName == 'ST_RSVR_R'">
+        select a.*,b.stnm,b.addvcd,c.fsltdz from
+            (SELECT STCD FROM ST_RSVR_R GROUP BY STCD) a
+             LEFT JOIN ST_STBPRP_B b on a.STCD=b.STCD
+             LEFT JOIN ST_RSVRFSR_B c on a.stcd = c.stcd
+             where b.STTP='RR'
+        </if>
+        <if test="histTbleName == 'ST_RIVER_R'">
+        select a.*,b.stnm,b.addvcd,c.wrz as fsltdz from
+            (SELECT STCD FROM ST_RIVER_R GROUP BY STCD) a
+             LEFT JOIN ST_STBPRP_B b on a.STCD=b.STCD
+             LEFT JOIN ST_RVFCCH_B c on a.stcd = c.stcd
+             where b.STTP='ZZ'
+        </if>
+        <if test="histTbleName == 'ST_PPTN_R'">
+        select b.* from
+            ( select *
+          from ST_STBPRP_B
+         where usfl = 1
+           and COOX is not null
+           and COOY is not null
+           and stcd in
+               (select distinct stcd from ST_STITEM_B where mnit = 3) ) b where 1=1
+        </if>
+        <if test="stnm != null and stnm != ''">
+            and b.stnm = #{stnm} 
+        </if>
+        <if test="addvcd != null">
+            <if test="addvcd == '荔湾区'"> and b.addvcd = '440103'</if>
+            <if test="addvcd == '越秀区'"> and b.addvcd = '440104'</if>
+            <if test="addvcd == '海珠区'"> and b.addvcd = '440105'</if>
+            <if test="addvcd == '天河区'"> and b.addvcd = '440106'</if>
+            <if test="addvcd == '白云区'"> and b.addvcd = '440111'</if>
+            <if test="addvcd == '黄埔区'"> and b.addvcd = '440112'</if>
+            <if test="addvcd == '番禺区'"> and b.addvcd = '440113'</if>
+            <if test="addvcd == '花都区'"> and b.addvcd = '440114'</if>
+            <if test="addvcd == '南沙区'"> and b.addvcd = '440115'</if>
+            <if test="addvcd == '增城区'"> and b.addvcd = '440183'</if>
+            <if test="addvcd == '从化区'"> and b.addvcd = '440184'</if>
+        </if>
+    </select>
+        
+    <select id="findHechongList" resultType="huanbao">
+    	select a.* from HUANBAO a,(select HCMC,max(S_CREATION_TIME)as tm from HUANBAO GROUP BY HCMC)b where a.hcmc=b.hcmc and a.S_CREATION_TIME=b.tm and a.ssxzq is not null
+    </select>
+    <select id="getHechongCount" resultType="int">
+    	select count(*) from HUANBAO a,(select HCMC,max(S_CREATION_TIME)as tm from HUANBAO GROUP BY HCMC)b where a.hcmc=b.hcmc and a.S_CREATION_TIME=b.tm and a.ssxzq is not null
+    </select>
+    <!-- 获取今天的天气预报数量,如果存在则查找就行,不在就需要去气象站抓取 -->
+    <select id="getWeatherCount" resultType="int">
+    	select count(*) from ST_WEATHER where  to_char(tm,'yyyymmdd')=#{tm}
+    </select>
+      <!-- 获取今天的天气预报数量,如果存在则查找就行,不在就需要去气象站抓取 -->
+    <select id="getWeather" resultType="string">
+    	select CONTENT from ST_WEATHER where  to_char(tm,'yyyymmdd')=#{data}
+    </select>
+      <!-- 保存任务实例 -->
+    <insert id="saveStWeather" parameterType="StWeather">
+      insert into ST_WEATHER(tm,CONTENT,TITLE) values(#{tm},#{content},#{title})
+    </insert>
+     <!-- 排水监测站的进出水数据 -->
+   <select id="findStFactoryList" resultType="stFactory">
+    	select a.stnm,a.STCD,a.ADDVCD,wndss.NH3N,wndss.DOX,wndss.tp,wndss.tn,WNDSS.CODcr,wpsss.ph,wpsss.SS,wpsss.REDOX,wpsss.ENVT,wpsss.HUMID,wpsss.CLAR_ITY,b.q2,b.spt from WQ_WQSINF_B a 
+		left join (select wnd.stcd,wnd.NH3N,wnd.tp,wnd.tn,wnd.CODcr,wnd.DOX from WQ_NMISP_D wnd,(select stcd,max(spt) as spt from WQ_NMISP_D GROUP BY stcd)wnds  where wnd.stcd=WNDS.stcd and wnd.spt = wnds.spt) wndss on a.stcd =wndss.stcd
+		left join (select wpd.ph,wpd.stcd,wpd.ss,wpd.REDOX,wpd.HUMID,wpd.CLAR_ITY,wpd.ENVT from WQ_PCP_D wpd,(select stcd,max(spt) as spt from WQ_PCP_D GROUP BY stcd)wpds  where wpd.stcd=wpds.stcd and wpd.spt = wpds.spt) wpsss on a.stcd =wpsss.stcd
+		left join (select whd.q2,whd.stcd,whd.spt from WQ_HYDROE_D whd,(select stcd,max(spt) as spt from WQ_HYDROE_D GROUP BY stcd)whds  where whd.stcd=whds.stcd and whd.spt = whds.spt) b on a.stcd =b.stcd
+		where a.STTP='FQ'
+        <if test="sttp != null and sttp=='JSK'">
+			 and (a.stnm LIKE '%进口%' or a.stnm LIKE '%进水口%')
+		</if>
+		 <if test="sttp != null and sttp=='CSK'">
+			 and (a.stnm LIKE '%出口%' or a.stnm LIKE '%出水口%')
+		</if>
+    </select>
+    <select id="getStFactoryCount" resultType="int">
+    	SELECT COUNT(*) from (select * from WQ_WQSINF_B where STTP = 'FQ')
+    </select>
+    <!-- 黑臭水体数据 -->
+   <select id="findBlackSmellyList" resultType="stFactory">
+    	select a.stnm,a.STCD,a.ADDVCD,wndss.NH3N,wndss.DOX,wndss.tp,wndss.tn,WNDSS.CODcr,wpsss.ph,wpsss.SS,wpsss.REDOX,wpsss.ENVT,wpsss.HUMID,wpsss.CLAR_ITY,b.q2,b.spt,
+ CASE
+        WHEN (CLAR_ITY BETWEEN 10 and 25) or  (DOX BETWEEN 0.2 and 2.0 ) or ( REDOX BETWEEN -200 and 50 ) or (NH3N BETWEEN 8.0 and 15) THEN 1
+        WHEN (CLAR_ITY &lt;10 or  DOX&lt;2.0 or REDOX&lt;-200 or NH3N>15)  THEN 2
+        ELSE 0 END black_Smelly,
+          CASE
+        WHEN (DOX>=7.5) or (NH3N &lt;=0.15)   THEN 1
+        WHEN (DOX>=6 and DOX&lt;7.5) or (NH3N >0.15 and NH3N&lt;=0.5)   THEN 2
+        WHEN (DOX >=5 and DOX&lt;6) or (NH3N >0.5 and NH3N&lt;=1)   THEN 3
+        WHEN (DOX >=3 and DOX&lt;5) or (NH3N >1 and NH3N&lt;=1.5)   THEN 4
+        WHEN (DOX >=2 and DOX&lt;3) or (NH3N >1.5 and NH3N&lt;=2)   THEN 5
+        ELSE 6 END water_quality
+
+ from WQ_WQSINF_B a 
+    left join (select wnd.stcd,wnd.NH3N,wnd.tp,wnd.tn,wnd.CODcr,wnd.DOX from WQ_NMISP_D wnd,(select stcd,max(spt) as spt from WQ_NMISP_D GROUP BY stcd)wnds  where wnd.stcd=WNDS.stcd and wnd.spt = wnds.spt) wndss on a.stcd =wndss.stcd
+    left join (select wpd.ph,wpd.stcd,wpd.ss,wpd.REDOX,wpd.HUMID,wpd.CLAR_ITY,wpd.ENVT from WQ_PCP_D wpd,(select stcd,max(spt) as spt from WQ_PCP_D GROUP BY stcd)wpds  where wpd.stcd=wpds.stcd and wpd.spt = wpds.spt) wpsss on a.stcd =wpsss.stcd
+    left join (select whd.q2,whd.stcd,whd.spt from WQ_HYDROE_D whd,(select stcd,max(spt) as spt from WQ_HYDROE_D GROUP BY stcd)whds  where whd.stcd=whds.stcd and whd.spt = whds.spt) b on a.stcd =b.stcd
+    where a.STTP='RQ' order by b.spt desc
+    </select>
+    <!-- 获取雨量的实时数据 -->
+     <select id="getStPptnList" resultType="stRealtimeDate">
+     	select a.*,b.stnm,b.COOX as x,b.COOY as y from (select a.stcd,a.drp,a.tm as time from ST_PPTN_R a,(select stcd,max(tm)as tm from ST_PPTN_R GROUP BY stcd)b where a.stcd=b.stcd and a.tm=b.tm)a
+		LEFT JOIN ST_STBPRP_B b on a.STCD=b.stcd and b.sttp='PP'
+		where b.stnm is not null
+		ORDER BY a.drp desc
+     </select>
+      <!-- 获取重要水库用来展示,值展示重要水库的实时数据-->
+     <select id="getStRsvrList" resultType="stRealtimeDate">
+     	select * from( select a.stcd stcd,a.Rz as rz,a.Rwptn as wptn,b.stnm,c.fsltdz,nvl(a.Rz-c.fsltdz,0) as maxData,b.coox as x,b.cooy as y  from (
+		(select a.* from ST_RSVR_R a,(select stcd,max(tm) as tm from ST_RSVR_R GROUP BY STCD)b where a.stcd=b.stcd and a.tm=b.tm)a)
+		LEFT JOIN ST_STBPRP_B b on a.stcd=b.stcd
+		LEFT JOIN ST_RSVRFSR_B c on a.stcd = c.stcd where a.stcd in(${stcd}))
+		where 1=1 
+		 <if test="sttp != null">
+			 and maxData>0
+		</if>
+		order by maxData desc
+     </select>
+ 	 <!-- 获取河道的实时数据 ,很多汛限值为null的,默认返回0,还需要按照超过汛限值大小来排序-->
+     <select id="getStRiverList" resultType="stRealtimeDate">
+     	select* from(select * from( select a.z as rz,a.stcd,a.wptn,b.stnm,c.wrz as fsltdz,nvl(a.z-c.wrz,0) as maxData,b.coox as x,b.cooy as y from (
+		(select a.* from ST_RIVER_R a,(select stcd,max(tm) as tm from ST_RIVER_R GROUP BY STCD)b where a.stcd=b.stcd and a.tm=b.tm)a)
+		LEFT JOIN ST_STBPRP_B b on a.stcd=b.stcd 
+		LEFT JOIN ST_RVFCCH_B c on a.stcd = c.stcd where a.stcd in(${stcd})
+		)order by maxData desc)
+			UNION all
+		select* from (select * from( select a.rwz as rz,a.stcd,a.RWWPTNU as wptn,b.stnm,c.wrz as fsltdz,nvl(a.rwz-c.wrz,0) as maxData,b.coox as x,b.cooy as y from (
+		(select a.* from ST_RVWR_R a,(select stcd,max(tm) as tm from ST_RVWR_R GROUP BY STCD)b where a.stcd=b.stcd and a.tm=b.tm)a)
+		LEFT JOIN ST_STBPRP_B b on a.stcd=b.stcd 
+		LEFT JOIN ST_RVFCCH_B c on a.stcd = c.stcd where a.stcd in(${stcd})
+		)order by maxData desc)
+     </select>
+
+
+    <!--实时数据分页-->
+    <select id="findListHechongPage" resultType="huanbao" parameterType="map">
+            select hist.* from (
+            select a.*,ROWNUM rn from HUANBAO a,
+            (select HCMC,max(S_CREATION_TIME)as tm from HUANBAO GROUP BY HCMC)b
+            where a.hcmc=b.hcmc and a.S_CREATION_TIME=b.tm and a.SSXZQ is not null
+            <if test="huanbao.hcmc!=null">
+                and a.hcmc = #{huanbao.hcmc} 
+            </if>
+            <!-- <if test="huanbao.ssxzq!=null and huanbao.ssxzq!=''">
+                and a.ssxzq = #{huanbao.ssxzq}
+            </if> -->
+            <choose>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '白云区'">and (a.SSXZQ='白云' or a.SSXZQ='花都-白云') </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '天河区'">and a.SSXZQ='天河' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '增城区'">and a.SSXZQ='增城' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '荔湾区'">and a.SSXZQ='荔湾' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '花都区'">and a.SSXZQ='花都' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '从化区'">and (a.SSXZQ='从化' or a.SSXZQ='从化区')  </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '越秀区'">and a.SSXZQ='越秀' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '黄埔区'">and a.SSXZQ='黄埔' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '海珠区'">and a.SSXZQ='海珠' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '南沙区'">and a.SSXZQ='南沙' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '番禺区'">and a.SSXZQ='番禺' </when>
+         		<otherwise></otherwise>
+     		</choose>
+            ) hist WHERE hist.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+    </select>
+    <!--历史数据分页-->
+    <select id="findAllListSZByPage" resultType="huanbao" parameterType="map">
+        select hist.* from (
+           select a.*,ROWNUM rn from HUANBAO a where  1=1
+            <if test="huanbao.hcmc != null and huanbao.hcmc != ''">
+                and hcmc = #{huanbao.hcmc} 
+            </if>
+            <if test="huanbao.lastupdated != null   and huanbao.lastupdated != ''">
+                and   to_char(s_last_updated,'yyyy-MM-dd') = #{huanbao.lastupdated}
+            </if>
+            <if test="huanbao.searchStrat != null  and huanbao.searchStrat != ''">
+                and jcny &gt;= #{huanbao.searchStrat}
+            </if>
+            <if test="huanbao.searchEnd != null  and huanbao.searchEnd != ''">
+                and jcny &lt;= #{huanbao.searchEnd}
+            </if>
+            <!-- <if test="huanbao.ssxzq != null  and huanbao.ssxzq != ''">
+                and a.ssxzq = #{huanbao.ssxzq}
+            </if> -->
+            <choose>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '白云区'">and (a.SSXZQ='白云' or a.SSXZQ='花都-白云') </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '天河区'">and a.SSXZQ='天河' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '增城区'">and a.SSXZQ='增城' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '荔湾区'">and a.SSXZQ='荔湾' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '花都区'">and a.SSXZQ='花都' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '从化区'">and (a.SSXZQ='从化' or a.SSXZQ='从化区')  </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '越秀区'">and a.SSXZQ='越秀' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '黄埔区'">and a.SSXZQ='黄埔' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '海珠区'">and a.SSXZQ='海珠' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '南沙区'">and a.SSXZQ='南沙' </when>
+		         <when test="huanbao.ssxzq != '' and huanbao.ssxzq == '番禺区'">and a.SSXZQ='番禺' </when>
+         		<otherwise></otherwise>
+     		</choose>
+			order by jcny desc
+        ) hist WHERE hist.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+    </select>
+
+    <!--历史echarts数据-->
+    <select id="findAllHistListByPageChartSSZ" resultType="huanbao" parameterType="map">
+        select hist.* from (
+        select a.*,ROWNUM rn from HUANBAO a where  1=1
+        <if test="huanbao.hcmc != null">
+            and (hcmc like = #{huanbao.hcmc} )
+        </if>
+        <if test="huanbao.lastupdated != null   and huanbao.lastupdated != ''">
+            and   to_char(s_last_updated,'yyyy-MM-dd') = #{huanbao.lastupdated}
+        </if>
+        <if test="huanbao.ssxzq != null   and huanbao.ssxzq != ''">
+            and a.ssxzq = #{huanbao.ssxzq}
+        </if>
+        <!--<if test="huanbao.searchStrat != null  and huanbao.searchStrat != ''">
+            and   to_char(s_last_updated,'yyyy-MM-dd') <![CDATA[ >= ]]> #{huanbao.searchStrat}
+        </if>
+        <if test="huanbao.searchEnd != null  and huanbao.searchEnd != ''">
+            and   to_char(s_last_updated,'yyyy-MM-dd') <![CDATA[ <= ]]>  #{huanbao.searchEnd}
+        </if>-->
+
+        ) hist
+    </select>
+
+    <!--历史数据总条数-->
+    <select id="findAllSZList" resultType="huanbao">
+        select a.* from HUANBAO a where  1=1
+        <if test="hcmc != null">
+            and a.hcmc =  #{hcmc} 
+        </if>
+        <if test="lastupdated != null and lastupdated != ''">
+            and   to_char(a.s_last_updated,'yyyy-MM-dd')=#{lastupdated}
+        </if>
+        <if test="searchStrat != null  and searchStrat != ''">
+            and jcny &gt;= #{searchStrat}
+        </if>
+        <if test="searchEnd != null  and searchEnd != ''">
+            and jcny &lt;= #{searchEnd}
+        </if>
+        <choose>
+		         <when test="ssxzq != '' and ssxzq == '白云区'">and (a.SSXZQ='白云' or a.SSXZQ='花都-白云') </when>
+		         <when test="ssxzq != '' and ssxzq == '天河区'">and a.SSXZQ='天河' </when>
+		         <when test="ssxzq != '' and ssxzq == '增城区'">and a.SSXZQ='增城' </when>
+		         <when test="ssxzq != '' and ssxzq == '荔湾区'">and a.SSXZQ='荔湾' </when>
+		         <when test="ssxzq != '' and ssxzq == '花都区'">and a.SSXZQ='花都' </when>
+		         <when test="ssxzq != '' and ssxzq == '从化区'">and (a.SSXZQ='从化' or a.SSXZQ='从化区')  </when>
+		         <when test="ssxzq != '' and ssxzq == '越秀区'">and a.SSXZQ='越秀' </when>
+		         <when test="ssxzq != '' and ssxzq == '黄埔区'">and a.SSXZQ='黄埔' </when>
+		         <when test="ssxzq != '' and ssxzq == '海珠区'">and a.SSXZQ='海珠' </when>
+		         <when test="ssxzq != '' and ssxzq == '南沙区'">and a.SSXZQ='南沙' </when>
+		         <when test="ssxzq != '' and ssxzq == '番禺区'">and a.SSXZQ='番禺' </when>
+         		<otherwise></otherwise>
+     	</choose>
+    </select>
+
+    <select id="huoQuSZXZTree" resultType="huanbao">
+        select tree.SSXZQ from
+        (select a.* from HUANBAO a,(select HCMC,max(S_CREATION_TIME)as tm from HUANBAO GROUP BY HCMC)b where a.hcmc=b.hcmc and a.S_CREATION_TIME=b.tm) tree
+        where	1 = 1 and tree.SSXZQ is not null   GROUP  BY tree.SSXZQ
+    </select>
+
+    <select id="findChildSZ" resultType="huanbao">
+        select a.* from HUANBAO a,(select HCMC,max(S_CREATION_TIME)as tm from HUANBAO GROUP BY HCMC)b where a.hcmc=b.hcmc and a.S_CREATION_TIME=b.tm
+    	and a.ssxzq is not null  
+	 <if test="ssxzq != null">
+            <if test="ssxzq == '荔湾区'"> and a.ssxzq = '荔湾'</if>
+            <if test="ssxzq == '越秀区'"> and a.ssxzq = '越秀'</if>
+            <if test="ssxzq == '海珠区'"> and a.ssxzq = '海珠'</if>
+            <if test="ssxzq == '天河区'"> and a.ssxzq = '天河'</if>
+            <if test="ssxzq == '白云区'"> and (a.ssxzq = '白云' or a.ssxzq='花都-白云')</if>
+            <if test="ssxzq == '黄埔区'"> and a.ssxzq = '黄埔'</if>
+            <if test="ssxzq == '番禺区'"> and a.ssxzq = '番禺'</if>
+            <if test="ssxzq == '花都区'"> and a.ssxzq = '花都'</if>
+            <if test="ssxzq == '南沙区'"> and a.ssxzq = '南沙'</if>
+            <if test="ssxzq == '增城区'"> and a.ssxzq = '增城'</if>
+            <if test="ssxzq == '从化区'"> and a.ssxzq = '从化'</if>
+        </if>
+    </select>
+
+
+	<!--实时数据  污水厂  新-->
+    <select id="findStFactoryRealPageNew" resultType="stFactory" parameterType="map">
+        select 
+        	hist.stnm ,
+        	hist.STCD ,
+        	hist.ADDVCD ,
+        	decode(hist.NH3N,null,'9999',hist.NH3N) NH3N ,
+        	hist.rn ,        	
+        	decode(hist.tp,null,'9999',hist.tp) tp ,
+        	decode(hist.tn,null,'9999',hist.tn) tn ,
+        	decode(hist.CODcr,null,'9999',hist.CODcr) CODcr ,
+        	decode(hist.DOX,null,'9999',hist.DOX) DOX ,
+        	hist.spt ,
+        	decode(hist.q2,null,'9999',hist.q2) q2 ,
+        	decode(hist.ph,null,'9999',hist.ph) ph ,
+        	decode(hist.SS,null,'9999',hist.SS) SS ,
+        	decode(hist.CLAR_ITY,null,'9999',hist.CLAR_ITY) CLAR_ITY ,
+        	decode(hist.REDOX,null,'9999',hist.REDOX) REDOX ,
+        CASE
+        WHEN (hist.CLAR_ITY BETWEEN 10 and 25) or  (hist.DOX BETWEEN 0.2 and 2.0 ) or ( hist.REDOX BETWEEN -200 and 50 ) or (hist.NH3N BETWEEN 8.0 and 15) THEN 1
+        WHEN (hist.CLAR_ITY &lt;10 or  hist.DOX&lt;2.0 or hist.REDOX&lt;-200 or hist.NH3N>15)  THEN 2
+        ELSE 0 END black_Smelly,
+        CASE
+        WHEN (hist.DOX>=7.5) or (hist.NH3N &lt;=0.15)   THEN 1
+        WHEN (hist.DOX>=6 and hist.DOX&lt;7.5) or (hist.NH3N >0.15 and hist.NH3N&lt;=0.5)   THEN 2
+        WHEN (hist.DOX >=5 and hist.DOX&lt;6) or (hist.NH3N >0.5 and hist.NH3N&lt;=1)   THEN 3
+        WHEN (hist.DOX >=3 and hist.DOX&lt;5) or (hist.NH3N >1 and hist.NH3N&lt;=1.5)   THEN 4
+        WHEN (hist.DOX >=2 and hist.DOX&lt;3) or (hist.NH3N >1.5 and hist.NH3N&lt;=2)   THEN 5
+        ELSE 6 END water_quality
+        from (
+			select a.stnm,
+               a.STCD,
+               a.ADDVCD,
+               wndss.NH3N,
+               ROWNUM rn,
+               wndss.tp,
+               wndss.tn,
+               WNDSS.CODcr,               
+               wndss.DOX,
+               wndss.spt,
+               (select q2 from WQ_HYDROE_D where stcd=a.stcd and spt=wndss.spt) q2,
+               (select ph from WQ_PCP_D where stcd=a.stcd and spt=wndss.spt) ph,
+               (select SS from WQ_PCP_D where stcd=a.stcd and spt=wndss.spt) SS,
+               (select CLAR_ITY from WQ_PCP_D where stcd=a.stcd and spt=wndss.spt) CLAR_ITY,
+               (select REDOX from WQ_PCP_D where stcd=a.stcd and spt=wndss.spt) REDOX
+                 from WQ_NMISP_D wndss,wq_wqsinf_b a 
+                 where wndss.stcd=a.stcd 
+                 <if test="stFactory.startTime!=null and stFactory.startTime!=''">
+                 	and wndss.spt <![CDATA[ >= ]]> to_date(#{stFactory.startTime},'yyyy-MM-dd HH24:mi:ss') 
+                 </if>
+                 <if test="stFactory.endTime!=null and stFactory.endTime!=''">
+                 	and  wndss.spt <![CDATA[ <= ]]> to_date(#{stFactory.endTime},'yyyy-MM-dd HH24:mi:ss')   
+                 </if>             
+        <if test="stFactory.sttp!=null and stFactory.sttp!=''">
+            <if test="stFactory.sttp == 'RQ'"> and a.STTP='RQ'</if>
+            <if test="stFactory.sttp == 'FQ'"> and a.STTP='FQ'</if>
+        </if>
+        <if test="stFactory.stnm!=null and stFactory.stnm!=''">
+            and a.stnm like '%' || #{stFactory.stnm} || '%'
+        </if>
+        <if test="stFactory.addvcd!=null and stFactory.addvcd!=''">
+            <if test="stFactory.addvcd == '荔湾区'"> and a.addvcd = '440103'</if>
+            <if test="stFactory.addvcd == '越秀区'"> and a.addvcd = '440104'</if>
+            <if test="stFactory.addvcd == '海珠区'"> and a.addvcd = '440105'</if>
+            <if test="stFactory.addvcd == '天河区'"> and a.addvcd = '440106'</if>
+            <if test="stFactory.addvcd == '白云区'"> and a.addvcd = '440111'</if>
+            <if test="stFactory.addvcd == '黄埔区'"> and a.addvcd = '440112'</if>
+            <if test="stFactory.addvcd == '番禺区'"> and a.addvcd = '440113'</if>
+            <if test="stFactory.addvcd == '花都区'"> and a.addvcd = '440114'</if>
+            <if test="stFactory.addvcd == '南沙区'"> and a.addvcd = '440115'</if>
+            <if test="stFactory.addvcd == '增城区'"> and a.addvcd = '440183'</if>
+            <if test="stFactory.addvcd == '从化区'"> and a.addvcd = '440184'</if>
+        </if>
+        order by spt desc
+        ) hist WHERE hist.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+    </select>
+    
+    <!--实时数据  污水厂  新  分页-->
+    <select id="findStFactoryRealPageNewAll" resultType="stFactory" parameterType="map">
+        select hist.* ,
+        CASE
+        WHEN (hist.CLAR_ITY BETWEEN 10 and 25) or  (hist.DOX BETWEEN 0.2 and 2.0 ) or ( hist.REDOX BETWEEN -200 and 50 ) or (hist.NH3N BETWEEN 8.0 and 15) THEN 1
+        WHEN (hist.CLAR_ITY &lt;10 or  hist.DOX&lt;2.0 or hist.REDOX&lt;-200 or hist.NH3N>15)  THEN 2
+        ELSE 0 END black_Smelly,
+        CASE
+        WHEN (hist.DOX>=7.5) or (hist.NH3N &lt;=0.15)   THEN 1
+        WHEN (hist.DOX>=6 and hist.DOX&lt;7.5) or (hist.NH3N >0.15 and hist.NH3N&lt;=0.5)   THEN 2
+        WHEN (hist.DOX >=5 and hist.DOX&lt;6) or (hist.NH3N >0.5 and hist.NH3N&lt;=1)   THEN 3
+        WHEN (hist.DOX >=3 and hist.DOX&lt;5) or (hist.NH3N >1 and hist.NH3N&lt;=1.5)   THEN 4
+        WHEN (hist.DOX >=2 and hist.DOX&lt;3) or (hist.NH3N >1.5 and hist.NH3N&lt;=2)   THEN 5
+        ELSE 6 END water_quality
+        from (
+			select a.stnm,
+               a.STCD,
+               a.ADDVCD,
+               wndss.NH3N,
+               ROWNUM rn,
+               wndss.tp,
+               wndss.tn,
+               WNDSS.CODcr,               
+               wndss.DOX,
+               wndss.spt,
+               (select q2 from WQ_HYDROE_D where stcd=a.stcd and spt=wndss.spt) q2,
+               (select ph from WQ_PCP_D where stcd=a.stcd and spt=wndss.spt) ph,
+               (select SS from WQ_PCP_D where stcd=a.stcd and spt=wndss.spt) SS,
+               (select CLAR_ITY from WQ_PCP_D where stcd=a.stcd and spt=wndss.spt) CLAR_ITY,
+               (select REDOX from WQ_PCP_D where stcd=a.stcd and spt=wndss.spt) REDOX
+                 from WQ_NMISP_D wndss,wq_wqsinf_b a 
+                 where wndss.stcd=a.stcd 
+                 <if test="stFactory.startTime!=null and stFactory.startTime!=''">
+                 	and wndss.spt <![CDATA[ >= ]]> to_date(#{stFactory.startTime},'yyyy-MM-dd HH24:mi:ss') 
+                 </if>
+                 <if test="stFactory.endTime!=null and stFactory.endTime!=''">
+                 	and  wndss.spt <![CDATA[ <= ]]> to_date(#{stFactory.endTime},'yyyy-MM-dd HH24:mi:ss')   
+                 </if>             
+        <if test="stFactory.sttp!=null and stFactory.sttp!=''">
+            <if test="stFactory.sttp == 'RQ'"> and a.STTP='RQ'</if>
+            <if test="stFactory.sttp == 'FQ'"> and a.STTP='FQ'</if>
+        </if>
+        <if test="stFactory.stnm!=null and stFactory.stnm!=''">
+            and a.stnm like '%' || #{stFactory.stnm} || '%'
+        </if>
+        <if test="stFactory.addvcd!=null and stFactory.addvcd!=''">
+            <if test="stFactory.addvcd == '荔湾区'"> and a.addvcd = '440103'</if>
+            <if test="stFactory.addvcd == '越秀区'"> and a.addvcd = '440104'</if>
+            <if test="stFactory.addvcd == '海珠区'"> and a.addvcd = '440105'</if>
+            <if test="stFactory.addvcd == '天河区'"> and a.addvcd = '440106'</if>
+            <if test="stFactory.addvcd == '白云区'"> and a.addvcd = '440111'</if>
+            <if test="stFactory.addvcd == '黄埔区'"> and a.addvcd = '440112'</if>
+            <if test="stFactory.addvcd == '番禺区'"> and a.addvcd = '440113'</if>
+            <if test="stFactory.addvcd == '花都区'"> and a.addvcd = '440114'</if>
+            <if test="stFactory.addvcd == '南沙区'"> and a.addvcd = '440115'</if>
+            <if test="stFactory.addvcd == '增城区'"> and a.addvcd = '440183'</if>
+            <if test="stFactory.addvcd == '从化区'"> and a.addvcd = '440184'</if>
+        </if>
+        ) hist 
+    </select>
+
+    <!--实时数据分页 污水厂-->
+    <select id="findStFactoryRealPage" resultType="stFactory" parameterType="map">
+        select hist.* ,
+        CASE
+        WHEN (hist.CLAR_ITY BETWEEN 10 and 25) or  (hist.DOX BETWEEN 0.2 and 2.0 ) or ( hist.REDOX BETWEEN -200 and 50 ) or (hist.NH3N BETWEEN 8.0 and 15) THEN 1
+        WHEN (hist.CLAR_ITY &lt;10 or  hist.DOX&lt;2.0 or hist.REDOX&lt;-200 or hist.NH3N>15)  THEN 2
+        ELSE 0 END black_Smelly,
+        CASE
+        WHEN (hist.DOX>=7.5) or (hist.NH3N &lt;=0.15)   THEN 1
+        WHEN (hist.DOX>=6 and hist.DOX&lt;7.5) or (hist.NH3N >0.15 and hist.NH3N&lt;=0.5)   THEN 2
+        WHEN (hist.DOX >=5 and hist.DOX&lt;6) or (hist.NH3N >0.5 and hist.NH3N&lt;=1)   THEN 3
+        WHEN (hist.DOX >=3 and hist.DOX&lt;5) or (hist.NH3N >1 and hist.NH3N&lt;=1.5)   THEN 4
+        WHEN (hist.DOX >=2 and hist.DOX&lt;3) or (hist.NH3N >1.5 and hist.NH3N&lt;=2)   THEN 5
+        ELSE 6 END water_quality
+        from (
+        select a.stnm,a.STCD,a.ADDVCD,wndss.NH3N,wndss.tp,wndss.tn,WNDSS.CODcr,wpsss.ph,wpsss.SS,b.q2,b.spt,ROWNUM rn,wndss.DOX,wpsss.CLAR_ITY,wpsss.REDOX from WQ_WQSINF_B a
+        left join (select wnd.stcd,wnd.NH3N,wnd.tp,wnd.tn,wnd.CODcr,wnd.DOX from WQ_NMISP_D wnd,(select stcd,max(spt) as spt from WQ_NMISP_D
+        GROUP BY stcd)wnds  where wnd.stcd=WNDS.stcd and wnd.spt = wnds.spt) wndss on a.stcd =wndss.stcd
+        left join (select wpd.ph,wpd.stcd,wpd.ss,wpd.REDOX,wpd.HUMID,wpd.CLAR_ITY,wpd.ENVT from WQ_PCP_D wpd,(select stcd,max(spt) as spt from WQ_PCP_D GROUP BY stcd)wpds
+        where wpd.stcd=wpds.stcd and wpd.spt = wpds.spt) wpsss on a.stcd =wpsss.stcd
+        left join (select whd.q2,whd.stcd,whd.spt from WQ_HYDROE_D whd,(select stcd,max(spt) as spt from WQ_HYDROE_D GROUP BY stcd)whds
+        where whd.stcd=whds.stcd and whd.spt = whds.spt) b on a.stcd =b.stcd 
+        <if test="stFactory.sttp!=null and stFactory.sttp!=''">
+            <if test="stFactory.sttp == 'RQ'"> where a.STTP='RQ'</if>
+            <if test="stFactory.sttp == 'FQ'"> where a.STTP='FQ'</if>
+        </if>
+        <if test="stFactory.stnm!=null and stFactory.stnm!=''">
+            and a.stnm like '%' || #{stFactory.stnm} || '%'
+        </if>
+        <if test="stFactory.addvcd!=null and stFactory.addvcd!=''">
+            <if test="stFactory.addvcd == '荔湾区'"> and a.addvcd = '440103'</if>
+            <if test="stFactory.addvcd == '越秀区'"> and a.addvcd = '440104'</if>
+            <if test="stFactory.addvcd == '海珠区'"> and a.addvcd = '440105'</if>
+            <if test="stFactory.addvcd == '天河区'"> and a.addvcd = '440106'</if>
+            <if test="stFactory.addvcd == '白云区'"> and a.addvcd = '440111'</if>
+            <if test="stFactory.addvcd == '黄埔区'"> and a.addvcd = '440112'</if>
+            <if test="stFactory.addvcd == '番禺区'"> and a.addvcd = '440113'</if>
+            <if test="stFactory.addvcd == '花都区'"> and a.addvcd = '440114'</if>
+            <if test="stFactory.addvcd == '南沙区'"> and a.addvcd = '440115'</if>
+            <if test="stFactory.addvcd == '增城区'"> and a.addvcd = '440183'</if>
+            <if test="stFactory.addvcd == '从化区'"> and a.addvcd = '440184'</if>
+        </if>
+        ) hist WHERE hist.rn BETWEEN (#{page}-1)*#{rows}+1 and #{page}*#{rows}
+    </select>
+    <!--实时数据总条数-->
+    <select id="findAllRealWSCLCList" resultType="stFactory">
+        select a.stnm,a.STCD,a.ADDVCD,wndss.NH3N,wndss.tp,wndss.tn,WNDSS.CODcr,wpsss.ph,wpsss.SS,b.q2,b.spt from WQ_WQSINF_B a
+        left join (select wnd.stcd,wnd.NH3N,wnd.tp,wnd.tn,wnd.CODcr from WQ_NMISP_D wnd,(select stcd,max(spt) as spt from WQ_NMISP_D
+        GROUP BY stcd)wnds  where wnd.stcd=WNDS.stcd and wnd.spt = wnds.spt) wndss on a.stcd =wndss.stcd
+        left join (select wpd.ph,wpd.stcd,wpd.ss from WQ_PCP_D wpd,(select stcd,max(spt) as spt from WQ_PCP_D GROUP BY stcd)wpds
+        where wpd.stcd=wpds.stcd and wpd.spt = wpds.spt) wpsss on a.stcd =wpsss.stcd
+        left join (select whd.q2,whd.stcd,whd.spt from WQ_HYDROE_D whd,(select stcd,max(spt) as spt from WQ_HYDROE_D GROUP BY stcd)whds
+        where whd.stcd=whds.stcd and whd.spt = whds.spt) b on a.stcd =b.stcd
+        where a.STTP='FQ'
+        <if test="stnm!=null and stnm!=''">
+            and a.stnm like '%' || #{stnm} || '%'
+        </if>
+        <if test="addvcd!=null and addvcd!=''">
+            <if test="addvcd == '荔湾区'"> and a.addvcd = '440103'</if>
+            <if test="addvcd == '越秀区'"> and a.addvcd = '440104'</if>
+            <if test="addvcd == '海珠区'"> and a.addvcd = '440105'</if>
+            <if test="addvcd == '天河区'"> and a.addvcd = '440106'</if>
+            <if test="addvcd == '白云区'"> and a.addvcd = '440111'</if>
+            <if test="addvcd == '黄埔区'"> and a.addvcd = '440112'</if>
+            <if test="addvcd == '番禺区'"> and a.addvcd = '440113'</if>
+            <if test="addvcd == '花都区'"> and a.addvcd = '440114'</if>
+            <if test="addvcd == '南沙区'"> and a.addvcd = '440115'</if>
+            <if test="addvcd == '增城区'"> and a.addvcd = '440183'</if>
+            <if test="addvcd == '从化区'"> and a.addvcd = '440184'</if>
+        </if>
+    </select>
+
+
+   <!--污水处理厂相关历史记录分页-->
+    <select id="findAllListWSCLCByPage" resultType="stFactory">
+        select * from (select a.stnm,a.STCD,a.ADDVCD,wnd.NH3N,wnd.DOX,wnd.tp,wnd.tn,wnd.CODcr,wpd.ph,wpd.SS,wpd.REDOX,wpd.ENVT,rownum rm from WQ_WQSINF_B a
+        left join WQ_PCP_D wpd on a.stcd = wpd.stcd  
+        <if test="stFactory.searchStrat!=null and stFactory.searchStrat!=''">
+            and wpd.spt <![CDATA[ >= ]]> to_date(#{stFactory.searchStrat}, 'yyyy-MM-dd')  
+        </if>
+        <if test="stFactory.searchEnd!=null and stFactory.searchEnd!=''">
+            and wpd.spt <![CDATA[ < ]]> to_date(#{stFactory.searchEnd}, 'yyyy-MM-dd') 
+        </if>
+        left join WQ_NMISP_D wnd on wnd.stcd = a.stcd
+        <if test="stFactory.searchStrat!=null and stFactory.searchStrat!=''">
+            and wpd.spt <![CDATA[ >= ]]> to_date(#{stFactory.searchStrat}, 'yyyy-MM-dd')  
+        </if>
+        <if test="stFactory.searchEnd!=null and stFactory.searchEnd!=''">
+            and wpd.spt <![CDATA[ < ]]> to_date(#{stFactory.searchEnd}, 'yyyy-MM-dd') 
+        </if>
+        left join WQ_HYDROE_D whd on whd.stcd = a.stcd
+        <if test="stFactory.searchStrat!=null and stFactory.searchStrat!=''">
+            and wpd.spt <![CDATA[ >= ]]> to_date(#{stFactory.searchStrat}, 'yyyy-MM-dd')  
+        </if>
+        <if test="stFactory.searchEnd!=null and stFactory.searchEnd!=''">
+            and wpd.spt <![CDATA[ < ]]> to_date(#{stFactory.searchEnd}, 'yyyy-MM-dd') 
+        </if>
+        where 1=1
+        <if test="stFactory.stnm!=null and stFactory.stnm!=''">
+             and  a.stnm like '%' || #{stFactory.stnm} || '%'
+        </if>
+        <if test="stFactory.addvcd!=null and stFactory.addvcd!=''">
+            <if test="stFactory.addvcd == '荔湾区'"> and a.addvcd = '440103'</if>
+            <if test="stFactory.addvcd == '越秀区'"> and a.addvcd = '440104'</if>
+            <if test="stFactory.addvcd == '海珠区'"> and a.addvcd = '440105'</if>
+            <if test="stFactory.addvcd == '天河区'"> and a.addvcd = '440106'</if>
+            <if test="stFactory.addvcd == '白云区'"> and a.addvcd = '440111'</if>
+            <if test="stFactory.addvcd == '黄埔区'"> and a.addvcd = '440112'</if>
+            <if test="stFactory.addvcd == '番禺区'"> and a.addvcd = '440113'</if>
+            <if test="stFactory.addvcd == '花都区'"> and a.addvcd = '440114'</if>
+            <if test="stFactory.addvcd == '南沙区'"> and a.addvcd = '440115'</if>
+            <if test="stFactory.addvcd == '增城区'"> and a.addvcd = '440183'</if>
+            <if test="stFactory.addvcd == '从化区'"> and a.addvcd = '440184'</if>
+        </if>
+        ) his 
+    </select>
+
+    <!--污水处理厂相关历史记录 总条数-->
+    <select id="findAllWSCLCList" resultType="stFactory">
+        SELECT * FROM WQ_NMISP_D wqn LEFT JOIN WQ_WQSINF_B  wqw on wqn.stcd=wqw.stcd where 1=1 AND wqw.sttp='FQ'
+        <if test="stnm!=null and stnm!=''">
+           and  wqw.stnm like '%' || #{stnm} || '%'
+        </if>
+        <if test="addvcd!=null and addvcd!=''">
+            <if test="addvcd == '荔湾区'"> and wqw.addvcd = '440103'</if>
+            <if test="addvcd == '越秀区'"> and wqw.addvcd= '440104'</if>
+            <if test="addvcd == '海珠区'"> and wqw.addvcd = '440105'</if>
+            <if test="addvcd == '天河区'"> and wqw.addvcd = '440106'</if>
+            <if test="addvcd == '白云区'"> and wqw.addvcd = '440111'</if>
+            <if test="addvcd == '黄埔区'"> and wqw.addvcd = '440112'</if>
+            <if test="addvcd == '番禺区'"> and wqw.addvcd = '440113'</if>
+            <if test="addvcd == '花都区'"> and wqw.addvcd = '440114'</if>
+            <if test="addvcd == '南沙区'"> and wqw.addvcd = '440115'</if>
+            <if test="addvcd == '增城区'"> and wqw.addvcd = '440183'</if>
+            <if test="addvcd == '从化区'"> and wqw.addvcd = '440184'</if>
+        </if>
+        <if test="timeDate!=null and timeDate!=''">
+            and to_char(wqn.spt,'yyyy-MM-dd')= #{timeDate}
+        </if>
+        <if test="searchStrat!=null and searchStrat!=''">
+            and to_char(wqn.spt,'yyyy-MM-dd') <![CDATA[ >= ]]> #{searchStrat}
+        </if>
+        <if test="searchEnd!=null and searchEnd!=''">
+            and to_char(wqn.spt,'yyyy-MM-dd') <![CDATA[ <= ]]> #{searchEnd}
+        </if>
+    </select>
+
+    <!--历史echarts数据 污水厂-->
+    <select id="findAllHistListByPageChartSWSCLC" resultType="stFactory" parameterType="map">
+        select hist.* from
+        (SELECT wqn.*,wqw.STNM,wqw.STTP ,ROWNUM rn  FROM WQ_NMISP_D wqn LEFT JOIN WQ_WQSINF_B  wqw on wqn.stcd=wqw.stcd where 1=1 AND wqw.sttp='FQ'
+        <if test="stFactory.stnm!=null and stFactory.stnm!=''">
+            and  wqw.stnm like '%' || #{stFactory.stnm} || '%'
+        </if>
+        <if test="addvcd!=null and addvcd!=''">
+            <if test="stFactory.addvcd == '荔湾区'"> and wqw.addvcd = '440103'</if>
+            <if test="stFactory.addvcd == '越秀区'"> and wqw.addvcd= '440104'</if>
+            <if test="stFactory.addvcd == '海珠区'"> and wqw.addvcd = '440105'</if>
+            <if test="stFactory.addvcd == '天河区'"> and wqw.addvcd = '440106'</if>
+            <if test="stFactory.addvcd == '白云区'"> and wqw.addvcd = '440111'</if>
+            <if test="stFactory.addvcd == '黄埔区'"> and wqw.addvcd = '440112'</if>
+            <if test="stFactory.addvcd == '番禺区'"> and wqw.addvcd = '440113'</if>
+            <if test="stFactory.addvcd == '花都区'"> and wqw.addvcd = '440114'</if>
+            <if test="stFactory.addvcd == '南沙区'"> and wqw.addvcd = '440115'</if>
+            <if test="stFactory.addvcd == '增城区'"> and wqw.addvcd = '440183'</if>
+            <if test="stFactory.addvcd == '从化区'"> and wqw.addvcd = '440184'</if>
+        </if>
+        <if test="stFactory.timeDate!=null and stFactory.timeDate!=''">
+            and to_char(wqn.spt,'yyyy-MM-dd')= #{stFactory.timeDate}
+        </if>
+        ) hist
+    </select>
+
+    <!--污水处理厂相关行政区域树形图-->
+    <select id="huoQuWSCLCXZTree" resultType="stFactory">
+        select addvcd from WQ_WQSINF_B   where STTP='FQ' GROUP BY addvcd
+    </select>
+    <!--污水处理厂相关行政区域树形图子目录-->
+    <select id="findChildWSCLC" resultType="stFactory">
+        select a.stnm,a.STCD,a.ADDVCD,wndss.NH3N,wndss.tp,wndss.tn,WNDSS.CODcr,wpsss.ph,wpsss.SS,b.q2,b.spt,ROWNUM rn from WQ_WQSINF_B a
+        left join (select wnd.stcd,wnd.NH3N,wnd.tp,wnd.tn,wnd.CODcr from WQ_NMISP_D wnd,(select stcd,max(spt) as spt from WQ_NMISP_D
+        GROUP BY stcd)wnds  where wnd.stcd=WNDS.stcd and wnd.spt = wnds.spt) wndss on a.stcd =wndss.stcd
+        left join (select wpd.ph,wpd.stcd,wpd.ss from WQ_PCP_D wpd,(select stcd,max(spt) as spt from WQ_PCP_D GROUP BY stcd)wpds
+        where wpd.stcd=wpds.stcd and wpd.spt = wpds.spt) wpsss on a.stcd =wpsss.stcd
+        left join (select whd.q2,whd.stcd,whd.spt from WQ_HYDROE_D whd,(select stcd,max(spt) as spt from WQ_HYDROE_D GROUP BY stcd)whds
+        where whd.stcd=whds.stcd and whd.spt = whds.spt) b on a.stcd =b.stcd
+        <if test="sttp != null and sttp !=''">
+            <if test="sttp == 'FQ'"> where a.STTP='FQ'</if>
+            <if test="sttp == 'RQ'"> where a.STTP='RQ'</if>
+        </if>
+        <if test="addvcd != null and addvcd!=''">
+            <if test="addvcd == '荔湾区'"> and a.addvcd = '440103'</if>
+            <if test="addvcd == '越秀区'"> and a.addvcd = '440104'</if>
+            <if test="addvcd == '海珠区'"> and a.addvcd = '440105'</if>
+            <if test="addvcd == '天河区'"> and a.addvcd = '440106'</if>
+            <if test="addvcd == '白云区'"> and a.addvcd = '440111'</if>
+            <if test="addvcd == '黄埔区'"> and a.addvcd = '440112'</if>
+            <if test="addvcd == '番禺区'"> and a.addvcd = '440113'</if>
+            <if test="addvcd == '花都区'"> and a.addvcd = '440114'</if>
+            <if test="addvcd == '南沙区'"> and a.addvcd = '440115'</if>
+            <if test="addvcd == '增城区'"> and a.addvcd = '440183'</if>
+            <if test="addvcd == '从化区'"> and a.addvcd = '440184'</if>
+        </if>
+    </select>
+    <!-- 获取区下面的出水口和进水口 -->
+     <select id="getWwbName" resultType="StFactory">
+     	select stnm from(
+			select stnm from WQ_WQSINF_B a 
+		<if test="sttp != null and sttp !=''">
+            <if test="sttp == 'FQ'"> where a.STTP='FQ'</if>
+            <if test="sttp == 'RQ'"> where a.STTP='RQ'</if>
+        </if> 
+		<if test="addvcd != null and addvcd!=''">
+            <if test="addvcd == '荔湾区'"> and a.addvcd = '440103'</if>
+            <if test="addvcd == '越秀区'"> and a.addvcd = '440104'</if>
+            <if test="addvcd == '海珠区'"> and a.addvcd = '440105'</if>
+            <if test="addvcd == '天河区'"> and a.addvcd = '440106'</if>
+            <if test="addvcd == '白云区'"> and a.addvcd = '440111'</if>
+            <if test="addvcd == '黄埔区'"> and a.addvcd = '440112'</if>
+            <if test="addvcd == '番禺区'"> and a.addvcd = '440113'</if>
+            <if test="addvcd == '花都区'"> and a.addvcd = '440114'</if>
+            <if test="addvcd == '南沙区'"> and a.addvcd = '440115'</if>
+            <if test="addvcd == '增城区'"> and a.addvcd = '440183'</if>
+            <if test="addvcd == '从化区'"> and a.addvcd = '440184'</if>
+        </if>
+		) a GROUP BY stnm
+     </select>
+    <select id="getBlackSmellCount" resultType="blackSmellCount">
+     select count(*) as coun,
+	   CASE WHEN(black_Smelly=1) THEN '轻度黑臭'
+	   WHEN(black_Smelly=2) THEN '严重黑臭'
+	   ELSE '不黑不臭' END as caseWhen
+	   from (select
+	   CASE
+	   WHEN (CLAR_ITY BETWEEN 10 and 25) or  (DOX BETWEEN 0.2 and 2.0 ) or ( REDOX BETWEEN -200 and 50 ) or (NH3N BETWEEN 8.0 and 15) THEN 1
+	   WHEN (CLAR_ITY &lt;10 or  DOX&lt;2.0 or REDOX&lt;-200 or NH3N>15)  THEN 2
+	   ELSE 0 END as black_Smelly 
+	   from WQ_WQSINF_B_VIEW t where t.sttp='RQ') group by black_Smelly
+    </select>
+    <!-- 获取环保局里面得各区河涌 -->
+    <select id="getHongChongEcharts" resultType="Huanbao">
+	select*from (select a.HCMC as stnm from HUANBAO a,
+	(select HCMC from HUANBAO GROUP BY HCMC) b 
+	where a.HCMC=b.hcmc and a.ssxzq is not null
+    <choose>
+         <when test="addvcd != '' and addvcd == '白云区'">and (a.SSXZQ='白云' or a.SSXZQ='花都-白云') </when>
+         <when test="addvcd != '' and addvcd == '天河区'">and a.SSXZQ='天河' </when>
+         <when test="addvcd != '' and addvcd == '增城区'">and a.SSXZQ='增城' </when>
+         <when test="addvcd != '' and addvcd == '荔湾区'">and a.SSXZQ='荔湾' </when>
+         <when test="addvcd != '' and addvcd == '花都区'">and a.SSXZQ='花都' </when>
+         <when test="addvcd != '' and addvcd == '从化区'">and (a.SSXZQ='从化' or a.SSXZQ='从化区')  </when>
+         <when test="addvcd != '' and addvcd == '越秀区'">and a.SSXZQ='越秀' </when>
+         <when test="addvcd != '' and addvcd == '黄埔区'">and a.SSXZQ='黄埔' </when>
+         <when test="addvcd != '' and addvcd == '海珠区'">and a.SSXZQ='海珠' </when>
+         <when test="addvcd != '' and addvcd == '南沙区'">and a.SSXZQ='南沙' </when>
+         <when test="addvcd != '' and addvcd == '番禺区'">and a.SSXZQ='番禺' </when>
+         <otherwise></otherwise>
+     </choose>
+	 ) GROUP BY stnm
+    </select>
+        <!-- 获取环保局数据 -->
+    <select id="getHechongDataTime" resultType="Huanbao">
+       select* from HUANBAO where 1=1
+       <if test="stnm != null and stnm != ''">
+            and hcmc = #{stnm} 
+       </if>
+       <if test="searchStrat != null and searchStrat != ''">
+            and jcny &gt;= #{searchStrat}
+     </if>
+     <if test="searchEnd != null and searchEnd != ''">
+            and jcny &lt;= #{searchEnd}
+     </if>
+       order BY jcny
+    </select>
+    <!--获取氨氮,总磷,总氮,含氧量的sql-->
+    <select id="getWndList" resultType="DataTime">
+        select b.spt as tm,b.NH3N as ad,b.tp as zl,b.tn as zd,b.CODcr as codcr from WQ_WQSINF_B a 
+		LEFT JOIN WQ_NMISP_D b on a.stcd=b.STCD where 1=1
+		<if test="searchStrat != null and searchStrat != ''">
+          and b.spt &gt;= to_date(#{searchStrat}, 'yyyy-MM-dd')
+     </if>
+     <if test="searchEnd != null and searchEnd != ''">
+          and b.spt &lt;= to_date( #{searchEnd}, 'yyyy-MM-dd')
+     </if>
+     <if test="stnm != null and stnm != ''">
+          and stnm like '%' || #{stnm} || '%'
+     </if>
+     order by b.spt
+    </select>
+     <!--获取PH,环境温度,透明度,氧化还原电位,湿度和悬浮物的sql-->
+    <select id="getWpdList" resultType="DataTime">
+        select b.spt as tm,b.ph,b.ss as xfw,b.envt as hjwd,b.CLAR_ITY as tmd,b.HUMID as sd,b.REDOX as yhhydw from WQ_WQSINF_B a 
+		LEFT JOIN WQ_PCP_D b on a.stcd=b.STCD where 1=1
+	<if test="searchStrat != null and searchStrat != ''">
+          and b.spt &gt;= to_date(#{searchStrat}, 'yyyy-MM-dd')
+     </if>
+     <if test="searchEnd != null and searchEnd != ''">
+          and b.spt &lt;= to_date( #{searchEnd}, 'yyyy-MM-dd')
+     </if>
+     <if test="stnm != null and stnm != ''">
+          and stnm like '%' || #{stnm} || '%'
+     </if>
+     order by b.spt
+    </select>
+     <!--获取水流量的sql-->
+    <select id="getWhdList" resultType="DataTime">
+        select b.spt as tm,nvl(b.q2,0) as sll from WQ_WQSINF_B a 
+		LEFT JOIN WQ_HYDROE_D b on a.stcd=b.STCD where 1=1
+	<if test="searchStrat != null and searchStrat != ''">
+          and b.spt &gt;= to_date( #{searchStrat}, 'yyyy-MM-dd')
+     </if>
+     <if test="searchEnd != null and searchEnd != ''">
+          and b.spt &lt;= to_date( #{searchEnd}, 'yyyy-MM-dd')
+     </if>
+     <if test="stnm != null and stnm != ''">
+          and stnm like '%' || #{stnm} || '%'
+     </if>
+     order by b.spt
+    </select>
+    <!--获取昨天八点到现在时间的累计雨量-->
+    <select id="getNewPptnData" resultType="stRealtimeDate">
+<!-- 	    select*from( select a.stcd as stcd,a.sumData as sumData, b.stnm as stnm from ( select stcd,sum(drp) as sumData from (select*from ST_PPTN_R where stcd in(select stcd from ST_PPTN_R where tm >= to_date(#{searchStrat}, 'yyyy-mm-dd hh24:mi:ss')
+		and tm &lt; to_date(#{searchEnd}, 'yyyy-mm-dd hh24:mi:ss')) and tm >= to_date(#{searchStrat}, 'yyyy-mm-dd hh24:mi:ss')
+		and tm &lt; to_date(#{searchEnd}, 'yyyy-mm-dd hh24:mi:ss') ) GROUP BY stcd ORDER BY sumData desc) a
+		LEFT JOIN ST_STBPRP_B b on a.stcd = b.stcd ORDER BY a.sumData desc)
+		UNION all
+		select*from( select a.stcd as stcd,a.sumData as sumData, b.stnm as stnm from (select stcd,0 as sumData from ST_PPTN_R where stcd not in(
+		select stcd from ST_PPTN_R where tm >= to_date(#{searchStrat}, 'yyyy-mm-dd hh24:mi:ss')
+		and tm &lt; to_date(#{searchEnd}, 'yyyy-mm-dd hh24:mi:ss')) GROUP BY stcd) a
+		LEFT join ST_STBPRP_B b on a.stcd = b.stcd )
+ -->
+select s1.stcd, nvl(s2.sum_drp, 0) sumData, s1.stnm from
+(select * from ST_STBPRP_B  where usfl=1 and COOX is not null and COOY is not null
+and stcd in (select distinct stcd from ST_STITEM_B where mnit = 3)) s1
+left join
+(select stcd, sum(drp) sum_drp from st_pptn_r  where tm >= to_date(#{searchStrat}, 'yyyy-mm-dd hh24:mi:ss')
+and tm &lt; to_date(#{searchEnd}, 'yyyy-mm-dd hh24:mi:ss')
+group by stcd) s2
+on s1.stcd=s2.stcd
+order by nvl(s2.sum_drp, 0) desc
+    </select>
+    
+    
+    <select id="queryVideo" resultType="map" parameterType="map">
+    	select objectid,mc,id,type,x,y
+    	from video_150
+    	where 1=1
+    	<if test="mc!=null and mc !=''">
+    		and mc like '%' || #{mc} || '%' 
+    	</if>
+    </select>
+
+    <!-- 获取流域信息列表 -->
+    <select id="listDrainageBasin" resultType="map" parameterType="map">
+        select CTNM, RVNM, RVCD, F187, F35, OBJECTID, CTCD
+        from GH_DRAINAGE_BASIN
+        where 1=1
+        <if test="rvcdnm !=null and rvcdnm !=''">
+            and (rvcd like CONCAT(CONCAT('%', TRIM(#{rvcdnm})),'%') or ctnm like CONCAT(CONCAT('%', TRIM(#{rvcdnm})),'%'))
+        </if>
+    </select>
+
+    <select id="getDrainageBasin" resultType="java.util.LinkedHashMap">
+        select CTNM, RVNM, RVCD, F187, F35, OBJECTID, CTCD
+        from GH_DRAINAGE_BASIN
+        where objectid = #{objectid}
+    </select>
+
+    <select id="listIrrigate" resultType="Irrigate">
+        select rtu.stcd, rtu.stname, rtu.coox x, rtu.cooy y, lv.lv1, lv.lv2, lv.lv3, lv.lv4, lv.datatime lvTime, q.q1, q.q2, q.q3, q.q4, q.datatime qTime, wl.wl1,wl.wl2,wl.wl3,wl.wl4, wl.datatime wlTime, rain.rainfall, rain.datatime rainfallTime
+        from tb_b_rtu rtu left join (
+          select stid, datatime, lv1, lv2, lv3, lv4
+          from tb_r_rtuwaterspeed
+          where datatime = (
+            select max(datatime)
+            from tb_r_rtuwaterspeed
+            where datatime >= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss') and datatime &lt; to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+          )
+        ) lv on rtu.stid = lv.stid left join (
+            select stid, datatime, rtu_q1 q1, rtu_q2 q2, rtu_q3 q3, rtu_q4 q4
+            from tb_r_flowmin
+            where datatime = (
+                select max(datatime)
+                from tb_r_flowmin
+                where datatime >= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss') and datatime &lt; to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            )
+        ) q on rtu.stid = q.stid left join (
+            select stid, datatime, wl1, wl2, wl3, wl4
+            from tb_r_rtuwaterline
+            where datatime = (
+                select max(datatime)
+                from tb_r_rtuwaterline
+                where datatime >= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss') and datatime &lt; to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            )
+        ) wl on rtu.stid = wl.stid left join (
+            select stid, datatime, rainfall
+            from tb_r_rturain_5min
+            where datatime = (
+                select max(datatime)
+                from tb_r_rtuwaterline
+                where datatime >= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss') and datatime &lt; to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            )
+        ) rain on rtu.stid = rain.stid
+        where 1=1
+        <if test="stcdnm != null and stcdnm != ''">
+          and (rtu.stcd = ${stcdnm} or rtu.stname like CONCAT(CONCAT('%', ${stcdnm}),'%'))
+        </if>
+
+    </select>
+
+    <select id="listIrrigateInfo" resultType="Irrigate">
+        select rtu.stcd, rtu.stname, rtu.coox x, rtu.cooy y, rtu.lng, rtu.lat, to_char(build_Time, 'yyyy-MM-dd HH24:MI:SS'), to_char(mod_Time, 'yyyy-MM-dd HH24:MI:SS') modTime, rtu.water_C waterC, rtu.flow_C flowC, rtu.lv_C lvC, rtu.gate_C gateC
+        from tb_b_rtu rtu
+        where 1=1
+        <if test="stcdnm != null and stcdnm != ''">
+            and (rtu.stcd = #{stcdnm} or rtu.stname like CONCAT(CONCAT('%', #{stcdnm}),'%'))
+        </if>
+
+    </select>
+
+    <select id="getIrrigateInfo" resultType="java.util.LinkedHashMap">
+        select STID, STCD, STNAME, COM_TYPE_ID, WRR_ID, ISRAIN, ISWATER, ISFLOW, ISLV, ISGATE, ISIMG, IRR_ID, SIM,
+          LNG, LAT, to_char(build_Time, 'yyyy-MM-dd HH24:MI:SS') BUILDTIME, to_char(mod_Time, 'yyyy-MM-dd HH24:MI:SS') MODTIME,
+          OPERATOR, RAIN_LIMIT, WATER_LIMIT, FLOW_LIMIT, LV_LIMIT, GATE_LIMIT, WATER_C, FLOW_C, LV_C, GATE_C, IMG_C, COM_TYPE,
+          WATER_CORRECT, BRANCH_ID, DATA_TIMESPAN
+        from tb_b_rtu
+        where stcd = #{stcd}
+    </select>
+
+    <select id="getXZQH" resultType="java.util.LinkedHashMap">
+        select id, village, jiedao, xzq, pid, lv
+        from xzqh
+        where id=#{id}
+    </select>
+
+    <select id="listXZQH" resultType="XZQH">
+        select id, village, jiedao, xzq, pid, lv
+        from xzqh
+        where 1=1
+        <if test="name != null and name != ''">
+            and village like CONCAT(CONCAT('%', TRIM(#{name})),'%')
+        </if>
+        <if test="name != null and name != ''">
+            and jiedao like CONCAT(CONCAT('%', TRIM(#{name})),'%')
+        </if>
+        <if test="name != null and name != ''">
+            and xzq like CONCAT(CONCAT('%', TRIM(#{name})),'%')
+        </if>
+        <if test="xzq != null and xzq != ''">
+            and xzq = #{xzq}
+        </if>
+        <if test="lvs != null">
+            <foreach collection="lvs" item="lv" open=" and (" close=")" separator="or">
+                lv = #{lv}
+            </foreach>
+        </if>
+        order by lv
+    </select>
+
+    <!-- 获取巡查成果列表 -->
+    <select id="listInspection" resultType="map" parameterType="map">
+        select projectid,mark_pid,mark_perso,to_char(mark_time, 'YYYY-MM-DD HH24:MI:SS') mark_time,desription,report_typ,correct_ty,attr_one,attr_two,attr_three,
+          attr_four,attr_five,road,addr,x,y,layer_name,us_id,team_org_i,team_org_n,direct_org,direct_o_1,supervise_,
+          supervise1,parent_org,parent_o_1,check_stat,check_pers,check_pe_1,to_char(check_time, 'YYYY-MM-DD HH24:MI:SS') check_time,check_desr,
+          check_type,mark_id,origin_add,origin_roa,orgin_x,orgin_y,origin_att,origin_a_1,
+          origin_a_2,origin_a_3,origin_a_4,user_addr,user_x,user_y,user_id,
+          to_char(update_tim, 'YYYY-MM-DD HH24:MI:SS') update_tim,pcode,child_code,city_villa,psh
+        from PS_REPORTN
+        where correct_ty != '设施不存在'
+        <if test="layerName != null and layerName != ''">
+            and layer_name = #{layerName}
+            <if test="layerName != '排放口' and unitVal != '' and unitVal != null">
+                and attr_four = #{unitVal}
+            </if>
+            <if test="layerName == '排放口' and unitVal != '' and unitVal != null">
+                and attr_three = #{unitVal}
+            </if>
+        </if>
+    </select>
+
+    <select id="getInspection" resultType="java.util.LinkedHashMap">
+        select projectid,mark_pid,mark_perso,to_char(mark_time, 'YYYY-MM-DD HH24:MI:SS') mark_time,desription,report_typ,correct_ty,attr_one,attr_two,attr_three,
+          attr_four,attr_five,road,addr,x,y,layer_name,us_id,team_org_i,team_org_n,direct_org,direct_o_1,supervise_,
+          supervise1,parent_org,parent_o_1,check_stat,check_pers,check_pe_1,to_char(check_time, 'YYYY-MM-DD HH24:MI:SS') check_time,check_desr,
+          check_type,mark_id,origin_add,origin_roa,orgin_x,orgin_y,origin_att,origin_a_1,
+          origin_a_2,origin_a_3,origin_a_4,user_addr,user_x,user_y,user_id,
+          to_char(update_tim, 'YYYY-MM-DD HH24:MI:SS') update_tim,pcode,child_code,city_villa,psh
+        from PS_REPORTN
+        where projectid = #{projectid}
+    </select>
+
+    <!-- 获取井（农污） -->
+    <select id="listWell" resultType="map" parameterType="map">
+        select temp1,to_char(check_time, 'YYYY-MM-DD HH24:MI:SS') check_time,cmb_vill_p,addr,cmb_cov_ar,report_typ,team_org_n,to_char(update_tim, 'YYYY-MM-DD HH24:MI:SS') update_tim,
+          yj_attr_on,us_id,direct_org,current_to,cmb_street,xzq,x,check_stat,jiedao,mark_perso,road,y,cmb_des_wa,fid_nw_rep,collect_ty,check_pe_1,current_vi,yj_comb,
+          cmb_number,cmb_treat_,cmb_stre_1,layer_name,direct_o_1,city_villa,mark_per_1,yj_attr_tw,parent_org,remark,to_char(cmb_run_ti, 'YYYY-MM-DD HH24:MI:SS') cmb_run_ti,
+          name,check_pers,check_type,cmb_name,newcode,desription,yj_attr_th,yj_attr_fi,team_org_i,check_desr,cmb_ma_u_2,cmb_is_dyn,user_id,objectid,parent_o_1,state,coox,
+          cmb_standa,mark_id,pcode,child_code,cmb_vill_1,cmb_ma_uni,fid_xzjx,to_char(mark_time, 'YYYY-MM-DD HH24:MI:SS') mark_time,yj_attr_fo,cooy,current_ar,cmb_ma_u_1
+        from NW_WELL
+        where 1=1
+        <if test="xzq != null and xzq != ''">
+            and district_code = #{xzq}
+        </if>
+    </select>
+
+    <select id="getWell" resultType="java.util.LinkedHashMap">
+        select temp1,to_char(check_time, 'YYYY-MM-DD HH24:MI:SS') check_time,cmb_vill_p,addr,cmb_cov_ar,report_typ,team_org_n,to_char(update_tim, 'YYYY-MM-DD HH24:MI:SS') update_tim,
+          yj_attr_on,us_id,direct_org,current_to,cmb_street,xzq,x,check_stat,jiedao,mark_perso,road,y,cmb_des_wa,fid_nw_rep,collect_ty,check_pe_1,current_vi,yj_comb,
+          cmb_number,cmb_treat_,cmb_stre_1,layer_name,direct_o_1,city_villa,mark_per_1,yj_attr_tw,parent_org,remark,to_char(cmb_run_ti, 'YYYY-MM-DD HH24:MI:SS') cmb_run_ti,
+          name,check_pers,check_type,cmb_name,newcode,desription,yj_attr_th,yj_attr_fi,team_org_i,check_desr,cmb_ma_u_2,cmb_is_dyn,user_id,objectid,parent_o_1,state,coox,
+          cmb_standa,mark_id,pcode,child_code,cmb_vill_1,cmb_ma_uni,fid_xzjx,to_char(mark_time, 'YYYY-MM-DD HH24:MI:SS') mark_time,yj_attr_fo,cooy,current_ar,cmb_ma_u_1
+        from NW_WELL
+        where objectid = #{objectid}
+    </select>
+
+    <!-- 获取设施点（农污） -->
+    <select id="listFacility" resultType="map" parameterType="map">
+        select temp1,to_char(check_time, 'YYYY-MM-DD HH24:MI:SS') check_time,cmb_vill_p,addr,cmb_cov_ar,report_typ,team_org_n,to_char(update_tim, 'YYYY-MM-DD HH24:MI:SS') update_tim,
+          yj_attr_on,us_id,direct_org,current_to,cmb_street,xzq,x,check_stat,jiedao,mark_perso,road,y,cmb_des_wa,fid_nw_rep,collect_ty,check_pe_1,current_vi,yj_comb,
+          cmb_number,cmb_treat_,cmb_stre_1,layer_name,direct_o_1,city_villa,mark_per_1,yj_attr_tw,parent_org,remark,to_char(cmb_run_ti, 'YYYY-MM-DD HH24:MI:SS') cmb_run_ti,
+          name,check_pers,check_type,cmb_name,newcode,desription,yj_attr_th,yj_attr_fi,team_org_i,check_desr,cmb_ma_u_2,cmb_is_dyn,user_id,objectid,parent_o_1,state,coox,
+          cmb_standa,mark_id,pcode,child_code,cmb_vill_1,cmb_ma_uni,fid_xzjx,to_char(mark_time, 'YYYY-MM-DD HH24:MI:SS') mark_time,yj_attr_fo,cooy,current_ar,cmb_ma_u_1
+        from NW_FACILITIESPOINT
+        where 1=1
+        <if test="xzq != null and xzq != ''">
+            and district_code = #{xzq}
+        </if>
+    </select>
+
+    <select id="getFacility" resultType="java.util.LinkedHashMap">
+        select temp1,to_char(check_time, 'YYYY-MM-DD HH24:MI:SS') check_time,cmb_vill_p,addr,cmb_cov_ar,report_typ,team_org_n,to_char(update_tim, 'YYYY-MM-DD HH24:MI:SS') update_tim,
+          yj_attr_on,us_id,direct_org,current_to,cmb_street,xzq,x,check_stat,jiedao,mark_perso,road,y,cmb_des_wa,fid_nw_rep,collect_ty,check_pe_1,current_vi,yj_comb,
+          cmb_number,cmb_treat_,cmb_stre_1,layer_name,direct_o_1,city_villa,mark_per_1,yj_attr_tw,parent_org,remark,to_char(cmb_run_ti, 'YYYY-MM-DD HH24:MI:SS') cmb_run_ti,
+          name,check_pers,check_type,cmb_name,newcode,desription,yj_attr_th,yj_attr_fi,team_org_i,check_desr,cmb_ma_u_2,cmb_is_dyn,user_id,objectid,parent_o_1,state,coox,
+          cmb_standa,mark_id,pcode,child_code,cmb_vill_1,cmb_ma_uni,fid_xzjx,to_char(mark_time, 'YYYY-MM-DD HH24:MI:SS') mark_time,yj_attr_fo,cooy,current_ar,cmb_ma_u_1
+        from NW_FACILITIESPOINT
+        where objectid = #{objectid}
+    </select>
+
+    <select id="listXwater" resultType="Xwater">
+        select a.id, a.nickname, a.district, a.streets, a.position, a.coox x, a.cooy y, to_char(b.tm, 'yyyy-MM-dd hh24:mi:ss') tm, b.ph, b.yl, b.ntu, b.p, b.t
+        from DEV_WATER a left outer join CO_DATAS b on a.id = b.did
+        where b.tm >= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss') and b.tm &lt; to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+        and b.tm = (
+            select max(c.tm)
+            from CO_DATAS c
+            where c.tm >= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss') and c.tm &lt; to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+            and c.did = a.id
+        )
+        <if test="stcdnm != null and stcdnm != ''">
+            and a.nickname like CONCAT(CONCAT('%', ${stcdnm}),'%')
+        </if>
+    </select>
+
+    <select id="listDevWater" resultType="map" parameterType="map">
+        <!--select a.id, a.nickname, a.district, a.streets, a.position, a.coox x, a.cooy y from DEV_WATER a where 1=1-->
+        select a.* from DEV_WATER a where 1=1
+        <if test="nickname != null and nickname != ''">
+            and (nickname like CONCAT(CONCAT('%', TRIM(#{nickname})),'%') or id like CONCAT(CONCAT('%', TRIM(#{nickname})),'%'))
+        </if>
+        <if test="xzq != null and xzq != ''">
+            and district=#{xzq}
+        </if>
+    </select>
+
+    <select id="listToxicWater" resultType="map" parameterType="map">
+        <!--select a.* from POISONOUS_GASES_DEV a where 1=1-->
+        select a.devid,a.status,a.sno,a.sname,a.place,a.lngtude,a.latude,a.coox,a.cooy,b.stcd,b.stnm,b.stlc,b.addv,b.mttp,b.mtpm,b.sspro
+        from POISONOUS_GASES_DEV a left outer join GS_WQMS_BINF b on a.sname = b.stnm where 1=1
+        <if test="stnm != null and stnm != ''">
+            and (a.sname like CONCAT(CONCAT('%', TRIM(#{stnm})),'%') or a.devid like CONCAT(CONCAT('%', TRIM(#{stnm})),'%') )
+        </if>
+        <if test="xzq != null and xzq != ''">
+            and addv=#{xzq}
+        </if>
+    </select>
+
+
+    <select id="listXgas" resultType="Xgas">
+        select a.devid, a.sno, a.sname, a.place, a.coox x, a.cooy y, to_char(b.time, 'yyyy-MM-dd hh24:mi:ss') tm, b.val_o2 o2, b.val_co co, b.val_h2s h2s, b.val_nh3 nh3, b.val_ch4 ch4, b.val_bat bat, b.val_door door, b.valtype
+        from POISONOUS_GASES_DEV a left join POISONOUS_GASES b on a.devid = b.devid
+        where b.time >= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss') and b.time &lt; to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+          and b.time = (
+            select max(c.time)
+            from POISONOUS_GASES c
+            where c.time >= to_date(#{sdate}, 'yyyy-MM-dd hh24:mi:ss') and c.time &lt; to_date(#{date}, 'yyyy-MM-dd hh24:mi:ss')
+              and c.devid = a.devid
+          )
+        <if test="stcdnm != null and stcdnm != ''">
+            and (a.devid = ${stcdnm} or b.sname like CONCAT(CONCAT('%', ${stcdnm}),'%'))
+        </if>
+    </select>
+
+    <select id="getXwaterDevInfo" resultType="map">
+        select id, nickname, district, streets, position, sspro, mttp, mtpm
+        from dev_water where id = #{id}
+    </select>
+
+    <select id="getXgasDevInfo" resultType="map">
+        select devid, status, sno, sname, place, lngtude, latude,coox, cooy
+        from POISONOUS_GASES_DEV where DEVID = #{devid}
+    </select>
+</mapper>

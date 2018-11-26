@@ -1,0 +1,352 @@
+{
+  "success": true,
+  "content": {
+    "topic": [
+
+      {
+        "id": "topic-12",
+        "text": "气象信息",
+        "title": "气象信息",
+        "subtopic": [
+          {
+            "id": "topic-12-1",
+            "text": "气象预报",
+            "title": "气象预报",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/weather/weather",
+            "viewOpenType": 1,
+            "enabled": true
+          },
+          {
+            "id": "topic-12-2",
+            "text": "卫星云图",
+            "title": "卫星云图",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/cloudchart/cloudchart",
+            "viewOpenType": 1,
+            "enabled": true
+          },
+          {
+            "id": "topic-12-3",
+            "text": "雷达图",
+            "title": "雷达图",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/weatherradar/weatherradar",
+            "viewOpenType": 1,
+            "enabled": true
+          },
+          {
+            "id": "topic-12-4",
+            "text": "台风路径",
+            "title": "台风路径",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/typhoontrack/typhoontrack",
+            "viewOpenType": 1,
+            "enabled": true
+          }
+        ]
+      },
+
+      {
+        "id": "topic-14",
+        "text": "水质信息",
+        "title": "水质信息",
+        "subtopic": [
+          {
+            "id": "topic-14-1",
+            "text": "污水处理厂进出水口",
+            "title": "污水处理厂进出水口",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/wastewaterplant/wastewaterplant",
+            "viewOpenType": 0,
+            "enabled": true,
+            "dirLayerId": "",
+            "serviceUrl": "http://10.194.170.71/proxy/bf8517c0dcefa0ef/4dfa4360488bfc42",
+            "layerTable": [0],
+            "annoFieldCN": "测站名称"
+          },
+          {
+            "id": "topic-14-2",
+            "text": "黑臭水体水质",
+            "title": "黑臭水体水质(在线监测)",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/blacksmellywater/blacksmellywater",
+            "viewOpenType": 0,
+            "enabled": true
+          },
+          {
+            "id": "topic-14-3",
+            "text": "水质公示(环保局)",
+            "title": "水质公示(环保局)",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/huanbao/huanbaoList",
+            "viewOpenType": 0,
+            "enabled": true
+          },
+          {
+            "id": "topic-14-4",
+            "text": "供水管网水质",
+            "title": "供水管网水质",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/xwater/xwater",
+            "viewOpenType": 0,
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "topic-15",
+        "text": "雨情信息",
+        "title": "雨情信息",
+        "subtopic": [
+          {
+            "id": "topic-15-1",
+            "text": "全市雨量",
+            "title": "全市雨量",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/rainFallStation/rainFallStation",
+            "viewOpenType": 0,
+            "enabled": true,
+            "dirLayerId": "fb00263b-d1f7-4a3e-b4a2-597577ef960b",
+            "serviceUrl": "http://10.194.170.71/proxy/c38365cfc289cc5d/4dfa4360488bfc42",
+            "layerTable": [1,3,5,7],
+            "annoFieldCN": "测站名称"
+          }
+        ]
+      },
+      {
+        "id": "topic-16",
+        "text": "水情信息",
+        "title": "水情信息",
+        "subtopic": [
+          {
+            "id": "topic-16-1",
+            "text": "全市水情",
+            "title": "全市水情",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/telemetryStation/realtimeWater",
+            "viewOpenType": 0,
+            "enabled": true,
+            "dirLayerId": "b7be21e3-37d2-4351-828b-58a3b6ec9086",
+            "serviceUrl": "http://10.194.170.71/proxy/ada7920623938623/4dfa4360488bfc42",
+            "layerTable": [1,3,5,7],
+            "annoFieldCN": "测站名称"
+          },
+          {
+            "id": "topic-16-3",
+            "text": "河道水情",
+            "title": "河道水情",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/river/river",
+            "viewOpenType": 0,
+            "enabled": true,
+            "dirLayerId": "675957ce-b0f0-41fb-a117-dd8a107bf17a",
+            "serviceUrl": "http://10.194.170.71/proxy/823ea99a3d96e2cf/4dfa4360488bfc42",
+            "layerTable": 0,
+            "annoFieldCN": "河流名称"
+          },
+          {
+            "id": "topic-16-4",
+            "text": "水库水情",
+            "title": "水库水情",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/reservoir/reservoir",
+            "viewOpenType": 0,
+            "enabled": true,
+            "dirLayerId": "a74d4db4-b501-46b9-865e-cd9c8f06d737",
+            "serviceUrl": "http://10.194.170.71/proxy/8fe90da1144c32e5/4dfa4360488bfc42",
+            "layerTable": [1, 3, 5, 7],
+            "annoFieldCN": "测站名称"
+          },
+          {
+            "id": "topic-16-5",
+            "text": "拦河坝水情",
+            "title": "拦河坝水情",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/weir/weir",
+            "viewOpenType": 0,
+            "enabled": true
+          },
+          {
+            "id": "topic-16-6",
+            "text": "堰闸水情",
+            "title": "堰闸水情",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/wasstation/wasstation",
+            "viewOpenType": 0,
+            "enabled": true,
+            "dirLayerId": "d436ae38-eb56-4a61-8360-81d99666d8f5",
+            "serviceUrl": "http://10.194.170.71/proxy/c07807bc5e47b9a2/4dfa4360488bfc42",
+            "layerTable": [1,3,5,7],
+            "annoFieldCN": "测站名称"
+          },
+          {
+            "id": "topic-16-7",
+            "text": "泵站水情",
+            "title": "泵站水情",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/pumpstation/pumpstation",
+            "viewOpenType": 0,
+            "enabled": true
+          },
+          {
+            "id": "topic-16-8",
+            "text": "管网水情",
+            "title": "管网水情",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/drainagenetwork/drainagenetwork",
+            "viewOpenType": 0,
+            "enabled": true
+          },
+          {
+            "id": "topic-16-9",
+            "text": "中型灌区水情",
+            "title": "中型灌区水情",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/irrigate/irrigate",
+            "viewOpenType": 0,
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "topic-17",
+        "text": "工情信息",
+        "title": "工情信息",
+        "subtopic": [
+          {
+            "id": "topic-17-2",
+            "text": "闸站运行",
+            "title": "闸泵监测",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "",
+            "viewOpenType": 0,
+            "enabled": false
+          },
+          {
+            "id": "topic-17-3",
+            "text": "泵站运行",
+            "title": "泵站运行",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "",
+            "viewOpenType": 0,
+            "enabled": false
+          }
+        ]
+      },
+      {
+        "id": "topic-18",
+        "text": "实时灾情",
+        "title": "实时灾情",
+        "subtopic": [
+          {
+            "id": "topic-18-1",
+            "text": "积水监测",
+            "title": "积水监测",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/floodPoint/floodPoint",
+            "viewOpenType": 0,
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "topic-19",
+        "text": "视频监控",
+        "title": "视频监控",
+        "subtopic": [
+          {
+            "id": "topic-19-1",
+            "text": "城市管理智能化视频云平台",
+            "title": "城市管理智能化视频云平台",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/video/video",
+            "viewOpenType": 0,
+            "enabled": true,
+            "dirLayerId": "27c08142-58b1-4d05-928a-be9e26ea750d",
+            "serviceUrl": "http://10.194.170.78/proxy/df798fc82473e5ee/4dfa4360488bfc42",
+            "layerTable": "0"
+          }
+        ]
+      },
+      {
+        "id": "topic-20",
+        "text": "水质信息(公开)",
+        "title": "水质信息",
+        "subtopic": [
+          {
+            "id": "topic-20-1",
+            "text": "水质公示(环保局)",
+            "title": "水质公示(环保局)",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/huanbao/huanbaoList",
+            "viewOpenType": 0,
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "topic-21",
+        "text": "气体监测",
+        "title": "气体监测",
+        "subtopic": [
+          {
+            "id": "topic-21-1",
+            "text": "有毒气体",
+            "title": "有毒气体",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "viewUrl": "view/app/watermap/topic/xgas/xgas",
+            "viewOpenType": 0,
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,171 @@
+<div class="servdetail-container" data-bind="fileServDetailInitHandler">
+	<div class="res-detail-back">
+		<a href="#" data-bind="click:$root.clickReturnBtn">返回</a>
+	</div>
+	<div class="res-detail-clearfix" style="text-align: left;">
+		<div class="res-detail-img-msg">
+			<img data-bind="attr:{ src : $root.layer().imgUrl() }" height="100%" />
+		</div>
+		<div class="res-detail-nr-msg">
+		  <dl>
+			<dt>
+				<span data-bind="text : $root.layer().name()"></span>
+			</dt>
+			<dd class="res-detail-desc" data-bind="text : $root.layer().remark() || '无描述'"></dd>
+			<dd>
+				<span data-bind="text: '数据来源:&nbsp;' + ($root.layer().source() || '')"></span>
+				<span style="margin-left: 20px;" data-bind="text: '敏感度:&nbsp;' + (layer.authorize === '1' ? '敏感' : '不敏感')"></span>
+				<span style="margin-left: 20px;" data-bind="text: '所在目录:&nbsp;' + ($root.layer().fileMenuPath())"></span>
+			</dd>
+			<dd class="res-detail-user-f">
+				<i></i>
+				<span data-bind="text:'发布人:&nbsp;' + $root.layer().creatorName()"></span>
+				<span style="margin-left: 16px;">
+					<em data-bind="text:'发布时间:&nbsp;' + $root.layer().createTime()"></em>
+				</span>
+				<span style="margin-left: 16px;">
+					<em data-bind="text:'发布人单位:&nbsp;' + $root.layer().creatorUnitName()"></em>
+				</span>
+			</dd>
+		  </dl>
+		</div>
+	</div>
+	<div class="res-detail-msg">
+		<!-- 地图内容、服务信息、申请电子材料、服务预览TAB页签 -->
+		<ul class="res-detail-nav-tab res-detail-clearfix">
+			<li data-bind="css:{ 'res-detail-hover': $root.selectedPanelIdx() == 1 }">
+			  	<a href="#" data-bind="click:function(){ $root.clickPanelBtn(1) }">元数据内容</a>
+		  	</li>
+			<li data-bind="visible: $root._$_param['instanceId'], css:{ 'res-detail-hover': $root.selectedPanelIdx() == 2 }">
+				<a href="#" data-bind="click:function(){ $root.clickPanelBtn(2) }">申请电子材料</a>
+			</li>
+		</ul>
+
+		<div id="fileResContainer" class="res-detail-bmain" data-bind="visible: $root.selectedPanelIdx() == 1 ">
+			<div class="panel-body" style="padding-bottom:0px;">
+				<div class="panel panel-default">
+					<!--<div class="panel-heading">查询条件</div>-->
+					<div class="panel-body">
+						<form id="formSearch" class="form-horizontal">
+							<div class="form_search">
+								<label>年份：</label>
+								<div id="yearItem" class="form_search_item">
+									<a href="#" class="click_a_style" data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										全部
+									</a>
+									<a href="#"  data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										2017年
+									</a>
+									<a href="#"  data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										2018年
+									</a>
+								</div>
+							</div>
+							<div class="form_search">
+								<label>月份：</label>
+								<div id="monthItem" class="form_search_item">
+									<a href="#" class="click_a_style" data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										全部
+									</a>
+									<a href="#"  data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										1月
+									</a>
+									<a href="#"  data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										2月
+									</a>
+									<a href="#" data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										3月
+									</a>
+									<a href="#"  data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										4月
+									</a>
+									<a href="#"  data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										5月
+									</a>
+									<a href="#"  data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										6月
+									</a>
+									<a href="#"  data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										7月
+									</a>
+									<a href="#" data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										8月
+									</a>
+									<a href="#" data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										9月
+									</a>
+									<a href="#" data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										10月
+									</a>
+									<a href="#" data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										11月
+									</a>
+									<a href="#" data-bind="event: { click: function(data, event) { clickSubTab(event); } }">
+										12月
+									</a>
+								</div>
+							</div>
+							<div class="form-group" style="margin-top:10px; padding-left: 16px; text-align: left;">
+								<label>文件名称：</label>
+								<div style="display: inline-block; text-align: left;">
+									<!--<div style="display: inline-block; wtext-align:left;">-->
+										<input type="text" id="search_filename" style="width: 200px;" data-bind="value: $root.search().fileName">
+									<!--</div>-->
+									<!--<div style="text-align:left;">-->
+										<button type="button" style="margin-left:30px;" class="btn-xs btn-primary" data-bind="click: clickSearchBtn">查询</button>
+									<!--</div>-->
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div id="file_toolbar" class="btn-group">
+					<button id="btn_add" type="button" class="btn btn-default" data-bind="click: downloadFiles, visible: downloadEnable">
+						<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>下载
+					</button>
+				</div>
+				<table id="tb_files"></table>
+			</div>
+		</div>
+
+		<!-- 展示申请审批材料信息 -->
+		<div id="d-map-serv-apply-doc-container" class="res-detail-bmain" data-bind="visible: $root.selectedPanelIdx() == 2">
+
+		</div>
+	</div>
+</div>
+
+<style>
+	.form_search{
+		display: flex;
+		overflow: hidden;
+		align-items: center;
+		padding: 2px 0;
+	}
+	.form_search_item{
+		display: flex;
+		align-items: center;
+	}
+	.form_search label{
+		margin: 0;
+		display: flex;
+		align-items: center;
+	}
+	.form_search_item a{
+		font-size: 13px;
+		color: #333;
+		text-decoration: none;
+		padding: 3px 8px;
+		text-align: center;
+		margin-right: 6px;
+	}
+	.form_search_item a:hover{
+		color: #F20D0D;
+	}
+	.form_search_item .click_a_style{
+		color: #F20D0D;
+		background-color: #FEF1F1;
+		border-radius: 4px;
+		font-weight: bold;
+	}
+</style>

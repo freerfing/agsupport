@@ -1,0 +1,401 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0"> 
+<title>综合信息</title>
+	<link id="style" href="css/index.css" rel="stylesheet" type="text/css">
+ 	<link href="../../../lib/3rdparty/jquery-easyui/themes/gray/easyui.css" rel="stylesheet" type="text/css"/>
+	<link href="../../../lib/3rdparty/jquery-easyui/themes/icon.css" rel="stylesheet" type="text/css"/>
+ 	<script src="../../../lib/3rdparty/echarts3.8.4/echarts.common.min.js"></script>
+	<script src="../homePage/jsLib/jquery-1.7.2.min.js"></script>
+	<script src="../../../lib/3rdparty/jquery-easyui/jquery.min.js" type="text/javascript"></script>
+	<script src="../../../lib/3rdparty/jquery-easyui/jquery.easyui.min.js" type="text/javascript"></script>
+ 	<script src="../../../lib/3rdparty/jquery-easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
+	<script src="../../../lib/3rdparty/jquery-easyui/jquery.form.js" type="text/javascript"></script>
+ 	<script type="text/javascript" src="../../../lib/3rdparty/layer/layer.js"></script>
+ 	<script type="text/javascript" src="js/resourceContainer.js"></script>
+ 	<script type="text/javascript" src="js/psgwChart.js"></script>
+ 	<script src="../shuiwu/js/commons.js"></script>
+  <script>
+      function topFullScreen() {
+          if(top.isFullScreen()){
+              top.exitFullScreen();
+          }else{
+              top.fullScreen();
+          }
+      }
+      function changeStyle(str){
+          var cssFile=document.getElementById("style");
+          cssFile.setAttribute("href","css/"+str);
+      }
+
+      function slideTo(){
+          var result=location.href.replace(/#[^#]+/,"");
+          result="#"+top.auGurit.global.pageContainer;
+          location.href=result;
+      }
+  </script>
+</head>
+<body onload="initCharts();slideTo()">
+<div class="main">
+
+    <div id="syq" class="sq clear">
+    <h2 class="title"><i></i>水雨情</h2>
+    <div class="nr-sq bk-sk">
+      <div class="tb-sq">
+      	<div calss="tb-pptn">
+      	</div>
+      	<div class="tb-pptn">
+      		<iframe src="../shuiwu/zhxxSkAndJhMap.html" frameborder="0" style="width:100%;height:100%"></iframe>
+      	</div>
+      	<div calss="tb-pptns">
+      		<center>
+	      		<font color="#0088ca">超警戒或者超汛限<img src="images/cjj.png"style="width: 15px; height: 15px;margin:2px auto auto auto;"/>
+	      		正常值<img src="images/zcsw.png"style="width: 15px; height: 15px;margin:2px auto auto auto;"/></font>
+      		</center>
+      	</div>
+      	<div class="tb-pptn">
+      		<iframe src="../shuiwu/zhxxSqMap.html" frameborder="0" style="width:100%;height:100%"></iframe>
+      	</div>
+      </div>
+      <div class="trt-sq" id ="shuiku">
+        <div class="clear-h">
+          <div class="sksw">
+            <h3>重点水库水位<i class="fresh" onclick="initRsvr();"></i>&nbsp;&nbsp;<a href="#" onclick="moreRsvr();">更多</a></h3>
+            <table class="table01">
+              <thead>
+                <tr>
+                  <th>站名</th>
+                  <th>当前水位（m）</th>
+                  <th>汛限值（m）</th>
+                </tr>
+              </thead>
+              <tbody id="rsvr">
+               	<tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="fy">
+              <p class="arrow_l" onclick="paGing('rsvr','shang');"></p>
+              <p class="arrow_r" onclick="paGing('rsvr','xia');"></p>
+              <p id="rsvrCount"></p>
+            </div>
+          </div>
+          <div class="jhsw">
+            <h3>重点江河水位<i class="fresh" onclick="initRiver();"></i>&nbsp;&nbsp;<a href="#" onclick="moreRiver();">更多</a></h3>
+            <table class="table01">
+              <thead>
+                <tr>
+                  <th>站名</th>
+                  <th>当前水位（m）</th>
+                  <th>警戒值（m）</th>
+                </tr>
+              </thead>
+              <tbody id="river">
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="fy">
+              <p class="arrow_l" onclick="paGing('river','shang');"></p>
+              <p class="arrow_r" onclick="paGing('river','xia');"></p>
+              <p id="riverCount"></p>
+            </div>
+          </div>
+        </div>
+        <div class="jj-top" id="yuqingq">
+          <h3>
+          	  <div style="float:left;width:400px;">
+          	 	 <div style="float:left; width:100px;">城区雨情监测</div>
+          	 	 <div style="float:right;width:300px;" >
+          	 	 	<div style="float:left;width:150px;">
+	          			<div id="searchStratPucture" style="float:left;width:130px;margin:2px auto auto auto;"></div >
+	          			<div style="float:right; width:17px;">至</div >
+          	 	 	</div style="float:right;width:150px;">
+	          		 <div id="searchEndPucture" style="float:left;width:130px;margin:2px auto auto auto;"></div>
+          	 	 </div>
+          	  </div>
+          	  <div style="float:right;width:80px;">
+		          <i class="fresh" onclick="initPptn();"></i>&nbsp;&nbsp;
+		          <a href="#" onclick="moreRian();">更多</a>
+          	  </div> 
+          </h3>
+           <input type="hidden" value="ST_PPTN_R" id="histTbleName">               
+        <table class="table01">
+          <thead>
+            <tr>
+              <th>站名</th>
+              <th>累计雨量（mm）</th>
+              <th>站名</th>
+              <th>累计雨量（mm）</th>
+            </tr>
+          </thead>
+          <tbody id="pptn">
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="fy">
+            <p class="arrow_l" onclick="paGing('pptn','shang');"></p>
+            <p class="arrow_r" onclick="paGing('pptn','xia');"></p>
+          <p id='pptnCount'></p>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="sz" class="sz" id="shuizz">
+    <h2 class="title"><i></i>水质</h2>
+    <div class="bk-sk clear-h">
+         <h3 id="wsckou">污水处理厂进出口水质
+           <i class="fresh" onclick="initStFactory()"></i>
+           &nbsp;&nbsp;<a href="#" onclick="moreStFactory();">更多</a>
+         </h3>
+        <table class="table01" style="height: 200px;">
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>所属行政区</th>
+              <th>监测时间</th>
+              <th>氨氮(mg/L)</th>
+              <th>总磷(mg/L)</th>
+              <th>总氮(mg/L)</th>
+              <th>PH</th>
+              <th>悬浮物(mg/L)</th>
+              <th>水流量(L/s)</th>
+              <th>化学需氧量 (mg/L)</th>
+            </tr>
+          </thead>
+          <tbody id="stFactory">
+          	<tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="fy">
+          <p class="arrow_l" onclick="paGing('stFactory','shang');"></p>
+            <p class="arrow_r" onclick="paGing('stFactory','xia');"></p>
+          <p id='stFactoryCount'></p>
+        </div>
+        <!-- <h3>黑臭水体监测
+           <i class="fresh" onclick="initBlackSmelly()"></i>
+           &nbsp;&nbsp;<a href="#" onclick="moreBlackSmelly();">更多</a>
+         </h3>
+        <table class="table01">
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>氧化还原电位(mv)</th>
+              <th>湿度(%)</th>
+              <th>化学需氧量(mg/L)</th>
+              <th>氨氮(mg/L)</th>
+              <th>溶解氧(mg/L)</th>
+              <th>总氮(mg/L)</th>
+              <th>总磷(mg/L)</th>
+              <th>透明度(m)</th>
+              <th>环境温度(℃)</th>
+              <th>水流量(1/s)</th>
+              <th>水质级别</th>
+              <th>黑臭级别</th>
+              <th>更新时间</th>
+            </tr>
+          </thead>
+          <tbody id="BlackSmelly">
+            <tr>
+              <td>流溪河白云段江村</td>
+              <td>天河区</td>
+              <td>Ⅴ</td>
+              <td>7.02<i class="s-l"></i></td>
+              <td>4.1<i class="s-l"></i></td>
+              <td>41.62<i class="s-l"></i></td>
+              <td>16.20<i class="s-l"></i></td>
+              <td>15.31</td>
+              <td>15.31</td>
+              <td>Ⅴ</td>
+              <td>7.02<i class="s-l"></i></td>
+              <td>4.1<i class="s-l"></i></td>
+              <td>41.62<i class="s-l"></i></td>
+              <td>16.20<i class="s-l"></i></td>
+            </tr>
+            <tr>
+              <td>石井河中游</td>
+              <td>天河区</td>
+              <td>Ⅴ</td>
+              <td>6.42<i class="cp-l"></i></td>
+              <td>4.28<i class="cp-l"></i></td>
+              <td>42.36<i class="s-l"></i></td>
+              <td>15.31<i class="cp-l"></i></td>
+              <td>15.31</td>
+              <td>15.31</td>
+              <td>Ⅴ</td>
+              <td>6.42<i class="cp-l"></i></td>
+              <td>4.28<i class="cp-l"></i></td>
+              <td>42.36<i class="s-l"></i></td>
+              <td>15.31<i class="cp-l"></i></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="fy">
+          <p class="arrow_l" onclick="paGing('BlackSmelly','shang');"></p>
+            <p class="arrow_r" onclick="paGing('BlackSmelly','xia');"></p>
+          <p id='BlackSmellyCount'>总共<b>35</b></p>
+        </div> -->
+    </div>
+  </div>
+  <div id="hzz" class="hzz">
+    <h2 class="title"><i></i>河长制</h2>
+    <div class="bk-sk clear-h"> 
+      <div class="tb-hzz"></div> 
+    </div>
+  </div>
+  <div id="psgw" class="swss">
+    <h2 class="title"><i></i>排水管网</h2>
+    <div class="bk-sk clear-h"> 
+      <div class="tb-swss">
+      	 <div id="xzqtj" style="float:left ; width:60%; height:100%;"></div>
+      	 <div style="float:right; width:40%; height:100%;">
+	      	 <div style="width:100%; height:20%;"><h2 id="zcd" style="margin-top: 10px;left:10px;"></h2></div>
+	      	 <div id="gwzcd" style="width:100%; height:80%;"></div>
+      	 </div>
+      </div> 
+      <p class="sjly">数据来源:广州市水务局</p> 
+    </div>
+  </div>
+</div>
+</body>
+</html>

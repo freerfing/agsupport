@@ -1,0 +1,27 @@
+/* 引入 EASYUI 样式 */
+@import "../../../../../lib/3rdparty/jquery-easyui/themes/gray/easyui.css";
+
+/* EasyUI 样式扩展 */
+.datagrid-header-row,
+.datagrid-row {
+    height: 30px;
+}
+.tree {
+    margin: 5px;
+}
+.tree-node {
+    height: 22px;
+}
+
+/* AgCloud 样式 */
+.agcloud-ui-page {margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px;}
+.agcloud-ui-page .agcloud-ui-title {margin-bottom:6px; padding-bottom:1px; border-bottom:1px dashed #cccccc;  height:33px; line-height:25px;}
+.agcloud-ui-page .agcloud-ui-title .icon-left {margin-left:5px; margin-top:1px; width:32px; height:32px; float:left; background:url(../../../../../lib/3rdparty/jquery-easyui/themes/icons-ex/24/settings.png) no-repeat; }
+.agcloud-ui-page .agcloud-ui-title .icon-right {margin-top:1px; width:32px; height:100%; float:right; background:url(../../../../../lib/3rdparty/jquery-easyui/themes/icons-ex/24/question.png) no-repeat; }
+.agcloud-ui-page .agcloud-ui-title .text {float:left}
+.agcloud-ui-page .agcloud-ui-title .text-main {font-family:微软雅黑,华文细黑; font-size:22px; color:#1b53af;}
+.agcloud-ui-page .agcloud-ui-title .text-tip {}
+
+.detailInfo_table{width: 100%; table-layout: fixed; font-size:12px;margin-top:5px; }
+.detailInfo_table td:nth-child(odd) {width: 15%;word-break:break-all; }  /* 奇数列*/
+.detailInfo_table td:nth-child(even) {word-break:break-all; }  /* 偶数列*/

@@ -1,0 +1,35 @@
+<style>
+	.feedback-container {
+		padding: 20px 10px;
+		background-color: #FBFBFB;
+		height: 520px;
+		overflow-y: auto;
+	}
+
+	.feedback-container div {
+		text-align: left;
+	}
+
+	.fcontent {
+		height: 21px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.feedback-container ul {
+		list-style: none;
+	}
+
+	.feedback-container li {
+		float: left;
+		display: inline;
+		padding: 0;
+		margin-right: 11px;
+	}
+</style>
+<div class="feedback-container" data-bind="feedbackInitHandler">
+	<div id="feedback-content">
+
+	</div>
+</div>

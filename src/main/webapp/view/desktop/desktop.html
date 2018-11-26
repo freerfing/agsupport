@@ -1,0 +1,44 @@
+<div class="desktop-container"  data-bind="initDesktopHandler">
+	
+	<!-- 菜单及用户信息 -->
+	<div class="desktop-head">
+
+		<div class="top clearfloat">
+			<ul class="user clearfloat">
+				<li>
+					<a class="loginuser" data-bind="click:$root.clickUserNameBtn, text:userName"></a>
+				</li>
+				<li>
+					<a class="message" data-bind="click:$root.clickSmsBtn;">短信平台</a>
+				</li>
+				<li style="position: relative;">
+					<a class="feedback" data-bind="click:$root.clickFeedbackBtn;">反馈意见</a>
+					<!-- ko if: $root.unReadCount() > 0 -->
+					<i class="desktop-ci-count" data-bind="text: $root.unReadCount()"></i>
+					<!-- /ko -->
+				</li>
+			    <li>
+			    	<a class="exit" data-bind="click:$root.clickQuitBtn;">退出</a>
+			    </li>
+			</ul>	
+			<ul id="sw-desktop-top-menu" class="nav">
+				<!--ko foreach: menuList-->
+				<li  data-bind="attr:{name:id}, css:{hover:visible}, click:$root.menuClick">
+					<div data-bind="text:name,attr:{title:name};"></div>
+				</li>
+				<!--/ko-->
+			</ul>
+		</div>
+
+
+
+	</div>
+	
+	<!-- 菜单对应容器 -->
+	<!--ko foreach: menuList-->		
+	<div data-bind="visible:visible, attr:{ id: id }" class="work-container"></div>
+	<!--/ko-->
+	<!-- 头顶大灯 -->
+	<!--ko compose: '../view/desktop/fullscreenContainer' --><!--/ko-->
+</div>
+

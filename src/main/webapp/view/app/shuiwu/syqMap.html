@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script type="text/javascript" src="../../../lib/3rdparty/arcgis_js_api/dojoConfig.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../lib/3rdparty/arcgis_js_api/dijit/themes/tundra/tundra.css"/>
+    <link rel="stylesheet" type="text/css" href="../../../lib/3rdparty/arcgis_js_api/esri/css/esri.css"/>
+    <script type="text/javascript" src="../../../lib/3rdparty/arcgis_js_api/init.js"></script>
+
+    <script type="text/javascript" src="../../../lib/3rdparty/jquery/jquery/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="js/yq.js"></script>
+
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .legendItem
+        {
+            width:100%;height:20px;margin-top:12px
+        }
+
+        .legendImg{
+            width:20px;height:20px;float:left;
+        }
+
+        .legendLabel{
+            width:70%;height:20px;font-size:18px;padding-top:0px;padding-left:10px;float:left;color:white
+        }
+
+        .esriLegendServiceLabel{
+            display:none;
+        }
+        .esriLegendLayerLabel{
+            display:none
+        }
+    </style>
+    <script type="text/javascript">
+
+        var gpServerUrl = "http://10.194.170.75/arcgis/rest/services/RainIDW/GPServer/idw";
+//        var gpServerUrl = "http://10.194.170.75/arcgis/rest/services/kriging/GPServer/kriging";
+        var baseLayer = "http://10.194.170.75/arcgis/rest/services/basemap/DP_basemap_White/MapServer";
+        var syqService = "/awater/subject/listStPptnRPage";
+        var arrayUtils;
+        require(["dojo/_base/array","esri/symbols/Font","esri/Color","esri/SpatialReference","esri/dijit/PopupTemplate","esri/symbols/TextSymbol","esri/geometry/Extent","esri/symbols/PictureMarkerSymbol","esri/symbols/SimpleMarkerSymbol","esri/map","esri/dijit/Legend","esri/symbols/SimpleMarkerSymbol", "esri/graphic", "esri/geometry/Point","esri/layers/GraphicsLayer", "esri/layers/ArcGISDynamicMapServiceLayer", "esri/tasks/FeatureSet", "esri/tasks/Geoprocessor"],function(arr){
+            arrayUtils=arr;
+        });
+        require(["dojo/ready"], function (ready) {
+            ready(function () {
+                initMap();
+            });
+        });
+
+        var map, gpService, gpTime,gpLayer,gl;
+        function initMap() {
+            map = new esri.Map("mapDiv", {
+                extent:new esri.geometry.Extent(6450.858411207,-34186.526489258,118525.529388793,118812.237285064,new esri.SpatialReference({wkid:2435})),
+                logo: false, slider: false});
+            var layer = new esri.layers.ArcGISDynamicMapServiceLayer(baseLayer);
+//            layer.setOpacity(0.5);
+            map.addLayer(layer);
+            gpService = new esri.tasks.Geoprocessor(gpServerUrl);
+            map.on("layers-add-result", layerAddHandler);
+            map.on("load", loadHandler);
+        }
+
+        function loadHandler() {
+            gl = new esri.layers.GraphicsLayer();
+            map.addLayer(gl);
+            initSYQ();
+            refreshTask();//一个小时刷新一次降雨分布图
+        }
+
+        function refreshTask(){
+            setInterval(function(){
+                var date=new Date();
+                var minute=date.getMinutes();
+                var second=date.getSeconds();
+                if(minute==0 && second==0) refreshSYQ();
+            },1000);
+        }
+
+        function initSYQ() {
+            var endTime=new Date();
+            var endHour=endTime.getHours();
+            var startTime=getLastHour(8-endHour-24);
+            var data="curPage=1&perPageCount=9999&startTime="+startTime.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+endTime.Format("yyyy-MM-dd hh:mm:ss")+"&xzq=&stsysArr=水文遥测,智能水网,气象局&rainfall=";
+            $.ajax({
+                url: syqService,
+                data:data,
+                type:"POST",
+                dataType: "json",
+                cache:false,
+                success: function (data) {
+                    var params = {
+                        //DP_rainstation:"DP_rainstation"
+                        "雨量站": getRainStationData(data.content.list)
+                      //  Z_value_field: "D_value"
+                    };
+                    gpService.submitJob(params, gpJobComplete, gpJobStatus, gpJobFailed);
+                },
+                error: function () {
+//                    alert("获取降雨格点数据失败");
+                }
+            });
+        }
+
+        function layerAddHandler(evt) {
+            var url=evt.layers[0].layer.url+"/legend?f=json";
+            initLegend(url);
+        }
+
+        function getRainStationData(data) {
+            var symbol= new esri.symbol.SimpleMarkerSymbol();
+            symbol.setColor(new esri.Color([255, 255, 0, 0.5]));
+            symbol.setSize(1);
+            var symbol = new esri.symbol.PictureMarkerSymbol();
+            symbol.setUrl("./icon.png")
+            var features = [];
+            var featureSet = new esri.tasks.FeatureSet();
+//            var maxTime=data[0].time;
+            for (var i = 0; i < data.length; i++) {
+                var rain = new esri.Graphic(new esri.geometry.Point(data[i].x, data[i].y, map.spatialReference), symbol, {"STNM":data[i].stnm,"D_value":data[i].sumDrp});//(data[i].drp+Math.random()*10).toFixed(2)
+                features.push(rain);
+      //          if(data[i].time>maxTime) maxTime=data[i].time;
+            }
+//            gpTime = maxTime;
+            featureSet.features = features;
+            return featureSet;
+        }
+
+        function gpJobComplete(jobinfo) {
+            gpService.getResultImageLayer(jobinfo.jobId, null, null, function (layer) {
+                addJYGDLayer(layer);
+                //addStationLayer(layer.url);添加中心雨量站
+            });
+            var endTime=new Date();
+            var endHour=endTime.getHours();
+            var startTime=getLastHour(8-endHour-24);
+            parent.document.getElementById("rainDesc").innerHTML=startTime.Format("yyyy-MM-dd hh:mm:ss")+"至"+endTime.Format("yyyy-MM-dd hh:mm:ss");
+        }
+
+        function addJYGDLayer(layer){
+            gpLayer=layer;
+            gpLayer.setOpacity(0.7);
+            gpLayer.setVisibleLayers([0]);
+            map.addLayers([gpLayer]);
+        }
+
+        function addStationLayer(url){
+            $.ajax({
+                url:"/awater/interpolate/analyse",
+                data:"url="+url,
+                success:function(data){
+                    var imgSymbol = new esri.symbol.PictureMarkerSymbol();
+                    imgSymbol.setUrl("./img/rain.png");
+                    for(var i=0;i<data.length;i++){
+                        var station=data[i];
+                        var features = [];
+                        var point=new esri.geometry.Point(data[i].x, data[i].y, map.spatialReference);
+//                        var template=new esri.dijit.PopupTemplate();
+//                        template.setTitle("aa");
+//                        template.setContent("State Name: ${STATE_NAME}");
+                        var rain = new esri.Graphic(point, imgSymbol,{});
+                        gl.add(rain);
+                        var textSymbol = new esri.symbol.TextSymbol();
+                        textSymbol.setText(data[i].stnm+"("+data[i]["d_value"]+"mm)");
+                        textSymbol.setOffset(0, 12);
+                        var font  = new esri.symbol.Font();
+                        font.setSize("12px");
+                        font.setWeight("bold");
+                        textSymbol.setFont(font);
+                        textSymbol.setColor(new esri.Color([255,0,0,0.7]));
+                        var text = new esri.Graphic(point, textSymbol);
+                        gl.add(text);
+                    }
+                    },
+                error:function(){}
+            });
+        }
+
+        function gpJobStatus() {
+
+        }
+
+        function gpJobFailed() {
+//            alert('调用降雨格点GP服务失败');
+        }
+
+        function refreshSYQ(){
+            map.removeLayer(gpLayer);
+            parent.document.getElementById("rainDesc").innerHTML="";
+            initSYQ();
+        }
+
+        var legendTemplate='<div class="legendItem"><div class="legendImg"><img src="data:image/png;base64,${imageData}" /></div><div class="legendLabel">${label}</div></div>';
+        function initLegend(url){
+          ///  var url="http://10.194.170.75/arcgis/rest/services/RainIDW/MapServer/jobs/j1e2a0f6d8d164bc688b1e11e42819aea/legend?f=json";
+            $.ajax({
+                url:url,
+                dataType:"jsonp",
+                success:function(data){
+                   var layers=data.layers;
+                    for(var j=0;j<layers.length;j++) {
+                        var legends = layers[j].legend;
+                        if (legends.length > 1) {
+                            for (var i = 0; i < legends.length; i++) {
+                                var imageData = legends[i].imageData;
+                                var label = legends[i].label;
+                                label=parseFloat(label.split("-")[0]).toFixed(1)+"  -  "+parseFloat(label.split("-")[1]).toFixed(1);
+                                var result=legendTemplate.replace("${imageData}",imageData).replace("${label}",label);
+                                $("#legendDiv").append(result);
+                            }
+                        }
+                    }
+                },
+                error:function(){
+
+
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+
+<div id="mapDiv" style="width:100%; height:100%;"></div>
+<div id="legendDiv" style="z-index:99999;width:200px;height:200px;position:absolute;bottom:0px;left:20px">
+
+    <!--
+    <div class="legendItem">
+        <div class="legendImg">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAD1JREFUOI1jYaAyYKGlgf+pYB4jigsfPnxItkny8vIMDAw09vKogaMGjho4aiB2A2FFEJmAEd1ARkpMgwEA0LUEsJVshdkAAAAASUVORK5CYII=" />
+        </div>
+        <div class="legendLabel">0-2.5</div>
+    </div>
+    -->
+
+</div>
+</body>
+</html>

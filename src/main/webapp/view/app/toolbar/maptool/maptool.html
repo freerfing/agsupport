@@ -1,0 +1,28 @@
+<style>
+    #table_print_setting, #printTitle, #printRemark {
+        width: 100%;
+        padding: 2px 10px;
+    }
+
+    #printRemark {
+        text-align: left;
+        resize: none;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<div class="sub_map_tool" data-bind="toolbarbtnInitHandler">
+    <a class="tool_btn"><div style="height: 30px;margin-top: 5px;border-right: 1px solid #d9d9d9;"></div></a>
+    <div id="maptool">
+        <div id="radio_maptool">
+            <div class="maptool-line maptool-icon-fangda-select" id="fangda"><a data-bind="click:$root.blow_up;" class="te"><div class="maptool-icon maptool-icon-fangda"></div><span>放大</span ></a></div>
+            <div class="maptool-line maptool-icon-suoxiao-select" id="suoxiao"><a data-bind="click:$root.shrink;"><div class="maptool-icon maptool-icon-suoxiao"></div><span>缩小</span></a></div>
+            <div class="maptool-line maptool-icon-pingyi-select" id="pingyi"><a data-bind="click:$root.translate;"><div class="maptool-icon maptool-icon-pingyi"></div><span>平移</span></a></div>
+            <div class="maptool-line maptool-icon-ceju-select" id="ceju"><a data-bind="click:$root.ranging;"><div class="maptool-icon maptool-icon-ceju"></div><span>测距</span></a></div>
+            <div class="maptool-line maptool-icon-cemian-select" id="cemian"><a data-bind="click:$root.measuring_surface;"><div class="maptool-icon maptool-icon-cemian"></div><span>测面</span></a></div>
+            <div class="maptool-line maptool-icon-qingchu-select" id="qingchu"><a data-bind="click:$root.clear;"><div class="maptool-icon maptool-icon-qingchu"></div><span>清除</span></a></div>
+            <div class="maptool-line maptool-icon-biaozhu-select" id="biaozhu"><a data-bind="click:$root.label;"><div class="maptool-icon maptool-icon-biaozhu"></div><span>标注</span></a></div>
+            <div class="maptool-line maptool-icon-print-select" id="print"><a data-bind="click:$root.print;"><div class="maptool-icon maptool-icon-print"></div><span>打印</span></a></div>
+        </div>
+    </div>
+</div>

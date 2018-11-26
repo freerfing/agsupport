@@ -1,0 +1,14 @@
+<div class="sub-map-tool" data-bind="infoToolInitHandler">
+    <div style="height: 30px;margin-top: 5px;border-left: 1px solid #d9d9d9;"></div>
+    
+    <div id="infoTool" class="info-tool">
+        <!--ko foreach: menuList-->
+        <div data-bind="click:$root.menuClick, attr:{id:id}," class="tool-line">
+            <span data-bind="text:title, attr:{name:id,title:title,viewUrl:viewUrl,hasMap:hasMap};"></span>                      
+        </div>
+        <div class="bottom-line"></div>
+        <!--/ko-->
+        <!-- <li data-index="0" data-title="720度全景" data-view-url="view/app/watermap/river/generalView/generalView" data-status="close" data-has-map="true">720度全景</li> -->
+    </div>
+    
+</div>

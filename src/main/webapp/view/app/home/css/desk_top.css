@@ -1,0 +1,41 @@
+#deskTop-continer{
+    padding: 20px;
+    
+}
+body{
+    background-image: url(../img/bg.png);
+}
+
+.menu-name{
+    text-align: center;
+    color: #ffffff;
+}
+.img-ct{
+    padding: 5px;
+}
+
+.menu-node img{
+    width: 90px;
+    height: 90px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    -ms-border-radius:5px;
+    -o-border-radius:5px;
+    
+}
+#deskTop-continer ul li:hover{
+    background-color: rgba(255,255,255,0.1);
+    cursor:pointer; 
+    border-radius: 5px;
+}
+.menu-name{
+    width: 100px;
+    height: 45px;
+
+}
+.menu-node{
+    padding: 10px;
+}
+li{
+    list-style-type:none
+}

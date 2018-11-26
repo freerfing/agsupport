@@ -1,0 +1,46 @@
+<!--水质公示环保局面板-->
+<div class="telemetryStation_detailed_list"  data-bind="huanbaoInitHandler">
+    <div class="telemetryStation_detailed_list_con">
+        <div class="telemetryStation_query_c">
+            <h3>查询</h3>
+            <div class="telemetryStation_query_com">
+                <p>
+                    <span class="telemetryStation_query_name">检测年月:</span>
+                    <span><input type="text" data-bind="value: search().date,click:$root.clickDate"/></span>
+                </p>
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchBtn;">查询</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickResetBtn;">重置</button>                          
+                </p>
+            </div>          
+            <h3><span class="icon_title">图例</span></h3>
+            <div class="telemetryStation_query_com_icon">
+                <label class="label_for_dengji"><b class="szleimark1"></b>Ⅰ类</label>
+                <label class="label_for_dengji"><b class="szleimark2"></b>Ⅱ类</label>
+                <label class="label_for_dengji"><b class="szleimark3"></b>Ⅲ类</label>
+                <label class="label_for_dengji"><b class="szleimark4"></b>Ⅳ类</label>
+                <label class="label_for_dengji"><b class="szleimark5"></b>Ⅴ类</label>
+                <label class="label_for_dengji"><b class="szleimark6"></b>劣Ⅴ类</label>
+            </div>
+
+            <div class="telemetryStation_query_com">
+                <p><span class="telemetryStation_query_name">河涌名:</span>
+                <span><input type="text" data-bind="value:search().stnm"></span></p>
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchByNameBtn;">搜索</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickClearSearchBtn;">清除</button>                          
+                </p>
+                <p><span class="telemetryStation_query_name">行政区:</span>
+                <span><select data-bind="value: search().xzq, event:{change:$root.clickXZQBtn}, options: search().xzqList, optionsText : 'text', optionsValue : 'value'">
+                </select></span></p>
+                <p><span class="telemetryStation_query_name">水质类别:</span>
+                <span><select data-bind="value: search().szlb, event:{change:$root.clickXZQBtn}, options: search().szlbList, optionsText : 'text', optionsValue : 'value'">
+                </select></span></p>
+            </div>  
+        </div>
+        <div class="telemetryStation_condition_c">
+            <div id="huanbaoList"  class="table_list"></div>
+            <div id="huanbaoListPager" class="list-datagroup-pager"></div>
+        </div>
+    </div>
+</div>

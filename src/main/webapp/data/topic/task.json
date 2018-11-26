@@ -1,0 +1,156 @@
+{
+	"success":true,
+  	"message":"",
+  	"content": {
+	  "totalItems": 2,
+	  "result": [
+		{
+		  "id": 3402,
+		  "templateCode": "",
+		  "templateName": "",
+		  "masterEntity": "",
+		  "wfDefKey": "",
+		  "wfDefVersion": 1,
+		  "isActive": "1",
+		  "creator": "aosadmin",
+		  "createTime": "2017-06-14 15:56:26",
+		  "updator": "aosadmin",
+		  "updateTime": "2017-06-14 16:35:18",
+		  "templateTypeId": 141
+		},
+		[{
+			"userName":"agcomadmin",
+			"taskList": [{
+				"templateid": 3402,
+				"viewname": "all",
+				"viewdisplayname": "全部",
+				"viewtype": "4",
+				"displayorder": 28,
+				"id": 101,
+				"wfMenu": [{
+					"id": 9247,
+					"elementCode": "button_apply",
+					"elementName": "申请",
+					"elementType": "button",
+					"isActive": "1",
+					"isPublic": "1",
+					"elementInvoke": "apply()",
+					"elementSortNo": 1
+				}
+				]
+			  },{
+				"templateid": 3402,
+				"viewname": "dsq",
+				"viewdisplayname": "待申请",
+				"viewtype": "0",
+				"displayorder": 28,
+				"id": 101,
+				"wfMenu": [{
+					"id": 9247,
+					"elementCode": "button_apply",
+					"elementName": "申请",
+					"elementType": "button",
+					"isActive": "1",
+					"isPublic": "1",
+					"elementInvoke": "apply()",
+					"elementSortNo": 1
+				}
+				]
+			  },
+			  {
+				"templateid": 3402,
+				"viewname": "dsh",
+				"viewdisplayname": "待审核",
+				"viewtype": "1",
+				"displayorder": 29,
+				"id": 102,
+				"wfMenu": [{
+					"id": 9249,
+					"elementCode": "button_audit",
+					"elementName": "审核",
+					"elementType": "button",
+					"isActive": "1",
+					"isPublic": "1",
+					"elementInvoke": "audit()",
+					"elementSortNo": 2
+				}]
+			  },
+			  {
+				"templateid": 3402,
+				"viewname": "ysq",
+				"viewdisplayname": "已申请",
+				"viewtype": "2",
+				"displayorder": 30,
+				"id": 103,
+				"wfMenu": []
+			  },
+			  {
+				"templateid": 3402,
+				"viewname": "ysh",
+				"viewdisplayname": "已审核",
+				"viewtype": "3",
+				"displayorder": 31,
+				"id": 104,
+				"wfMenu": []
+			  }]
+		  },{
+			"userName":"denghr",
+			"taskList": [{
+				"templateid": 3402,
+				"viewname": "dsq",
+				"viewdisplayname": "待申请",
+				"viewtype": "0",
+				"displayorder": 28,
+				"id": 101,
+				"wfMenu": [{
+					"id": 9247,
+					"elementCode": "button_apply",
+					"elementName": "申请",
+					"elementType": "button",
+					"isActive": "1",
+					"isPublic": "1",
+					"elementInvoke": "apply()",
+					"elementSortNo": 1
+				}
+				]
+			  },
+			  {
+				"templateid": 3402,
+				"viewname": "dsh",
+				"viewdisplayname": "待审核",
+				"viewtype": "1",
+				"displayorder": 29,
+				"id": 102,
+				"wfMenu": [{
+					"id": 9249,
+					"elementCode": "button_audit",
+					"elementName": "审核",
+					"elementType": "button",
+					"isActive": "1",
+					"isPublic": "1",
+					"elementInvoke": "audit()",
+					"elementSortNo": 2
+				}]
+			  },
+			  {
+				"templateid": 3402,
+				"viewname": "ysq",
+				"viewdisplayname": "已申请",
+				"viewtype": "2",
+				"displayorder": 30,
+				"id": 103,
+				"wfMenu": []
+			  },
+			  {
+				"templateid": 3402,
+				"viewname": "ysh",
+				"viewdisplayname": "已审核",
+				"viewtype": "3",
+				"displayorder": 31,
+				"id": 104,
+				"wfMenu": []
+			  }]
+		  }]
+	  ]
+	}
+}

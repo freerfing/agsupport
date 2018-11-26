@@ -1,0 +1,68 @@
+<style>
+
+</style>
+<div data-bind="feedbackDetailInitHandler">
+	<div>
+		<div>
+			<button class="btn btn-danger btn-sm" data-bind="click: clickReturnBackBtn">返回</button>
+		</div>
+
+		<div style="margin: 10px; padding: 10px; border-bottom: 1px dotted #dadada; overflow:auto; zoom:1; ">
+			<h3 data-bind="text: $root.ftitle"></h3>
+			<div data-bind="text: $root.content"></div>
+			<ul>
+				<!--ko foreach: {data: $root.files, as:'file'}-->
+				<li style="margin-top: 20px;">
+					<img style="width: auto; height: auto; max-width: 100%; max-height: 100%;" data-bind="attr: { src: '/agsupport/download/file/' + file.id }">
+				</li>
+				<!--/ko-->
+			</ul>
+			<div style="clear: both;">
+				<span>发布人：<font data-bind="text: $root.senderName || '--'"></font></span>
+				<span style="margin-left: 15px;">部门：<font data-bind="text: $root.orgName || '--'"></font></span>
+				<span style="margin-left: 15px;">职务：<font data-bind="text: $root.identitynum || '--'"></font></span>
+				<span style="margin-left: 15px;">手机号码：<font data-bind="text: $root.mobile || '--'"></font></span>
+				<span style="margin-left: 15px;">分机号码：<font data-bind="text: $root.fax || '--'"></font></span>
+				<span style="margin-left: 15px;">发布时间：<font data-bind="text: $root.createTime"></font></span>
+			</div>
+		</div>
+		<!--ko foreach: {data:$root.feedbacks, as:'feedback'}-->
+		<div style="padding: 10px; border-bottom: 1px dotted #dadada; overflow:auto; zoom:1; ">
+			<div class="fcontent" data-bind="text: feedback.content, attr: { title: content }"></div>
+			<ul>
+				<!--ko foreach: {data:feedback.files, as:'file'}-->
+				<li style="margin-top: 20px;">
+					<img style="width: auto; height: auto; max-width: 100%; max-height: 100%;" data-bind="attr: { src: '/agsupport/download/file/' + file.id }">
+				</li>
+				<!--/ko-->
+			</ul>
+			<div style="clear: both;">
+				<span>发布人：<font data-bind="text: feedback.senderName || '--'"></font></span>
+				<span style="margin-left: 15px;">部门：<font data-bind="text: feedback.sender.orgName || '--'"></font></span>
+				<span style="margin-left: 15px;">职务：<font data-bind="text: feedback.sender.identitynum || '--'"></font></span>
+				<span style="margin-left: 15px;">手机号码：<font data-bind="text: feedback.sender.mobile || '--'"></font></span>
+				<span style="margin-left: 15px;">分机号码：<font data-bind="text: feedback.sender.fax || '--'"></font></span>
+				<span style="margin-left: 15px;">发布时间：<font data-bind="text: feedback.createTime"></font></span>
+			</div>
+		</div>
+		<!--/ko-->
+
+		<div style="margin-top: 30px; padding: 10px; ">
+			<h3>发表回复</h3>
+			<textarea name="replyContent" rows="8" maxlength="400" style="width: 100%; resize: none;" data-bind="textInput: $root.replyContent, event: {keyup: contentChange, keydown: contentChange, change: contentChange }" />
+			<p class="content-tips" data-bind="html: $root.contentHtmlTips()"></p>
+
+			<!--ko foreach: {data:$root.fileInfos, as:'fileInfo'}-->
+			<div class="imgContainer" style="position: relative; float: left; margin-right: 16px;" data-bind="event: { mouseover: $root.enableFileRemove, mouseout: $root.disableFileRemove}">
+				<div class="removeImgContainer" style="display: none; position: absolute; width: 100%; text-align: center; background-color: grey; color: #F60; cursor: pointer; bottom: 0; left: 0;" data-bind="click: $root.removeFile">移除图片</div>
+				<img style="width: auto; height: auto; max-width: 150px; max-height: 105px;" data-bind="attr: { src: fileInfo.url }">
+			</div>
+			<!--/ko-->
+			<img src="view/app/homePage/icon/upload_icon.png" title="点击上传图片" id="feedback_detail_upload_btn">
+			<div style="clear: both; text-align: center; margin: 20px 0 10px 20px">
+				<button class="btn btn-primary btn-sm" style="margin-right: 10px;" data-bind="click: $root.saveReplyFeedback">回复</button>
+				<button class="btn btn-default btn-sm" style="margin-right: 10px;" data-bind="click: $root.clickReturnBackBtn">返回</button>
+			</div>
+		</div>
+	</div>
+</div>

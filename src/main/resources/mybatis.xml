@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+		PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties>
+		<property name="_defaultDatabaseId" value="oracle"/><!--使用的数据库类型(目前仅支持oracle,mysql)-->
+	</properties>
+	<settings>
+		<!-- xml配置对于NULL值默认作为字符串来处理 -->
+		<setting name="jdbcTypeForNull" value="VARCHAR"/>
+			<setting name="logImpl" value="LOG4J"/>
+	</settings>
+	<typeAliases>
+		<!-- agsupport5.0jar包所用路径 -->
+		<package name="com.augurit.agcom.domain"/>
+		<!-- 水务一张图的别名配置 -->
+		<package name="com.augurit.asip.watermap.domain"/>
+	</typeAliases>
+
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper">
+			<property name="dialect" value="oracle"/>
+			<property name="offsetAsPageNum" value="true"/>
+			<property name="rowBoundsWithCount" value="true"/>
+			<property name="pageSizeZero" value="true"/>    <!--true表示 pageSize=0时候，返回全部-->
+		</plugin>
+	</plugins>
+
+</configuration>

@@ -1,0 +1,53 @@
+<div class="rainfallstation_detailed_list" data-bind="rainfallcitystationInitHandler">
+    <div id="rainfallstation-flow-chart" class="rainfallstation_detailed_list_con">
+        <div class="rainfallstation_query_c">
+            <h3>查询</h3>
+            <div class="rainfallstation_query_com" style="text-align: left">
+                <p><span>&nbsp;&nbsp;&nbsp;&nbsp;从：</span><span><input class="rainfallstation_app-datepick" type="text" id="startTime"></span>
+                </p>
+
+                <p><span>&nbsp;&nbsp;&nbsp;&nbsp;至：</span><span><input class="rainfallstation_app-datepick" type="text" id="endTime"></span></p>
+                <p><span >站点/站号：</span><span>
+                    <input class="rainfallstation_app-datepick" style="width:100px" id="rainfallstation_stnm" type="text">
+                </span></p>
+                <p class="rainfallstation_btn_c" style="margin-top: -85px;padding-left: 250px;">
+                    <button style="display: block;" class="rainfallstation_btn_02" data-bind="click:$root.clickSearchBtn;">查询</button>
+                    <button style="display: block; margin-top: 5px;" class="rainfallstation_btn_01" data-bind="click:$root.clickResetBtn;">重置</button>
+                    <button style="display: block;margin-top: 5px;width:55px;position: relative;left: -52px" class="rainfallstation_btn_02" data-bind="click:$root.clickSearchByNameBtn;">搜索</button>
+                    <button style="display: block;margin-top: 5px;width:55px;position: relative;top: -30px;left: 6px;" class="rainfallstation_btn_01" data-bind="click:$root.clickClearSearchBtn;">清除</button>
+                </p>
+            </div>
+
+        </div>
+        <div class="rainfallstation_condition_c">
+            <h3 class="rainfall_range_h3">雨量范围（单位：mm）</h3>
+            <div class="rainfallstation_condition_com rainfallstation_rain_com">
+                <form action="" method="get" style="text-align: left" id="myform">
+                </form>
+            </div>
+            <div class="rainfallstation_condition_c">
+            <!--     <h3>雨量信息（单位：mm）</h3>
+                <div class="rainfallstation_condition_com rainfallstation_rain_com">
+                    <form action="" method="get">
+                        <p class="rainfallstation_fw" style="display: none;"><span>范围：<select id="FW" class="rainfallstation_radius">
+                                <option value="" selected></option>
+                                <option value="天河区">天河区</option>
+                                <option value="番禺区">番禺区</option>
+                            </select></span><span>来源：<select id="LY" class="rainfallstation_radius">
+                                <option value="" selected></option>
+                                <option value="全部">全部</option>
+                                <option value="部分">部分</option>
+                            </select></span></p>
+                        <label class="rainfallstation_rain_label"><input name="" type="checkbox" value=""/> 点雨量 </label>
+                        <label class="rainfallstation_rain_label"><input name="" type="checkbox" value=""/> 等值面 </label>
+                        <label class="rainfallstation_rain_label"><input name="" type="checkbox" value=""/> 等值线 </label>
+                    </form>
+                </div> -->
+                <div class="rainfallstation_table_b">
+                    <div id="rainfallcitystationList"></div>
+                </div>
+                <div class="list-datagroup-pager"></div>
+            </div>
+        </div>
+    </div>
+</div>

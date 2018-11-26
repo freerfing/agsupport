@@ -1,0 +1,94 @@
+<div class="tabCon-container" data-bind="tabConAuditHandler">
+
+    <div class="row">
+        <div class="res_content_subtitle">
+            <div class="input-group" style="float:left;">
+                <input type="text" class="form-control" placeholder="申请流水号" data-bind="value: $root.applySerialNoSearch" style="margin-top:3px; margin-right: 30px; width:245px;" maxlength="50">
+                <input type="text" class="form-control" placeholder="申请人" data-bind="value: $root.applyUserNameSearch" style="margin-top:3px; margin-right: 30px; width:245px;" maxlength="50">
+                <input type="text" class="form-control" placeholder="服务资源名称" data-bind="value: $root.serviceNameSearch" style="margin-top:3px; width:245px;" maxlength="50">
+                <span>
+	                <button class="btn btn-primary" type="button" data-bind="click:$root.onSearchClick">搜索</button>
+	            </span>
+            </div>
+            <div style="float: right; display:inline-block;">
+                <div class="btn-group">
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span data-bind="text: $root.selectedStatusType().name()">全部</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" style="min-width: 100px;">
+                        <!--ko foreach: {data:$root.statusTypeItems, as:'statusTypeItem'}-->
+                        <li>
+                            <a href="#" data-bind="click: function() { $root.clickStatusType($index, statusTypeItem); }">
+                                <font data-bind="text: statusTypeItem"></font>
+                                <span style="color: red;" data-bind="if: $root.selectedStatusType().value() === $index">&radic;</span>
+                            </a>
+                        </li>
+                        <!--/ko-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; min-height: 400px;">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="12%">申请流水号</th>
+                    <th width="8%">申请人</th>
+                    <th width="12%">申请单位</th>
+                    <th width="14%">申请时间</th>
+                    <th width="32%">申请服务名</th>
+                    <th width="8%">审核人</th>
+                    <th width="6%">审核状态</th>
+                    <th width="10%">操作</th>
+                </tr>
+                </thead>
+                <tbody style="text-align: left;" data-bind="foreach: {data:applys, as:'apply'}">
+                <tr>
+                    <td>
+                        <a href="#" data-bind="text: apply.applySerialNo, click: $root.lookApplyDocDetail"></a>
+                    </td>
+                    <td data-bind="text: apply.applyUser"></td>
+                    <td data-bind="text: apply.applyingUser.workUnitName"></td>
+                    <td data-bind="text: apply.createTime"></td>
+                    <td>
+                    <!--ko foreach: {data:apply.layers, as:'layer'}-->
+                    <a href="#" data-bind="text: layer.nameCn, click: function() {$root.lookMapServDetail(apply, layer);}"></a>
+                    <font data-bind="visible: $index() != (apply.layers.length - 1) || (apply.resourcesList && apply.resourcesList.length > 0)">、</font>
+                    <!--/ko-->
+                    <!--ko foreach: {data:apply.resourcesList, as:'resources'}-->
+                    <a href="#" data-bind="text: resources.serviceName, click: function() {$root.lookDataServDetail(apply, resources);}"></a>
+                    <font data-bind="visible: $index() != (apply.resourcesList.length - 1)">、</font>
+                    <!--/ko-->
+                    <!--ko foreach: {data:apply.fileCollections, as:'fileCollection'}-->
+                    <a href="#" data-bind="text: fileCollection.name, click: function() {$root.lookFCDetail(apply, fileCollection);}"></a>
+                    <font data-bind="visible: $index() != (apply.fileCollections.length - 1)">、</font>
+                    <!--/ko-->
+                    </td>
+                    <td data-bind="text: apply.auditUser"></td>
+                    <td>
+                        <font style="color: red;" data-bind="if: apply.curStatus === '0'.toString()">已驳回</font>
+                        <font style="color: green;" data-bind="if: apply.curStatus === '1'.toString()">已通过</font>
+                        <font style="color: #F60;" data-bind="if: apply.curStatus === '4'.toString()">待审核</font>
+                    </td>
+                    <td>
+                        <a href="#" data-bind="if: apply.curStatus === '4'.toString(), click: $root.openAuditPanal">审核</a>
+                        <a href="#" data-bind="if: apply.curStatus === '0'.toString() || apply.curStatus === '1'.toString(), click: $root.lookApplyDocDetail">查看申请材料</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="float: right;">
+            <ul class="pagination">
+                <li><a href="#" data-bind="click:function(){ $root.onPageClick(1); }">首页</a></li>
+                <!--ko foreach: {data:$root.pageBar, as:'pb'}-->
+                <li data-bind="css:{ 'active': pb == $root.pageNum() }"><a href="#" data-bind="click:function(){ $root.onPageClick(pb); }, text:pb"></a></li>
+                <!--/ko-->
+                <li><a href="#" data-bind="click:function(){ $root.onPageClick($root.lastPageNum()); }">最后一页</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

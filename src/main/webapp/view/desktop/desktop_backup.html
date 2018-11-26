@@ -1,0 +1,70 @@
+<div class="desktop-container"  data-bind="initDesktopHandler">
+	<div class="desktop-head">
+		<div style="width:100%;height:25px;position:absolute;top:0px;z-index:99999" id="godlamp">
+			<img src="view/app/resourceContainer/images/blue.png" class="fullScreen" style="cursor: pointer;" onclick="fullScreen()"/>
+		</div>
+		<iframe id="resourceFrame" frameborder="0" style="display:none;width:100%;height:100%;z-index:99999;position: absolute;top:0px;left:0px" src="view/app/resourceContainer/resourceContainer_Dark.html"></iframe>
+		<div class="top clearfloat">
+			<ul class="user clearfloat">
+				<li class="uimg"><a href="#" class="user_pic" data-bind="click:$root.clickUserNameBtn;" style="width: 100px;"><em id="userName"></em></a></li>
+			    <!--<li><a href="#" class="set">设置</a></li>-->
+			    <li><a data-bind="click:$root.clickQuitBtn;" class="exit">退出</a></li>
+			</ul>
+			<ul class="nav" id="sw-desktop-top-menu">
+				<!--ko foreach: menuList-->
+				<li  data-bind="attr:{name:id},click:$root.menuLevelOne, css:{disabled:!enabled}">
+					<div data-bind="text:title,attr:{title:title};"></div>
+				</li>
+				<!--/ko-->
+			</ul>
+		</div>
+	</div>
+	<div class="fakeloader maploader"></div>
+	<div class="map-container">
+		<ul class="querylayerbar"></ul>
+		<ul class="colormap-legend"></ul>
+		<div id="desktop-map" class="desktop-map">
+			<div id="emap-container" class="emap-container">
+				<iframe id="desktop-main-map" class="emap-iframe"></iframe>
+			</div>
+		</div>
+	</div>
+	<div id="home-container" class="home-container" style="overflow:hidden;display:none;z-index:999;">
+	</div>
+	<div id="page-container" class="home-container" style="overflow:hidden;display:none;z-index:99999;">
+		<!-- <a><img src="style/asip/common/css/images/desktop/page.png"/></a> -->
+	</div>
+	<div id="more-page-container" class="more-page-container" style="display:none;z-index:999;">
+	</div>
+	<div id="resource-container" class="resource-container" style="display:none;z-index:999;">
+	</div>
+	<div id="operation-container" class="operation-container" style="display:none;z-index:999;">
+		<!--<iframe src="http://127.0.0.1/agsupport/?top=false" style="width:100%;height:100%;"></iframe>-->
+	</div>
+	<div id="side">
+		<div id="sidebar"><a><img src="style/asip/common/css/images/desktop/list.png" /></a></div>
+		<ul id="mainnav-menu" class="smenu">
+			<!--ko foreach: subMenuList-->
+			<li data-bind="click:$root.clickSubItem,attr:{name:id},css:{disabled:!enabled}">
+				<a>
+					<b  data-bind="css:icon,text:title,attr:{title:title};"></b>
+				</a>
+			</li>
+			<!--/ko-->
+		</ul>
+		<div id="smainPanel" class="smain">
+			<!--ko compose:{model:smainPanel} --><!--/ko-->
+		</div>
+		<!-- 202px -->
+		<div id="widgets_toolbar" class="widgets_toolbar" style="display:none;z-index:999;width: 162px">
+			<ul>
+				<li><a class="tool_btn_curtain" id="tool_curtain_btn" title="卷帘"><div style="height: 30px;margin-top: 5px;border-right: 1px solid #d9d9d9;"></div></a></li>
+				<li class="toolbar_tool_btn_li" id="tool_btn" ></li>
+				<li class="toolbar_layer_btn_li" id="toolbar_layer_btn_li" ></li>
+                <li><a class="tool_btn_identify" id="tool_identify_btn" title="属性查看"></a></li>
+			</ul>
+		</div>
+		<div id="moretopic"></div>
+
+	</div>
+</div>

@@ -1,0 +1,44 @@
+<style>
+	p { line-height: 1.1; text-align: left; }
+	.smsSender-container input { padding: 3px; }
+	.content-tips { text-align: right; font-size: 12px; margin-right: 20%; }
+</style>
+<div class="smsSender-container" data-bind="smsSenderInitHandler">
+	<table style="width: 100%;">
+		<tr>
+			<td width="20%" style="text-align: center;">提&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;示：</td>
+			<td style="text-align: left;">
+				<p>&gt;短信发送可以通过选择系统用户和直接输入手机号码两种方式。</p>
+				<p>&gt;输入多个手机号码时请用英文状态下的","隔开。请尽量减少短信内容的字数。</p>
+				<p>&gt;接收人不能多于200个用户,多于200个用户请分开发送。</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;">接 收 人：</td>
+			<td style="text-align: left;">
+				<input type="text" data-bind="textInput: $root.recieverNames" style="width: 80%;" readonly />
+				<button class="btn btn-primary btn-sm" data-bind="click: $root.chooseRecievers">选择接收人</button>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;">手机号码：</td>
+			<td style="text-align: left;">
+				<input type="text" name="phones" data-bind="textInput: $root.phones" style="width: 80%;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;">短信内容：</td>
+			<td style="text-align: left;">
+				<textarea name="content" rows="8" maxlength="400" style="width: 80%; resize: none;" data-bind="textInput: $root.content, event: {keyup: contentChange, keydown: contentChange, change: contentChange }" />
+				<p class="content-tips" data-bind="html: $root.contentHtmlTips()"></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="text-align: center;">
+				<button class="btn btn-primary btn-sm" style="margin-right: 10px;" data-bind="click: $root.sendContent, disable : $root.hasSended()">发送</button>
+				<button class="btn btn-success btn-sm" style="margin-right: 10px;" data-bind="click: $root.saveContent, disable : $root.hasSended()">保存</button>
+				<button class="btn btn-default btn-sm" style="margin-right: 10px;" data-bind="click: $root.closePanel">返回</button>
+			</td>
+		</tr>
+	</table>
+</div>

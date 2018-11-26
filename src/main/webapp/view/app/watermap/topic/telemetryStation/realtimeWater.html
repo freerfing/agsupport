@@ -1,0 +1,60 @@
+<div class="telemetryStation_detailed_list" data-bind="realtimeWaterInitHandler">
+    
+    <div class="telemetryStation_detailed_list_con">
+        <div class="telemetryStation_query_c">
+            <h3 class="h3_title">查询</h3>
+            <div class="telemetryStation_query_com_sttp">
+                <label class="label_for_sttp"><input name="realtime_stsys" type="checkbox" value="水文遥测" checked="checked" />水文遥测</label>
+                <label class="label_for_sttp"><input name="realtime_stsys" type="checkbox" value="智能水网"  checked="checked"/>智能水网</label>   
+                <!-- <label class="label_for_sttp"><input name="realtime_sttp" type="checkbox" value="RR" checked="checked" />水库</label>
+                <label class="label_for_sttp"><input name="realtime_sttp" type="checkbox" value="NRR"  checked="checked"/>河道</label>      -->                        
+            </div>
+             <div class="telemetryStation_query_com">
+                <p>
+                    <span class="telemetryStation_query_name">时间:</span>
+                    <span><input class="date-input" type="text" data-bind="value: search().date,click:$root.clickDate"/></span>
+                </p>
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchBtn;">查询</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickResetBtn;">重置</button>                          
+                </p>
+            </div>
+            <h3><span class="icon_title">图例</span></h3>
+            <div class="telemetryStation_query_com_icon" >
+                <label><input name="realtime_wptn" type="checkbox" value="4" checked="checked" /><b class="telemetryStation_icon_down"></b>落</label>
+                <label><input name="realtime_wptn" type="checkbox" value="5"  checked="checked"/><b class="telemetryStation_icon_up"></b>涨</label>
+                <label><input name="realtime_wptn" type="checkbox" value="6"  checked="checked"/><b class="telemetryStation_icon_same"></b>平</label>
+                <label><input name="realtime_state_normal" type="checkbox" value="0" checked="checked" /><b class="telemetryStation_icon_blue"></b>正常</label>
+                <label><input name="realtime_state_normal" type="checkbox" value="1" checked="checked" /><b class="telemetryStation_icon_red"></b>超警戒/汛限</label>
+                <label><b class="telemetryStation_icon_gray"></b>无检测值</label>  
+            </div>            
+            
+
+            <!-- 
+            <h3>数据来源</h3>
+            <div class="telemetryStation_query_com_sys">
+                <label class="label_for_sttp"><input name="realtime_stsys" type="checkbox" value="水文遥测" checked="checked" />水文遥测</label>
+                <label class="label_for_sttp"><input name="realtime_stsys" type="checkbox" value="智能水网"  checked="checked"/>智能水网</label>                        
+            </div> -->
+
+            <div class="telemetryStation_query_com">                
+                <p class="input-group"><span class="telemetryStation_query_name">站名/站号:</span>
+                <span><input data-bind="value:search().stnm" type="text"></span></p>
+                
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchByNameBtn;">搜索</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickClearSearchBtn;">清除</button>                          
+                </p>
+                <p><span class="telemetryStation_query_name">行政区:</span>
+                <span><select data-bind="value: search().xzq, event:{change:$root.clickXZQBtn}, options: search().xzqList, optionsText : 'title', optionsValue : 'value'">
+                </select></span></p>
+            </div>
+        </div>
+        <div class="telemetryStation_condition_c">
+            <div id="realtimeWaterList"  class="table_list"></div>
+            <div id="realtimeWaterListPager" class="list-datagroup-pager"></div>
+        </div>
+    </div>
+    
+
+</div>

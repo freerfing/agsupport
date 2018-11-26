@@ -1,0 +1,70 @@
+<!--湖泊面板 -->
+<div class="lakes-container" data-bind="lakesInitHandler" style="height:100%">
+
+
+    <div id="lakes-flow-chart" class="lakes_detailed_list_con">
+            <div class="lakes_query_c">
+            	<h3>查询</h3>
+                <div class="lakes_query_com" style="text-align: left;">
+
+                    <span class="lakes_query_name NormalPanel" data-bind="visible: !IsMax()">
+                        名称 / 编码：
+                        <input type="text" class="InputTextTop" data-bind="textInput: search().lkcdnm, event:{ keypress:function(data, event){ if(event.keyCode == 13){ clickSearchBtn(); }  return true; } }">
+                        &nbsp;
+                        <button class="searchBtn" data-bind="click:$root.clickSearchBtn;">查询</button>
+                        &nbsp;
+                        <button class="resetBtn" data-bind="click:$root.clickResetBtn;">重置</button> 
+
+                    </span>
+
+                    <span class="lakes_query_name NormalPanel" data-bind="visible: !IsMax()">
+                        <div style="margin-top:5px">
+                        所属行政区：
+                            <select class="InputTextTop" data-bind="value: search().xzq, event:{change:$root.clickSearchBtn}, options: search().xzqList, optionsText : 'text', optionsValue : 'value'">
+                            </select>
+                        </div>
+                    </span>
+
+                    <span class="lakes_query_name MaxPanel" data-bind="visible:IsMax()">湖泊编码：
+                        <input type="text" class="InputTextTopMax" data-bind="value: search().lkcd">
+                    </span>
+
+                    <span class="lakes_query_name MaxPanel" data-bind="visible:IsMax()">湖泊名称：
+                        <input type="text" class="InputTextTopMax" data-bind="value: search().lknm">
+                    </span>               
+
+                    <span class="lakes_query_name MaxPanel" data-bind="visible:IsMax()">所属行政区：
+                        <select class="InputTextTopMax" data-bind="value: search().xzq, options: search().xzqList, optionsText : 'text', optionsValue : 'value'">
+                        </select>
+                    </span>
+
+                    <span class="lakes_btn_c MaxPanel" data-bind="visible:IsMax()">
+                        &nbsp;
+                        &nbsp;
+                        <button class="searchBtn" data-bind="click:$root.clickSearchBtn;">查询</button>
+                        &nbsp;
+                        &nbsp;
+                        <button class="resetBtn" data-bind="click:$root.clickResetBtn;">重置</button>
+                        &nbsp;
+                        &nbsp;
+                    </span>
+                </div>
+                <div class="rivers_query_c search_panel" style="margin-top:4px">
+                    <h3>图例</h3>
+                    <div class="rivers_query_com" style="text-align: left;">
+                        <b class="legend-hubo" />湖泊
+                    </div>
+                </div>                
+            </div>
+            <div class="lakes_condition_c">
+
+                <div id="lakesList"></div>
+                <div id="lakesPager" class="list-datagroup-pager"></div>
+
+            </div>
+        </div>
+
+	
+
+</div>
+<!-- 湖泊面板-->

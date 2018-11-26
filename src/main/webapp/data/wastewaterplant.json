@@ -1,0 +1,98 @@
+{
+  "success": true,
+  "message": "分页查询成功",
+  "content": {
+    "pageNum": 1,
+    "pageSize": 10,
+    "size": 8,
+    "startRow": 1,
+    "endRow": 8,
+    "total": 8,
+    "pages": 1,
+    "list": [
+      {
+        "rowId": 1,
+        "siteName": "猎德",
+        "siteType": "Ⅴ",
+        "siteArea": "天河",
+        "x": 48516.373,
+        "y": 28367.150,
+        "legend":""
+      },
+      {
+        "rowId": 2,
+        "siteName": "沥滘",
+        "siteType": "Ⅴ",
+        "siteArea": "海珠区",
+        "x": 42490.351,
+        "y": 21830.886,
+        "legend":""
+      },
+      {
+        "rowId": 3,
+        "siteName": "大坦沙",
+        "siteType": "Ⅴ",
+        "siteArea": "荔湾区",
+        "x": 32897.724,
+        "y": 29591.299,
+        "legend":""
+      },
+      {
+        "rowId": 4,
+        "siteName": "西朗",
+        "siteType": "Ⅴ",
+        "siteArea": "荔湾区",
+        "x": 33677.090,
+        "y": 24271.296,
+        "legend":""
+      },
+      {
+        "rowId": 5,
+        "siteName": "龙归",
+        "siteType": "Ⅴ",
+        "siteArea": "白云区",
+        "x": 39711.086,
+        "y": 46987.763,
+        "legend":""
+      },
+      {
+        "rowId": 6,
+        "siteName": "竹料",
+        "siteType": "Ⅴ",
+        "siteArea": "白云区",
+        "x": 55776.995,
+        "y": 50968.134,
+        "legend":""
+      },
+      {
+        "rowId": 7,
+        "siteName": "石井",
+        "siteType": "Ⅴ",
+        "siteArea": "白云区",
+        "x": 47407.198,
+        "y": 44102.606,
+        "legend":""
+      },
+      {
+        "rowId": 8,
+        "siteName": "京溪",
+        "siteType": "Ⅴ",
+        "siteArea": "白云区",
+        "x": 40935.816,
+        "y": 42111.086,
+        "legend":""
+      }                      
+    ],
+    "firstPage": 1,
+    "nextPage": 1,
+    "lastPage": 1,
+    "isFirstPage": true,
+    "isLastPage": true,
+    "hasPreviousPage": false,
+    "hasNextPage": false,
+    "navigatePages": 8,
+    "navigatepageNums": [
+      1
+    ]
+  }
+}

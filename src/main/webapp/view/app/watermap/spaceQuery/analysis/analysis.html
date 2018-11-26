@@ -1,0 +1,23 @@
+<!-- 统计分析 -->
+<div class="gates-container" data-bind="analysisInitHandler" style="height:100%">
+	<div id="gates-flow-chart" class="gates_detailed_list_con">
+		 <!-- 查询 开始 --
+		 <div class="gates_query_c">
+             <div class="gates_query_com" style="text-align: center;margin-bottom: 20px;margin-top: 10px;">
+                 <span class="gates_btn_c MaxPanel">
+                     <button class="searchBtn" data-bind="click:$root.clickSearchBtn;" style="width: 70px;">开始范围</button>
+                     &nbsp;
+                     &nbsp;
+                     <button class="resetBtn" data-bind="click:$root.clickClearBtn;">清空</button>
+                 </span>
+             </div>              
+         </div>
+		 <!-- 查询 结束 -->
+		
+		<!-- 结果 开始 -->
+		<div class="query_condition_c">
+            <div id="analysisList"></div>
+        </div>
+		<!-- 结果 结束 -->
+	</div>
+</div>

@@ -1,0 +1,230 @@
+<style>
+	#apply-container {
+		background-color: #FBFBFB;
+	}
+
+	#apply-container table {
+		width: 680px;
+		table-layout: fixed;
+		word-wrap:break-word;
+	}
+
+	#apply-container table td {
+		border: 1px solid #dadada;
+		padding: 0;
+	}
+
+	#apply-container p {
+		margin-bottom: 1px;
+		text-align: left;
+	}
+
+	#apply-container input[type="text"] {
+		border: 0;
+		text-align: center;
+		outline: none;
+		width: 100%;
+		height: 100%;
+	}
+
+	#apply-container input[type="text"][name="obtainTypeDesc"] {
+		border-bottom: 1px solid;
+		text-align: left;
+		width: 100px;
+	}
+
+	#apply-container input[type="radio"] {
+		padding: 0;
+		margin: 0;
+	}
+
+	#apply-container textarea {
+		border: 0;
+		text-align: left;
+		outline: none;
+		resize: none;
+		width: 100%;
+		height: 100%;
+	}
+
+	.step {
+		margin-top: 20px;
+	}
+
+	.step .num {
+		position: relative;
+		z-index: 2;
+		background: transparent;
+		width: 54px;
+		height: 30px;
+		text-align: center;
+		display: inline-block;
+	}
+
+	.step .num em {
+		background: #1a97d7;
+		transform: rotate(45deg);
+		-webkit-transform: rotate(45deg);
+		-moz-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		-o-transform: rotate(45deg);
+		border-radius: 5px;
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		z-index: 2;
+	}
+
+	.step .num em, .num i {
+		width: 24px;
+		height: 24px;
+		display: inline-block;
+		left: 15px;
+		top: 2px;
+		position: absolute;
+	}
+
+	.step .num i {
+		z-index: 3;
+		color: #fff;
+		font-style: normal;
+		font-weight: 700;
+		top: 4px;
+	}
+
+	.step .line_bg {
+		height: 3px;
+		background: #1a97d7;
+		display: inline-block;
+		width: 76%;
+		right: -49px;
+		top: 13px;
+		position: absolute;
+		z-index: 1;
+	}
+
+	.step .lbg-txt {
+		position: relative;
+		color: #1a97d7;
+		font-size: 12px;
+	}
+
+</style>
+
+<div id="apply-container" class="servlist-container" data-bind="applyForm2InitHandler">
+	<div style="height: 460px; overflow-y: auto; width: inherit; margin: 10px 5px;">
+		<table>
+		<tbody>
+			<tr>
+				<td colspan="4" style="font-size: 16px;border: 0;"><b>广州水务一体化平台数据使用申请表</b></td>
+			</tr>
+			<tr>
+				<td colspan="4"><b>申请单位基本情况</b></td>
+			</tr>
+			<tr>
+				<td colspan="1">单位全称<span style="color:red">*</span></td>
+				<td colspan="3"><input type="text" name="workUnitName" data-bind="value: $root.workUnitName, disable: $root.isApplySucess" /></td>
+			</tr>
+			<tr>
+				<td colspan="1">单位地址</td>
+				<td colspan="3"><input type="text" name="workUnitAddress" data-bind="value: $root.workUnitAddress, disable: $root.isApplySucess" /></td>
+			</tr>
+			<tr>
+				<td colspan="1">经办人姓名<span style="color:red">*</span></td>
+				<td colspan="1"><input type="text" name="applyUserName" data-bind="value: $root.applyUserName, disable: $root.isApplySucess" /></td>
+				<td colspan="1">经办人手机号码<span style="color:red">*</span></td>
+				<td colspan="1"><input type="text" name="mobile" data-bind="value: $root.mobile, disable: $root.isApplySucess" /></td>
+			</tr>
+			<tr>
+				<td colspan="1">经办人身份证号码<span style="color:red">*</span></td>
+				<td colspan="3"><input type="text" name="selfCert" data-bind="value: $root.selfCert, disable: $root.isApplySucess" /></td>
+			</tr>
+			<tr>
+				<td colspan="4"><b>申请使用“广州水务一体化平台”的数据内容</b></td>
+			</tr>
+			<tr>
+				<td colspan="1">申请数据名称</td>
+				<td colspan="3"><input type="text" name="resNames" data-bind="value: $root.resNames" disabled /></td>
+			</tr>
+			<tr>
+				<td colspan="1">数据类型</td>
+				<td colspan="3">
+					<input type="radio" name="dataType" value="1" data-bind="checked: dataType, disable: $root.isApplySucess">非涉密
+					<span class="space-indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<input type="radio" name="dataType" value="2" data-bind="checked: dataType, disable: $root.isApplySucess">涉密
+				</td>
+			</tr>
+			<tr>
+				<td colspan="1">申请期限</td>
+				<td colspan="3">
+					<select data-bind="options: availableValidityDateOptions, optionsText: 'name', optionsValue: 'value', value: selectedValidityDate"></select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="1">数据用途<span style="color:red">*</span></td>
+				<td colspan="3"><textarea id="applyOpinionContainer" rows="4" data-bind="value: applyOpinion, disable: $root.isApplySucess"></textarea></td>
+			</tr>
+			<tr>
+				<td colspan="1">获取方式</td>
+				<td colspan="3">
+					<input type="radio" name="obtainType" value="0" data-bind="checked: obtainType, disable: $root.isApplySucess">线下拷贝数据
+					<span class="space-indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<input type="radio" name="obtainType" value="1" data-bind="checked: obtainType, disable: $root.isApplySucess">在线接口服务
+					<span class="space-indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<input type="radio" name="obtainType" value="2" data-bind="checked: obtainType, disable: $root.isApplySucess">其他
+					<input type="text" name="obtainTypeDesc" data-bind="value: $root.obtainTypeDesc, disable: $root.isApplySucess">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="1">申请单位承诺</td>
+				<td colspan="3">
+					<p style="text-indent:2em;">一、使用数据需符合国家、省、市、广州市水务一体化平台的保密、政务等相关规定，不危害国家安全和利益；</p>
+					<p style="text-indent:2em;">二、数据存放设施与条件，符合国家、省、市的政务、消防及档案管理的有关规定和要求，并建立完善的数据内部管理制度；</p>
+					<p style="text-indent:2em;">三、需严格规范数据处理单位的使用行为，不擅自复制、转让或者转借数据。</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="1">服务申请流程说明</td>
+				<td colspan="3">
+					<div class="step">
+						<ul>
+							<li class="col-xs-3 on">
+								<span class="num"><em></em><i>1</i></span>
+								<span class="line_bg lbg-l"></span>
+								<p class="lbg-txt">填写申请信息并提交申请</p>
+							</li>
+							<li class="col-xs-3">
+								<span class="num"><em></em><i>2</i></span>
+								<span class="line_bg lbg-l"></span>
+								<p class="lbg-txt">在“我的资源”或者“全部资源”下载“服务申请文档”</p>
+							</li>
+							<li class="col-xs-3">
+								<span class="num"><em></em><i>3</i></span>
+								<span class="line_bg lbg-l"></span>
+								<p class="lbg-txt">打印“服务申请文档”并线下走完审批流程</p>
+							</li>
+							<li class="col-xs-3">
+								<span class="num"><em></em><i>4</i></span>
+								<p class="lbg-txt">上传“服务申请文档”扫描文件并等待审批结果</p>
+							</li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	<div class="row" style="margin-top:10px;">
+		<div class="col-lg-12" data-bind="ifnot: $root.isApplySucess">
+			<button class="btn btn-success" type="button" data-bind="click:$root.clickSubmitBtn;">提交申请</button>
+			&nbsp;&nbsp;
+			<button class="btn btn-primary" type="button" data-bind="click:$root.clickCloseBtn;">&nbsp;关&nbsp;&nbsp;闭&nbsp;</button>
+		</div>
+
+		<div class="col-lg-12" data-bind="if: $root.isApplySucess">
+			<button class="btn btn-success" type="button" data-bind="click:$root.clickExportBtn;">导出服务申请文档</button>
+			&nbsp;&nbsp;
+			<button class="btn btn-primary" type="button" data-bind="click:$root.clickExportCloseBtn;">&nbsp;关&nbsp;&nbsp;闭&nbsp;</button>
+
+		</div>
+	</div>
+</div>

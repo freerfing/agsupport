@@ -1,0 +1,257 @@
+@charset "utf-8";
+/* CSS Document */
+.header{
+	background:url(../images/titleBackgroupGif.gif) no-repeat 0 0;
+	background-color: #234383;
+	height:85px;
+	position: relative;
+	min-width: 1024px;
+}
+.logo{
+    left: 25px;
+    position: absolute;
+    top: 15px;
+    width: 56px;	
+    height: 54px;
+}
+.logoTitle{
+    width: 376px;
+	height: 36px;
+    left: 91px;
+    position: absolute;
+    top: 25px;
+}
+.sub-system{
+	width:800px;
+	height: 85px;
+	position: absolute;
+	right: 400px;
+}
+.sub-system ul li{
+	float: left;
+	margin-left: 30px;
+	text-align:center;
+}
+.sub-system ul li .sanwei{
+	background: url(../images/sanwei.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+}
+.sub-system ul li .sanwei_name{
+	color: #fff;	
+}
+.sub-system ul li:hover .sanwei{
+	background: url(../images/sanwei_hover.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+	cursor: pointer;
+}
+.sub-system ul li:hover .sanwei_name{
+	color: #fff;
+	cursor: pointer;
+
+}
+.sub-system ul li .fangxun{
+	background:url(../images/fangxun.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+}
+.sub-system ul li .fangxun_name{
+	color: #fff;	
+}
+.sub-system ul li:hover .fangxun{
+	background: url(../images/fangxun_hover.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+	cursor: pointer;
+}
+.sub-system ul li:hover .fangxun_name{
+	color: #fff;
+	cursor: pointer;
+
+}
+.sub-system ul li .paishuisheshi{
+	background:url(../images/paishuisheshi-1.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+}
+.sub-system ul li .paishuisheshi_name{
+	color: #fff;	
+}
+.sub-system ul li:hover .paishuisheshi{
+	background: url(../images/paishuisheshi-1.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+	cursor: pointer;
+}
+.sub-system ul li:hover .paishuisheshi_name{
+	color: #fff;
+	cursor: pointer;
+}
+.sub-system ul li .shuizhi{
+	background:url(../images/shuizhi.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+}
+.sub-system ul li .shuizhi_name{
+	color: #fff;	
+}
+.sub-system ul li:hover .shuizhi{
+	background: url(../images/shuizhi_hover.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+	cursor: pointer;
+}
+.sub-system ul li:hover .shuizhi_name{
+	color: #fff;
+	cursor: pointer;
+}
+.sub-system ul li .more{
+	background:url(../images/more.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+}
+.sub-system ul li .more_name{
+	color: #fff;	
+}
+.sub-system ul li:hover .more{
+	background: url(../images/more.png) no-repeat center 5px;
+	height: 63px;
+	display: block;
+	cursor: pointer;
+}
+.sub-system ul li:hover .more_name{
+	color: #fff;
+	cursor: pointer;
+}
+.user_info{
+	width: 250px;
+	height: 85px;
+	line-height: 85px;
+	position: absolute;
+	right: 0;
+	top: 16px;
+}
+.user_info ul li{
+	float:left;
+}
+.user_info span{
+	display: block;
+	
+}
+.user_pic{
+	width: 48px;
+	height: 48px;
+	float: left;
+}
+.user_pic img{
+	border-radius: 50px;
+	border: 1px solid #d9d9d9;
+	box-shadow: 2px 2px 5px #459ee0;
+}
+.user_name{
+	margin-left: 55px;
+	color: #fff;
+	width:80px;
+}
+.user_name p{
+	height: 22px;
+	line-height: 22px;
+}
+.user_info ul li a.skin_btn{
+	background: url(../images/skin.png) no-repeat 0 10px;
+	width: 30px;
+	height: 85px;
+	display:inline-block;
+	margin-left: 25px;
+}
+.user_info ul li a.skin_btn:hover{
+	background: url(../images/skin_hover.png) no-repeat 0 10px;
+}
+.user_info ul li a.exit_btn{
+	background: url(../images/exit.png) no-repeat 0 10px;
+	width: 30px;
+	height: 85px;
+	display: inline-block;
+	margin-left: 10px;
+}
+.user_info ul li a.exit_btn:hover{
+	background: url(../images/exit_hover.png) no-repeat 0 10px;
+}
+
+
+li.more_icon{
+	position: relative;
+}
+.more_syetem{
+	position: absolute;
+    width: 190px;;
+	left: 95px;
+	top: 8px;
+    height: 108px;
+    border: 1px solid #c3e2ff;
+    background-color: #fff;
+	border-radius: 8px;
+	box-shadow:0 3px 5px #ccc; 
+}
+.more_syetem:before{
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 0;
+    left: -10px;
+    top: 20px;
+    border-right: 10px solid #c3e2ff;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+.more_syetem:after{
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 0;
+    left: -8px;
+    top: 22px;
+    border-right: 8px solid #fff;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+.more_syetem ul{
+	padding-top: 5px;
+}
+.more_syetem ul li{
+	width: 168px;
+	height: 32px;
+	line-height: 32px;
+	margin-left: 10px;
+}
+.more_syetem ul li.swgc a{
+	background: url(../images/swgc_icon.png) no-repeat 0 5px;
+	display: inline-block;
+	width: 168px;
+	color: #333;
+	text-indent: 30px;
+}
+.more_syetem ul li.swgc a:hover{
+		color: #279bf6;	
+}
+.more_syetem ul li.hzz a{
+	background: url(../images/hzz_icon.png) no-repeat 0 5px;
+	display: inline-block;
+	width: 168px;
+	color: #333;
+	text-indent: 30px;
+}
+.more_syetem ul li.hzz a:hover{
+		color: #279bf6;	
+}
+.more_syetem ul li.hsjc a{
+	background: url(../images/hsjc_icon.png) no-repeat 0 5px;
+	display: inline-block;
+	width: 168px;
+	color: #333;
+	text-indent: 30px;
+}
+.more_syetem ul li.hsjc a:hover{
+		color: #279bf6;	
+}

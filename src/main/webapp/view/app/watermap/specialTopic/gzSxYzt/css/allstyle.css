@@ -1,0 +1,202 @@
+﻿/*chenyh-begin*/
+.yellow{
+	background:yellow;
+}
+.hand tr:hover
+{
+	cursor:pointer
+}
+.width80pecent{
+	width:80%;
+}
+.width30pecent{
+	width:30%;
+}
+.width20pecent{
+	width:20%;
+}
+.width10pecent{
+	width:10%;
+}
+.fontred{
+	color:red;
+}
+.fontorange{
+	color:"#FF7F24";
+}
+.fontyellow{
+	color:yellow;
+}
+.fontgreen{
+	color:green;
+}
+.inline{
+	display:inline;
+}
+/*管道快速定位开始*/
+#gdSearch{
+	position:absolute;
+	right:10px;
+	top:65px;
+	width:auto;
+	padding:0px 5px;
+ 	border-radius:4px 4px 4px 4px;
+	background:#328AA4;
+	z-index:999
+}
+#gdSearch input{
+	margin:5px 0px;
+	width:125px;
+	heigth:30px;
+}
+#gdSearch button{
+	/*width:40px;*/
+	heigth:25px;
+}
+/*管道快速定位结束*/
+
+/*市政审批开始*/
+.szspform{
+	font-size:18px
+}
+.szspform input{
+	width:200px;
+	height:35px;
+}
+.szspform select{
+	width:120px;
+	height:35px;
+}
+.szsptable tr td:nth-child(2),
+.szsptable tr td:nth-child(4),
+.szsptable tr td:nth-child(5),
+.szsptable tr td:nth-child(6),
+.szsptable tr td:nth-child(7){
+	white-space: nowrap;
+}
+td{
+	text-align:left;
+}
+/*市政审批结束*/
+
+/*管道评估开始*/
+.gdpgtable tr td:nth-child(1),
+.gdpgtable tr td:nth-child(3),
+.gdpgtable tr td:nth-child(5){
+	white-space: nowrap;
+}
+#gdinfoDiv{
+	font-size:20px;
+}
+/*管道评估结束*/
+/*layer开始*/
+body .layeropen .layui-layer-title{
+	background:#328aa4;
+	color:white
+}
+/*layer结束*/
+/*chenyh-end*/
+
+
+div.dlg{
+	padding-left:10px;
+}
+form label,form input{
+	margin:10px 10px 10px 10px;
+}
+form label{
+	font-size:18px;
+}
+.wrapper{
+	padding-top:20px;
+}
+.panel-body{overflow:auto;overflow-x:hidden;}
+.listColor{
+	background:#e5f1f4;
+	font-size:18px;
+	color:#333;
+}
+.listColor li:hover{
+	background:#328aa4;
+}
+.btn-right{
+	float:right;
+	margin:10px 50px;
+}
+.panel-primary{
+	border:solid 1px #328aa4;
+}
+.table{
+	font-size:16px;
+}
+.table>thead>tr>td{
+	padding:16px;
+	font-weight:bold;
+	background:#328aa4 url(tr_back.gif) repeat-x;
+	color:#fff;
+}
+.table>tbody>tr>td{
+	background:#e5f1f4;
+}
+
+#TableTab li{
+	background-color:#fff;
+	border-radius:3px;
+	border:1px solid #c4c4c4;
+	border-bottom-width:0px;
+	margin-right:3px;
+}
+#TableTab li a{
+	margin-right:0px;
+}
+#TableTab li.active{
+	background-color:#0085ca;
+	
+}
+#TableTab li.active a{
+	color:#fff;
+}
+.wrap-left{
+	background:#ccc;
+}
+.panel-left{
+	height:600px;
+}
+.panel-right{
+	height:600px;
+}
+.userInfo-l{
+	width:250px;
+	height:200px;
+	margin:20px;
+	background:#ccc;
+	padding:10px;
+}
+.userInfo-l div,.userInfo-r div,.userInfo-r a{
+	border-radius:5px;
+	padding:10px;
+	margin-bottom:20px;
+}
+.userInfo-title{
+	background:#328aa4;
+	color:#fff;
+}
+.userInfo-body{
+	background:#e5f1f4;
+}
+.userInfo-r{
+	margin:30px auto;
+	width:80%;
+}
+.disInfo-t{
+	height:400px;
+}
+.userInfo-r a{
+	display:block;
+	width:150px;
+	height:40px;
+	margin:0 auto;
+	background:#ccc;
+	text-align:center;
+	color:#333;
+}

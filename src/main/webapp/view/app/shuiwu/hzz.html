@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>河长制</title>
+		<link type="text/css" rel="stylesheet" href="style.css" />
+		
+	</head>
+
+	<body>
+
+		<!--标题-->
+		<div class="title">
+			<img src="img/title_hzz.png" />
+		</div>
+
+		<div class="main">
+
+			<!--左-->
+			<div class="left">
+				<div class="content">
+					<h4>河长制</h4>
+					<div class="area-2-1" style="margin-top: 0;">
+						<div class="clear"></div>
+						<div style="width:100%;height:20%">
+						<h2>2017年问题总量  <span class="zongshu">3</span><span class="zongshu">4</span><span class="zongshu">5</span>  个</h2>
+						<h3>河长总数  <span class="nub-blue">2895个</span></h3>
+						<h3>市级  <span class="nub-blue">13个</span></h3>
+						<h3>区级  <span class="nub-blue">274个</span></h3>
+						<h3>镇村级  <span class="nub-blue">2608个</span></h3>
+						</div>
+						<div id="tousufltj-hzz" style="float: left;width:100%;height:80%;"></div>
+					</div>
+				</div>
+
+				<div class="clear"></div>
+
+				<div class="content-c">
+					<h4>河长履职统计</h4>
+					<div class="area-2-1">
+						<div id="hzlztj" style="float: left;width:100%;height:100%;"></div>
+
+					</div>
+				</div>
+			</div>
+
+			<!--中-->
+			<div class="center">
+				<div class="c-top" style="position: relative">
+					<h1 style="position: absolute;width:100%;height:40px">河长巡河动态</h1>
+					<div style="float: left;position: absolute">
+						<span>河长总数</span><br />
+						<span class="nub-yellow" style="font-size: 40px;">2895</span><span>个</span>
+					</div>
+					<div style="width:100%;height:100%;">
+						<iframe src="./gzmap.html" frameborder="0" style="width:100%;height:100%"></iframe>
+					</div>
+				</div>
+
+				<div class="content">
+					<h4>巡河动态</h4>
+					<div class="c-bottom">
+						<div class="clear"></div>
+						<ul class="xhdt">
+							<li>1、松洲街道越云飞开始巡河<span class="date">12-05 14：10</span></li>
+							<li>2、松洲街道越云飞开始巡河<span class="date">12-05 14：10</span></li>
+							<li>3、松洲街道越云飞开始巡河<span class="date">12-05 14：10</span></li>
+							<li>4、松洲街道越云飞开始巡河<span class="date">12-05 14：10</span></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<!--右-->
+			<div class="right">
+				<div class="content">
+					<h4>公众投诉</h4>
+					<div class="area-2-1" style="margin-top: 0;">
+						<div id="gzts" style="float: left;width:100%;height:100%;"></div>
+					</div>
+				</div>
+
+				<div class="clear"></div>
+
+				<div class="content-c">
+					<h4>公众投诉分区统计</h4>
+					<div class="area-2-1">
+						<div id="gztsfqtj" style="float: left;width:100%;height:100%"></div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+	</body>
+		<script src="js/echarts/jquery.min.js"></script>
+		<script src="js/echarts/echarts.js"></script>
+		<script type="text/javascript" src="js/tousufltj-hzz.js"></script>
+		<!-- 投诉分类统计 柱图 -->
+		<script type="text/javascript" src="js/hzlztj.js"></script>
+		<!-- 河长履职统计 柱图 -->
+		<script type="text/javascript" src="js/gzts.js"></script>
+		<!-- 公众投诉 柱图 -->
+		<script type="text/javascript" src="js/gztsfqtj.js"></script>
+		<!-- 公众投诉分区统计 柱图 -->
+</html>

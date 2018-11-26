@@ -1,0 +1,51 @@
+<div class="side-container"  data-bind="initSideHandler">
+
+	<div id="side">
+		<div id="sidebar" data-bind="click:$root.sidebarClick"><a><img src="style/asip/common/css/images/desktop/list.png" /></a></div>
+		<ul id="mainnav-menu" class="smenu">
+			<!--ko foreach: menuList-->
+			<li data-bind="click:$root.menuClick, attr:{name:id}, css:{hover:visible}, ">
+				<a>
+					<b data-bind="css:icon, text:name, attr:{title:name};"></b>
+				</a>
+			</li>
+			<!--/ko-->
+		</ul>
+		<div id="smainPanel" class="smain">
+
+			<!--ko foreach: menuList-->		
+			<div data-bind="visible:visible, attr:{ id: id }" class="smain-container"></div>
+			<!--/ko-->			
+		</div>
+		<!--放置数据说明一块的容器-->
+		<div id="dataExplain" class="dataExplainBoxContainer">
+
+		</div>
+
+		<div id="tipPanel" class="tipmain" data-bind="visible:tipVisible">
+			<div class="tipmainBg"> </div>	
+			<div class="tipmainTxt">
+				<h4>总体情况</h4>
+				&diams;广州目前列入首批城市黑臭水体监管平台的河涌总共35条，总长度为266.63km，重度污染河涌3条，轻度污染河涌32条。
+				<br />
+				&diams;荔湾区有13条，总长度为15.86km；
+				<br />
+				&diams;花都区有8条，区内5条河涌总长度为31.54km，3条（白坭河、雅瑶河、新街河）与白云区交界，其花都段总长度55.75km；
+				<br />
+				&diams;白云区有7条，区内4条河涌总长度为58.46km，3条（白坭河、雅瑶河、新街河）与花都区交界，其白云段总长度19.46km；
+				<br />
+				&diams;天河区有4条，区内3条河涌总长度为28.16km，1条（乌涌）与黄埔交界，其天河段总长度0.95km；
+				<br />
+				&diams;黄埔共有4条，区内3条河涌总长度为13.6km，1条（乌涌）与天河区交界，其黄埔段总长度22.6km；
+				<br />
+				&diams;海珠区有2条，总长度为9.39km；
+				<br />
+				&diams;增城区有1条，总长度为10.8km。
+			</div>
+
+		</div>
+
+	</div>	
+
+</div>
+

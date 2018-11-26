@@ -1,0 +1,190 @@
+<style>
+	#audit-container {
+		height: 100%;
+		background-color: #FBFBFB;
+	}
+
+	#audit-container table {
+		width: 760px;
+		table-layout: fixed;
+		word-wrap:break-word;
+	}
+
+	#audit-container table td {
+		border: 1px solid #dadada;
+		padding: 0;
+	}
+
+	#audit-container p {
+		margin-bottom: 1px;
+		text-align: left;
+	}
+
+	#audit-container div.signatureWrapper {
+		text-align: right;
+	}
+
+	#audit-container div.signatureWrapper span {
+		padding: 0 20px;
+	}
+
+	#audit-container input[type="text"] {
+		border: 0;
+		text-align: center;
+		outline: none;
+		width: 100%;
+		height: 100%;
+	}
+
+	#audit-container input[type="radio"] {
+		padding: 0;
+		margin: 0;
+	}
+
+	#audit-container textarea {
+		border: 0;
+		text-align: left;
+		outline: none;
+		resize: none;
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+<div id="audit-container" class="servlist-container" data-bind="uploadDocOrApprovalFormInitHandler">
+
+	<div style="height: 460px; overflow-y: auto; width: inherit; margin: 10px 5px;">
+		<table>
+		<tbody>
+		<tr>
+			<td colspan="4" style="font-size: 16px;border: 0;"><b>广州水务一体化平台数据使用申请表</b></td>
+		</tr>
+		<tr>
+			<td colspan="4" style="border: 0; text-align: right;">
+				申请编码：<input type="text" style="width: 160px;" name="applySerialNo" data-bind="value: $root.applySerialNo" disabled />
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4"><b>申请单位基本情况</b></td>
+		</tr>
+		<tr>
+			<td colspan="1">单位全称</td>
+			<td colspan="3"><input type="text" name="workUnitName" data-bind="value: $root.workUnitName" disabled /></td>
+		</tr>
+		<tr>
+			<td colspan="1">单位地址</td>
+			<td colspan="3"><input type="text" name="workUnitAddress" data-bind="value: $root.workUnitAddress" disabled /></td>
+		</tr>
+		<tr>
+			<td colspan="1">经办人姓名</td>
+			<td colspan="1"><input type="text" name="applyUserName" data-bind="value: $root.applyUserName" disabled /></td>
+			<td colspan="1">经办人联系电话</td>
+			<td colspan="1"><input type="text" name="mobile" data-bind="value: $root.mobile" disabled /></td>
+		</tr>
+		<tr>
+			<td colspan="1">经办人身份证号码</td>
+			<td colspan="3"><input type="text" name="selfCert" data-bind="value: $root.selfCert" disabled /></td>
+		</tr>
+		<tr>
+			<td colspan="4"><b>申请使用“广州水务一体化平台”的数据内容</b></td>
+		</tr>
+		<tr>
+			<td colspan="1">申请数据名称</td>
+			<td colspan="3">
+				<!--<input type="text" name="servName" data-bind="value: $root.servName" disabled />-->
+				<!--ko foreach: {data:$root.layers, as:'layer'}-->
+				<a href="#" data-bind="text: layer.nameCn"></a>
+				<font data-bind="visible: $index() != ($root.layers().length - 1)">、</font>
+				<!--/ko-->
+				<!--ko foreach: {data:$root.resourcesList, as:'resources'}-->
+				<a href="#" data-bind="text: resources.serviceName"></a>
+				<font data-bind="visible: $index() != ($root.resourcesList().length - 1)">、</font>
+				<!--/ko-->
+			</td>
+		</tr>
+		<tr>
+			<td colspan="1">数据类型</td>
+			<td colspan="3">
+				<input type="radio" name="dataType" value="1" data-bind="checked: dataType" disabled>非涉密
+				<span class="space-indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<input type="radio" name="dataType" value="2" data-bind="checked: dataType" disabled>涉密
+			</td>
+		</tr>
+		<tr>
+			<td colspan="1">有效期限</td>
+			<td colspan="3">
+				<input type="text" name="validityDateName" data-bind="value: validityDateName" disabled />
+			</td>
+		</tr>
+		<tr>
+			<td colspan="1">数据用途</td>
+			<td colspan="3"><textarea rows="4" data-bind="value: $root.applyOpinion" disabled ></textarea></td>
+		</tr>
+		<tr>
+			<td colspan="1">获取方式</td>
+			<td colspan="3">
+				<input type="radio" name="obtainType" value="0" data-bind="checked: obtainType" disabled>线下拷贝数据
+				<span class="space-indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<input type="radio" name="obtainType" value="1" data-bind="checked: obtainType" disabled>在线接口服务
+				<span class="space-indent">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<input type="radio" name="obtainType" value="2" data-bind="checked: obtainType" disabled>其他
+				<input type="text" name="obtainTypeDesc" style="width: 120px; font-size: 12px; font-family: '微软雅黑'; border-bottom: 1px solid;" data-bind="value: $root.obtainTypeDesc" disabled>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="1">申请单位承诺</td>
+			<td colspan="3">
+				<p style="text-indent:2em;">一、使用数据需符合国家、省、市、广州市水务一体化平台的保密、政务等相关规定，不危害国家安全和利益；</p>
+				<p style="text-indent:2em;">二、数据存放设施与条件，符合国家、省、市的政务、消防及档案管理的有关规定和要求，并建立完善的数据内部管理制度；</p>
+				<p style="text-indent:2em;">三、需严格规范数据处理单位的使用行为，不擅自复制、转让或者转借数据。</p>
+			</td>
+		</tr>
+		<tr data-bind="visible: $root.curStatus() == '4'">
+			<td colspan="1" data-bind="text:$root.approvalName"></td>
+			<td colspan="3">
+				<textarea rows="4" id="uploadDocOrApprovalForm_approvalOpion" data-bind="value: $root.approvalOpinion"  style="background-color: #ffffff;"></textarea>
+				<div class="signatureWrapper">
+					<span>
+						审核状态:&nbsp;<font style="color: red;" data-bind="text: $root.approvalStatusCn()"></font>
+					</span>
+					<span data-bind="text: '审核人:&nbsp;' + $root.approvalUserName()"></span>
+					<span data-bind="text: '审核日期:&nbsp;' + $root.approvalTime()"></span>
+				</div>
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan="1">
+				上传电子申请材料<span style="color: red">*</span>
+				<div data-bind="visible: $root.curStatus() != 4"><a id="approvallist_upload_button" style="color: red;">点此上传材料</a></div>
+			</td>
+			<td colspan="3">
+				<ul data-bind="foreach: {data:fileInfos, as: 'fileInfo'}">
+					<li style="text-align: left;">
+						<span style="padding-left: 10px; max-width: 60%;" data-bind="text: fileInfo.originalFilename"></span>
+						<span style="padding-left: 10px;" data-bind="text: fileInfo.fileSize"></span>
+						<span style="padding-left: 10px;" data-bind="ifnot: $root.curStatus() == 4"><a data-bind="click: $root.removeFile">删除</a></span>
+						<span style="padding-left: 10px;" data-bind="if: $root.curStatus() == 4"><a data-bind="click: $root.dowloadFile">下载</a></span>
+					</li>
+				</ul>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+	</div>
+
+	<div class="row" style="margin-top:10px">
+		<div class="col-lg-12" data-bind="visible: $root.curStatus() == 3">
+			<button type="button" class="btn btn-success" data-bind="click:function(){ $root.clickUploadDocConfirmBtn(); }">&nbsp;提&nbsp;&nbsp;交&nbsp;</button>
+			&nbsp;&nbsp;&nbsp;
+			<button type="button" class="btn btn-danger" data-bind="click: $root.clickCloseBtn;">&nbsp;关&nbsp;&nbsp;闭&nbsp;</button>
+		</div>
+		<div class="col-lg-12" data-bind="visible: $root.curStatus() == 4">
+			<button type="button" class="btn btn-success" data-bind="click:function(){ $root.clickApprovalBtn(1); }">&nbsp;同&nbsp;&nbsp;意&nbsp;</button>
+			&nbsp;&nbsp;&nbsp;
+			<button type="button" class="btn btn-danger" data-bind="click:function(){ $root.clickApprovalBtn(0); }">&nbsp;不同意&nbsp;</button>
+		</div>
+	</div>
+
+
+</div>

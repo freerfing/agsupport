@@ -1,0 +1,19 @@
+<!--水库列表-->
+<div class="tbox" id="mtopic" data-bind="moretopicInitHandler">
+        <div class="morepd10" >
+            <!--ko foreach: :{data:topicList,as:'topicList'}-->
+            <div class="title3 bk_bd" data-bind="attr:{name:id};">
+            <div data-bind="text:title,attr:{title:title};">
+            </div>
+            <!--<div class="more" id="showtopic"></div>-->
+        </div>
+            <div id="mainnav-moretopic" class="nr_sd" data-bind="foreach:{data:topicList.subtopic,as:'subtopic'}">
+                <a href="#" data-bind="click:$root.clickSubMoreTopic,attr:{name:id},css: {'hover':hover};">
+                    <div data-bind="text:title,attr:{title:title};"></div>
+                </a>
+            </div>
+            <!--/ko-->
+
+        </div>
+</div>
+<!--水库列表 END-->

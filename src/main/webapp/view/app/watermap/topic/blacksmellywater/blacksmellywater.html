@@ -1,0 +1,52 @@
+<!--黑臭水体-->
+<div class="telemetryStation_detailed_list"  data-bind="blacksmellywaterInitHandler">
+    <div class="telemetryStation_detailed_list_con">
+        <div class="telemetryStation_query_c">
+            <h3>查询</h3>
+            <div class="telemetryStation_query_com_sttp">
+                <!--ko foreach: search().hcList-->
+                <!-- <input name="blackLevel" type="checkbox" checked="checked" data-bind="click:$root.clickSearchBtn, attr:{id:id,value:value}"/><label class="label_for_blacklevel" data-bind="attr:{for:id},text:text"></label> -->
+                <!--/ko-->
+                <label class="label_for_blacklevel"><input name="blackLevel" type="checkbox" value="3"  checked="checked" />不黑不臭</label>
+                <label class="label_for_blacklevel"><input name="blackLevel" type="checkbox" value="1"  checked="checked"/>轻度黑臭</label> 
+                <label class="label_for_blacklevel"><input name="blackLevel" type="checkbox" value="2"  checked="checked"/>严重黑臭</label>
+                <input style="display: none;" name="blackLevel" type="checkbox" value="0"  checked="checked"/>                          
+            </div>
+
+            <div class="telemetryStation_query_com">
+                <p>
+                    <span class="telemetryStation_query_name">时间:</span>
+                    <span><input class="date-input" type="text" data-bind="value: search().date,click:$root.clickDate"/></span>
+                </p>
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchBtn;">查询</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickResetBtn;">重置</button>                          
+                </p> 
+            </div>
+
+            <h3><span class="icon_title">图例</span></h3>
+            <div class="telemetryStation_query_com_icon">
+                <label class="label_for_shuizhi"><b class="shuizhimark"></b>水质监测点</label>
+            </div>
+
+            <div class="telemetryStation_query_com">
+                <p><span class="telemetryStation_query_name">站名/站号:</span>
+                <span><input type="text" data-bind="value:search().stnm"></span></p>
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchByNameBtn;">搜索</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickClearSearchBtn;">清除</button>                          
+                </p>
+                <p><span class="telemetryStation_query_name">行政区:</span>
+                <span><select data-bind="value: search().xzq, event:{change:$root.clickXZQBtn}, options: search().xzqList, optionsText : 'title', optionsValue : 'value'">
+                </select></span></p>
+            </div>          
+  
+        </div>
+
+        <div class="telemetryStation_condition_c">
+            <div id="blacksmellywaterList" class="table_list"></div>
+            <div id="blacksmellywaterListPager" class="list-datagroup-pager"></div>
+        </div>
+    </div>
+</div>
+

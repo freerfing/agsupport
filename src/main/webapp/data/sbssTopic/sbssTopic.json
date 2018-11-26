@@ -1,0 +1,147 @@
+{
+  "success": true,
+  "content": {
+    "topic": [
+      {
+        "id": "topic-41",
+        "text": "底图信息",
+        "title": "底图信息",
+        "subtopic": [
+          {
+            "id": "topic-41-1",
+            "text": "影像底图",
+            "title": "影像底图",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": true,
+            "dirLayerId": "",
+            "layerTable": "0",
+            "serviceUrl": "http://10.194.170.71/proxy/104c48613a343fbd/4dfa4360488bfc42"
+          }
+        ]
+      },
+      {
+        "id": "topic-42",
+        "text": "基础地理",
+        "title": "基础地理",
+        "subtopic": [
+          {
+            "id": "topic-42-1",
+            "text": "兴趣点",
+            "title": "兴趣点",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": true,
+            "dirLayerId": "",
+            "layerTable": "0",
+            "serviceUrl": "http://10.194.170.71/proxy/4e898c5b253897c5/4dfa4360488bfc42"
+          },   
+           {
+            "id": "topic-42-2",
+            "text": "道路",
+            "title": "道路",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": false,
+            "dirLayerId": "",
+            "layerTable":  "0",
+            "serviceUrl": "http://10.194.170.71/proxy/b62dd31eeef19bdc/4dfa4360488bfc42"
+          },       
+          {
+            "id": "topic-42-3",
+            "text": "门牌",
+            "title": "门牌",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": true,
+            "dirLayerId": "",
+            "layerTable":  "0",
+            "serviceUrl": "http://10.194.170.71/proxy/84829483657bfe86/4dfa4360488bfc42"
+          },
+          {
+            "id": "topic-42-4",
+            "text": "网格",
+            "title": "网格",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": true,
+            "dirLayerId": "",
+            "layerTable": "0",
+            "serviceUrl": "http://10.194.170.71/proxy/267843c4fb82cfdd/4dfa4360488bfc42"
+          },
+          {
+            "id": "topic-42-5",
+            "text": "建筑物编码",
+            "title": "建筑物编码",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": true,
+            "dirLayerId": "",
+            "layerTable": "0",
+            "serviceUrl": "http://10.194.170.71/proxy/7b199d222b905814/4dfa4360488bfc42"
+          },
+          {
+            "id": "topic-42-6",
+            "text": "建筑物实体",
+            "title": "建筑物实体",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": true,
+            "dirLayerId": "",
+            "layerTable":  "0",
+            "serviceUrl": "http://10.194.170.71/proxy/f6485b7a2a91659c/4dfa4360488bfc42"
+          },
+          {
+            "id": "topic-42-7",
+            "text": "广州地名地址（不包含从化增城）",
+            "title": "广州地名地址（不包含从化增城）",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": true,
+            "dirLayerId": "",
+            "layerTable": "0",
+            "serviceUrl": "http://10.194.170.71/proxy/4c45149a9527c380/4dfa4360488bfc42"
+          },
+          {
+            "id": "topic-42-8",
+            "text": "从化增城地名地址",
+            "title": "从化增城地名地址",
+            "viewUrl": "",
+            "subtopic": null,
+            "hasMap": true,
+            "hover": false,
+            "view": "",
+            "enabled": true,
+            "dirLayerId": "",
+            "layerTable": "0",
+            "serviceUrl": "http://10.194.170.71/proxy/18b4c8cc5c95a09d/4dfa4360488bfc42"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+<!--行政区划面板-->
+<div class="telemetryStation_detailed_list"  data-bind="xzqhInitHandler">
+    <div class="telemetryStation_detailed_list_con">
+        <div class="telemetryStation_query_c">
+            <h3>查询</h3>
+            <div class="telemetryStation_query_com_sttp">
+                <label><input name="xzqhType" type="checkbox" value="0" checked data-bind="click: wantXZQH" />市行政区</label>
+                <label><input name="xzqhType" type="checkbox" value="1" checked data-bind="click: wantXZQH" />镇、街道</label>
+                <label><input name="xzqhType" type="checkbox" value="2" checked data-bind="click: wantXZQH" />村委</label>
+            </div>
+
+            <div class="telemetryStation_query_com">
+                <p><span class="telemetryStation_query_name">名称:</span>
+                <span><input type="text" data-bind="value:search().name"></span></p>
+                <p class="telemetryStation_btn_c">
+                    <button class="telemetryStation_btn_02" data-bind="click:$root.clickSearchBtn;">搜索</button>
+                    <button class="telemetryStation_btn_01" data-bind="click:$root.clickClearBtn;">清除</button>
+                </p>
+                <p><span class="telemetryStation_query_name">行政区:</span>
+                <span><select data-bind="value: search().xzq, event:{change:$root.clickXZQBtn}, options: search().xzqList, optionsText : 'title', optionsValue : 'value'">
+                </select></span></p>
+            </div>          
+        </div>
+        <div class="telemetryStation_condition_c">
+            <div id="xzqhList"  class="table_list"></div>
+            <div id="xzqhListPager" class="list-datagroup-pager"></div>
+        </div>
+    </div>
+</div>

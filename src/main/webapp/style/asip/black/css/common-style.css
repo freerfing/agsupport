@@ -1,0 +1,29 @@
+/*------body-----------*/
+.app-body-container-spe{background-color:#313031;}
+/*------panal----------*/
+.app-panal-spe{background-color:#6E6C6B;}
+.app-panal-head-spe{background-color:#313031;}
+.app-panal-background-spe{background-color:#6E6C6B;}
+/*------box------------*/
+.app-box-head-spe{background-color:#313031;}
+.app-box-content-spe{background-color:#6E6C6B;}
+/*------tabs-----------*/
+.app-tabs .app-tabs-item-active-spe{border-bottom:1px solid #6E6C6B;}
+/*------menu-----------*/
+.app-menu-spe{background-color:#6E6C6B;}
+/*------menuX-----------*/
+.app-menuX-spe{background-color:#494646;}
+.app-menuX-first .app-menuX-item-spe:hover{background-color:#0d0c0c;}
+.app-menuX-first .app-menuX-item-subMenu-spe:hover{background-color:#0d0c0c;}
+/*------menuY-----------*/
+.app-menuY-spe{background-color:#494646;}
+.app-menuY .app-menuY-item-spe:hover{background-color:#0d0c0c;}
+/*------multinav-----------*/
+.app-nav-multiY-head-spe{background-color:#494646;}
+/*------commonnav-----------*/
+.app-nav-common .app-nav-common-head-spe{background-color:#6E6C6B;}
+.app-nav-common .app-nav-common-container-spe{background-color:#6E6C6B;}
+.app-nav-common .app-nav-common-click-spe{background-color:#dd7373;}
+/*------popup----------*/
+.app-popup-head-spe{background-color:#6E6C6B;}
+.app-popup-content-container-spe{background-color:#6E6C6B;}

@@ -1,0 +1,554 @@
+/**
+ * 空间查询
+ */
+define(["jquery","layer", "durandal/app", "durandal/composition", "knockout", "common", "http", "panal", "pager", "echarts", "slickGrid", "watertype", "mapUtils", "jqxgrid.selection", "WdatePicker", "bootstrap"],
+	function ($,layer, app, composition, ko, common, http, panal, pager, echarts, Slick, w, mapUtils) {
+		var panalObj;
+		var map = $("#desktop-main-map")[0].contentWindow.map;//地图对象
+		var title;
+		var buffer = {
+			init: function () {
+				var that = this;
+				composition.addBindingHandler("bufferInitHandler", {
+                    init: function (dom) {
+                        panalObj = panal.getPanalByElement(dom);
+                        modal.wkt(panalObj.param.wkt);
+                        that.renderUI();
+                        that.bindUI();
+                    },
+                    update: function () {
+                    }
+                });
+			},
+			renderUI: function () {
+                var that = this;
+                panalObj.addEvent("onMinShow", function (e) {
+                    that.initLayout();
+                });
+                panalObj.addEvent( "onMaxShow", function (e) {
+                    that.initLayout();
+                });
+            },
+            bindUI: function () {
+                var that = this;
+                that.initPage(modal);
+                that.initTableColumns();
+                this.clickSearchBtn(modal.wkt());
+            },
+            initLayout: function () {
+            	var that = this;
+                var jqHeight =  $(".app-panal-content").height() - 100;
+                var columns = panalObj.getSizeState() == "max" ? that._columns : that._normalColumns;
+                $("#bufferList").jqxGrid({
+                    width: '100%',
+                    height: 370,
+                    rowsheight: 25,
+                    altrows: true,
+                    groupsheaderheight: 25,
+                    columnsheight: 25,
+                    columns: columns
+                });
+            },
+            initPage: function (modal) {
+                this._columns = [];
+                this._normalColumns = [];
+            },
+            initTableColumns: function () {
+                var that = this;
+                var normalColumns = [];
+                normalColumns.push({
+                    align:"center",
+                    cellsalign:"center",
+                    cellsrenderer:null,
+                    datafield:"type",
+                    id:"type",
+                    order:1,
+                    text:"类型",
+                    width:"130"
+                });
+                normalColumns.push({
+                    align:"center",
+                    cellsalign:"center",
+                    cellsrenderer:null,
+                    datafield:"slnm",
+                    id:"slnm",
+                    order:1,
+                    text:"名称",
+                    width:"340"
+                });
+                that._normalColumns = normalColumns;
+                that.initLayout();
+            },  
+            clickSearchBtn: function (wkt2) {
+                var that = this;
+                var wkt="";
+                // 清空数据
+            	gridDataSource = {
+                        localdata:[],
+                        datatype: "array"
+                };
+            	var dataAdapter = new $.jqx.dataAdapter(gridDataSource);
+            	$("#bufferList").jqxGrid({
+            		source: dataAdapter
+            	});
+                
+                
+                // 图层数组
+                var lay=new Array();                
+                lay[0]={"title":"河流","name":"RVNM"}; 
+                lay[1]={"title":"湖泊","name":"LKNM"};
+                lay[2]={"title":"水库","name":"RSNM"};
+                lay[3]={"title":"堤防","name":"LVNM"};
+                lay[4]={"title":"水闸","name":"SLNM"};
+                lay[5]={"title":"泵站","name":"IDSTNM"};
+                lay[6]={"title":"雨量站","name":"STNM"};
+                lay[7]={"title":"河道水位站","name":"STNM"};
+                lay[8]={"title":"水库水文站","name":"STNM"};
+                lay[9]={"title":"拦河坝水文站","name":"STNM"};
+                lay[10]={"title":"堰闸水文站","name":"STNM"};
+                lay[11]={"title":"污水管液位监测站","name":"STNM"};
+                lay[12]={"title":"排水泵监测点","name":"STNM"};
+                lay[13]={"title":"河涌水质监测站","name":"MNName"};
+                lay[14]={"title":"污水处理厂进出口水质水量监测站","name":"MNName"};
+                lay[15]={"title":"积水监测点","name":"STNM"};
+                
+                try{     
+                	/*
+	               // 查询范围
+	               map._mapInterface.drawGraph("marker",function(re){
+	            	    // 查询缓冲范围
+		               	var dBuffer = modal.search().hcjl();
+		               	if(dBuffer==""||dBuffer=="0"||!(/^(?!(0[0-9]{0,}$))[0-9]{1,}[.]{0,}[0-9]{0,}$/.test(dBuffer))){
+		               		layer.msg('缓冲距离不能为空且必须是大于0的数字，请重新输入', {time: 3000,icon: 2});
+		               		return ;
+		               	}
+		               	
+		               	var post = 'wkt=' + re + '&dBuffer=' + dBuffer;
+		               	var url = agsupportUrl+'/agsupport/operate/buffer';
+		                $.post(url, post, function (r) {		
+		                	
+		                	wkt=map._mapInterface.wktToGeojson(r);
+		                	*/
+		                	if(wkt2!=""){
+		                		wkt=wkt2;
+		                	}
+                	
+			                // 判断空间范围
+			                if(wkt!=""){
+				                // 稍等 
+				   	            layer.msg('缓冲分析正在执行中，请稍候...', {
+				   	              time: 5000,
+				   	              icon: 1
+				   	            });				   	               	 
+				   	               	 
+				   	             // 河流
+			                     if($("a[name='topic-21-1']").hasClass("hover")){
+			 	                	var la0=lay[0];
+			 	                	var title0=la0.title;
+			 	                	var name0=la0.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title0]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title0]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                        geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name0];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title0,slnm:slnm});                        		
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                     
+			                 	// 湖泊  
+			                     if($("a[name='topic-21-3']").hasClass("hover")){
+			 	                    var la1=lay[1];
+			 	                	var title1=la1.title;
+			 	                	var name1=la1.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title1]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title1]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name1];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title1,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 水库
+			                     if($("a[name='topic-22-1']").hasClass("hover")){
+			 	                    var la2=lay[2];
+			 	                	var title2=la2.title;
+			 	                	var name2=la2.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title2]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title2]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name2];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title2,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	                    
+			                 	// 堤防
+			                     if($("a[name='topic-22-2']").hasClass("hover")){
+			 	                    var la3=lay[3];
+			 	                	var title3=la3.title;
+			 	                	var name3=la3.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title3]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title3]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name3];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title3,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 水闸
+			                     if($("a[name='topic-22-3']").hasClass("hover")){
+			 	                    var la4=lay[4];
+			 	                	var title4=la4.title;
+			 	                	var name4=la4.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title4]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title4]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name4];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title4,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 泵站
+			                     if($("a[name='topic-22-4']").hasClass("hover")){
+			 	                    var la5=lay[5];
+			 	                	var title5=la5.title;
+			 	                	var name5=la5.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title5]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title5]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name5];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title5,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 雨量站
+			                     if($("a[name='topic-23-3']").hasClass("hover")){
+			 	                    var la6=lay[6];
+			 	                	var title6=la6.title;
+			 	                	var name6=la6.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title6]["serviceUrl"],	
+			 	                    	layerTable:[1,3,5,7],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name6];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title6,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 河道水位站
+			                     if($("a[name='topic-23-1']").hasClass("hover")){
+			 	                    var la7=lay[7];
+			 	                	var title7=la7.title;
+			 	                	var name7=la7.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title7]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title7]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name7];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title7,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                     
+			                 	// 水库水文站
+			                     if($("a[name='topic-23-2']").hasClass("hover")){
+			 	                    var la8=lay[8];
+			 	                	var title8=la8.title;
+			 	                	var name8=la8.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title8]["serviceUrl"],	
+			 	                    	layerTable: [1,3,5,7],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name8];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title8,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 拦河坝水文站
+			                     if($("a[name='topic-23-10']").hasClass("hover")){
+			 	                    var la9=lay[9];
+			 	                	var title9=la9.title;
+			 	                	var name9=la9.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title9]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title9]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name9];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title9,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 堰闸水文站
+			                     if($("a[name='topic-23-6']").hasClass("hover")){
+			 	                    var la10=lay[10];
+			 	                	var title10=la10.title;
+			 	                	var name10=la10.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title10]["serviceUrl"],	
+			 	                    	layerTable:[1,3,5,7],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name10];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title10,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 污水管液位监测站
+			                     if($("a[name='topic-23-7']").hasClass("hover")){
+			 	                    var la11=lay[11];
+			 	                	var title11=la11.title;
+			 	                	var name11=la11.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title11]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title11]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name11];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title11,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 排水泵监测点
+			                     if($("a[name='topic-23-9']").hasClass("hover")){
+			 	                    var la12=lay[12];
+			 	                	var title12=la12.title;
+			 	                	var name12=la12.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title12]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title12]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name12];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title12,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 河涌水质监测站
+			                     if($("a[name='topic-23-4']").hasClass("hover")){ 
+			 	                    var la13=lay[13];
+			 	                	var title13=la13.title;
+			 	                	var name13=la13.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title13]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title13]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name13];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title13,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                 	
+			                 	// 污水处理厂进出口水质水量监测站
+			                     if($("a[name='topic-23-5']").hasClass("hover")){
+			 		                var la14=lay[14];
+			 		            	var title14=la14.title;
+			 		            	var name14=la14.name;
+			 		            	var layerOption={
+			 		                	url:auGurit.global.mapTopLayers[title14]["serviceUrl"],	
+			 		                	layerTable: auGurit.global.mapTopLayers[title14]["layerTable"],
+			 		                    where: "1=" + 1,
+			 		                   geometry:wkt,
+			 		                    opacity: 1
+			 		                };
+			 		                map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){			 		                	
+			 		                    if(featureCollection){			 		                    	
+			 		                    	for(var i in featureCollection.features){
+			 		                    		var feature=featureCollection.features[i];
+			 		                    		var slnm=feature.properties[name14];
+			 		                    		$("#bufferList").jqxGrid("addrow",null,{type:title14,slnm:slnm});
+			 		                    	}
+			 		                    }
+			 		                });
+			                     }
+			                 	
+			                 	 // 积水监测点
+			                     if($("a[name='topic-23-8']").hasClass("hover")){
+			 	                    var la15=lay[15];
+			 	                	var title15=la15.title;
+			 	                	var name15=la15.name;
+			 	                	var layerOption={
+			 	                    	url:auGurit.global.mapTopLayers[title15]["serviceUrl"],	
+			 	                    	layerTable: auGurit.global.mapTopLayers[title15]["layerTable"],
+			 	                        where: "1=" + 1,
+			 	                       geometry:wkt,
+			 	                        opacity: 1
+			 	                    };
+			 	                    map._mapInterface.queryLayerObjects(layerOption,function(featureCollection){
+			 	                        if(featureCollection){
+			 	                        	for(var i in featureCollection.features){
+			 	                        		var feature=featureCollection.features[i];
+			 	                        		var slnm=feature.properties[name15];
+			 	                        		$("#bufferList").jqxGrid("addrow",null,{type:title15,slnm:slnm});
+			 	                        	}
+			 	                        }
+			 	                    });
+			                     }
+			                }else{
+			                	layer.msg('空间范围不能为空，请在地图上标记空间范围...', {
+			   	            	    icon: 2
+			   	            	  });
+			                	
+			                	// 无范围则不执行查询
+			                	return ;
+			                }
+			            /*    
+		                });
+	               });
+	               */
+                }catch(e){
+                	console.log(e);
+                	layer.alert('执行缓冲分析时发生异常，请联系系统管理员！', {icon: 2});
+                }
+            },
+            clickClearBtn: function () {            	
+            	modal.search().hcjl("");
+            	// 清空数据
+            	gridDataSource = {
+                        localdata:[],
+                        datatype: "array"
+                };
+            	var dataAdapter = new $.jqx.dataAdapter(gridDataSource);
+            	$("#bufferList").jqxGrid({
+            		source: dataAdapter
+            	});
+            	map._controls.queryLayerControl._clearDraw();            	
+            	map._mapInterface.layerFeature.clearLayers();
+            }
+		}
+		var modal = {
+			wkt:ko.observable(),		
+			IsMax: ko.observable(false),
+			search: ko.observable({
+				hcjl: ko.observable("")
+			}),
+			clickSearchBtn: $.proxy(buffer.clickSearchBtn, buffer),
+			clickClearBtn: $.proxy(buffer.clickClearBtn, buffer)
+		}
+		buffer.init();
+		return modal;
+	});

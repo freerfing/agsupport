@@ -1,0 +1,96 @@
+{
+  "success": true,
+  "message": "分页查询成功",
+  "content": {
+    "pageNum": 1,
+    "pageSize": 10,
+    "size": 10,
+    "startRow": 1,
+    "endRow": 10,
+    "total": 10,
+    "pages": 1,
+    "list": [
+      {
+        "rowId": 1,
+        "bh": "YG1198YG1197",
+        "wsclxy": "大涌",
+        "x": "58776.056",
+        "y": "17173.477"
+      },
+      {
+        "rowId": 2,
+        "bh": "YG1298YG1197",
+        "wsclxy": "龙洞",
+        "x": "50416.962",
+        "y": "39447.236"
+      },
+      {
+        "rowId": 3,
+        "bh": "YG1198YG1123",
+        "wsclxy": "流溪河",
+        "x": "35917.472",
+        "y": "46324.850"
+      },
+      {
+        "rowId": 4,
+        "bh": "YG5698YG1197",
+        "wsclxy": "大涌",
+        "x": "59776.056",
+        "y": "18273.477"
+      },
+      {
+        "rowId": 5,
+        "bh": "YG1158YG5667",
+        "wsclxy": "龙洞",
+        "x": "51416.962",
+        "y": "38547.236"
+      },
+      {
+        "rowId": 6,
+        "bh": "YG1568YG7797",
+        "wsclxy": "流溪河",
+        "x": "36917.472",
+        "y": "47424.850"
+      },
+      {
+        "rowId": 7,
+        "bh": "YG1478YG4197",
+        "wsclxy": "大涌",
+        "x": "60776.056",
+        "y": "19373.477"
+      },
+      {
+        "rowId": 8,
+        "bh": "YG11488YG1197",
+        "wsclxy": "龙洞",
+        "x": "49416.962",
+        "y": "37647.236"
+      },
+      {
+        "rowId": 9,
+        "bh": "YG11498YG117",
+        "wsclxy": "流溪河",
+        "x": "33917.472",
+        "y": "48524.850"
+      },
+      {
+        "rowId": 10,
+        "bh": "YG1178YG11887",
+        "wsclxy": "大涌",
+        "x": "58776.056",
+        "y": "16073.477"
+      }
+    ],
+    "firstPage": 1,
+    "nextPage": 1,
+    "lastPage": 1,
+    "isFirstPage": true,
+    "isLastPage": true,
+    "hasPreviousPage": false,
+    "hasNextPage": false,
+    "navigatePages": 8,
+    "navigatepageNums": [
+      1
+    ]
+  }
+}

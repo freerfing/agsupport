@@ -1,0 +1,16 @@
+<div class="sub_map" data-bind="layerbtnInitHandler">
+    <a class="layer_btn"><div style="height: 30px;margin-top: 5px;border-right: 1px solid #d9d9d9;"></div></a>
+    <div id="toolbar_layer">
+        <div id="radio_map" class="radio_map layer_option">
+            <div class="radio_map_div shiliang selectedByClick" data-bind="click:$root.switch_swj_vector;"><div class="radio_map_title selectedByClick">矢量底图(国规委)</div></div>
+            <!--<div class="radio_map_div shiliang" data-bind="click:$root.switch_ggw_vector;"><div class="radio_map_title">国规委矢量</div></div>-->
+            <div class="radio_map_div yingxiang" data-bind="click:$root.switch_swj_striograph;"><div class="radio_map_title">影像底图</div></div>
+            <!--<div class="radio_map_div yingxiang" data-bind="click:$root.switch_ggw_striograph;"><div class="radio_map_title">国规委影像</div></div>-->
+            <div class="radio_map_div DEM" data-bind="click:$root.switch_dem;"><div class="radio_map_title">地貌晕渲图</div></div>
+            <div class="radio_map_div simple" data-bind="click:$root.switch_simple;"><div class="radio_map_title">矢量底图</div></div>
+
+            <div class="radio_map_div yingxiang" data-bind="click:$root.switch_4biao4shi_2017;"><div class="radio_map_title">四标四实(2017)</div></div>
+            <div class="radio_map_div yingxiang" data-bind="click:$root.switch_4biao4shi_2016;"><div class="radio_map_title">四标四实(2016)</div></div>
+        </div>
+    </div>
+</div>

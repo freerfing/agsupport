@@ -1,0 +1,24 @@
+<!-- 排水设施检查成果(雨水口) -->
+<div class="rivers-container"  data-bind="psCombZyInitHandler"  style="height:100%">
+    <div class="rivers_detailed_list_con">
+        <div class="rivers_query_c search_panel">
+            <h3>查询</h3>
+            <div class="rivers_query_com" style="text-align: left;">
+                <span class="rivers_query_name">
+                    <div style="margin-top:5px">
+                        权属单位:&nbsp;&nbsp;&nbsp;&nbsp;
+                        <select data-bind="value: search().unitVal, event:{change:$root.clickUnitBtn}, options: search().units, optionsText : 'text', optionsValue : 'value'"></select>
+                    </div>
+                </span>
+            </div>
+            <h3>图例</h3>
+            <div class="telemetryStation_query_com">
+                <label><b class="legend-yushuikou"></b>雨水口</label>
+            </div>
+        </div>
+        <div class="rivers_condition_c" style="margin-top:5px">
+            <div id="psCombZyList"></div>
+            <div id="psCombZyPager" class="list-datagroup-pager"></div>
+        </div>
+    </div>
+</div>

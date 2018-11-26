@@ -1,0 +1,50 @@
+/*----------login-----------*/
+.login-form-container-spe{background-color:#1B587F}
+.login-form-spe{background-color:#1F1E23}
+
+/*----------desktop----------*/
+.desktop-head-spe{background-color:#1B587F;}
+.desktop-tool-spe{background-color:#1B587F;}
+.desktop-clock-spe{border-color:#1B587F;}
+.desktop-panal-list-spe{background-color:#1B587F;}
+.desktop-panal-item-spe{background-color:#1B587F;}
+
+/*-----------法律法规-------------*/
+.con-header{padding:10px 20px;height:45px;width:100%;text-align:initial;}
+.con-header-style1{background-color:#457CC1;}
+.con-header-style2{background-color:#457CC1}
+.con-header-title{}
+.con-header-title-icon{background:url(svg/container/news.svg) center center no-repeat;width:20px;height:20px;display:inline-block;}
+.con-header-title-text{font-size:16px;font-family:微软雅黑;color:#ffffff;line-heght:16px;}
+.con-body{padding: 10px 20px;font-family:微软雅黑;font-size:14px;color:#333333;background-color: #fff;overflow:auto;}
+.con-footer{}
+.OpenDlg_Btn{cursor: pointer;margin:0px 4px;}
+.button_ {
+	color:#ffffff;
+	display: inline-block;
+	outline: none;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	font: 14px/100% Arial, Helvetica, sans-serif;
+	padding: .5em 2em .55em;
+	text-shadow: 0 1px 1px rgba(0,0,0,.3);
+	-webkit-border-radius: .5em; 
+	-moz-border-radius: .5em;
+	border-radius: .5em;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	box-shadow: 0 1px 2px rgba(0,0,0,.2);
+}
+.button_:hover {
+	text-decoration: none;
+}
+.button_:active {
+	position: relative;
+	top: 1px;
+}
+.button_query {background-color:#457CC1;}
+.button_reset {background-color:#AAAAAA;}
+div a{color:#6b6b6b;}
+
+

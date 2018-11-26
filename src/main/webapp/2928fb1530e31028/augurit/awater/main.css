@@ -1,0 +1,139 @@
+.leaflet-popup .fieldContainer {
+    height: 250px;
+    width: 400px;
+    overflow: auto;
+}
+
+.leaflet-popup .fieldContainer select {
+    height: 34px;
+    /*border: 1px solid #5bc0de;*/
+    background-color: #ddfafb;
+}
+
+.leaflet-popup .fieldContainer .inputClone {
+    /*border: 1px solid #5bc0de;*/
+    background-color: #ddfafb;
+}
+
+.leaflet-popup .input-group {
+    margin-bottom: 2px;
+}
+
+.leaflet-popup .input-group > .input-group-addon {
+    width: 170px;
+}
+/*标注*/
+.leaflet-popup .label-popupContainer .input-group > .input-group-addon {
+    width: 50px;
+}
+.leaflet-popup .input-group > input {
+    background-color: white;
+}
+
+.leaflet-popup .popup_tools {
+    margin: 5px 0 0;
+    border-top: 1px solid #DDD;
+}
+
+.leaflet-popup .popup_tools > div > span:not(.label) {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.leaflet-popup .popup_tools > div:not(.input-group) {
+    margin-top: 5px;
+}
+
+.leaflet-popup .popup_tools > .input-group {
+    margin: 5px 0;
+}
+
+.leaflet-popup .popup_tools > p {
+    color: #4501ff;
+    margin: 5px;
+}
+
+.leaflet-popup .popup_tools a {
+    color: #333;
+}
+
+.leaflet-popup .popup_tools a:hover {
+    text-decoration: none;
+}
+
+.leaflet-popup .popup_tools input {
+    width: 230px;
+    background-color: #ddfafb;
+}
+
+._anim-tooltip {
+    margin-top: 3px !important;
+    position: absolute !important;
+    padding: 6px !important;
+    white-space: nowrap !important;
+    user-select: none !important;
+    pointer-events: none !important;
+    transform-origin: 0 0 !important;
+    box-shadow:0 0 !important;
+    background-color:transparent !important;
+    border:0 !important;
+    color: #FFF !important;
+    font-weight:bold !important;
+    text-shadow:#9C9B9B 1px 0 1px,#9C9B9B 0 1px 1px,#9C9B9B -1px 0 1px,#9C9B9B 0 -1px 1px;
+    -webkit-text-shadow:#9C9B9B 1px 0 1px,#9C9B9B 0 1px 1px,#9C9B9B -1px 0 1px,#9C9B9B 0 -1px 1px;
+    -moz-text-shadow:#9C9B9B 1px 0 1px,#9C9B9B 0 1px 1px,#9C9B9B -1px 0 1px,#9C9B9B 0 -1px 1px;
+    font-size: 15px;
+    *filter: Glow(color=#9C9B9B, strength=1);
+}
+
+._shadow_white{
+    text-shadow:#fff 1px 0 1px,#fff 0 1px 1px,#fff -1px 0 1px,#fff 0 -1px 1px;
+    -webkit-text-shadow:#fff 1px 0 1px,#fff 0 1px 1px,#fff -1px 0 1px,#fff 0 -1px 1px;
+    -moz-text-shadow:#fff 1px 0 1px,#fff 0 1px 1px,#fff -1px 0 1px,#fff 0 -1px 1px;
+    *filter: Glow(color=#fff, strength=1);
+}
+._text_blue{
+    color: #0000FF !important;    
+}
+._text_red{
+    color: #ce0c0c !important;    
+}
+._text_guanwang{
+    color: #0099CC !important;
+}
+._text_shuiku{
+    color: #1861ca !important;
+}
+._text_shuizhi{
+    color: #038ab7 !important;
+}
+._selected{
+    box-shadow:#EACF02 0px 1px 15px 5px !important;
+    background-color: #EACF02 !important;
+    /*border-radius:5px;*/
+}
+._anim-tooltip:before {
+    border-top-color: rgba(255, 255, 255, 0) !important;
+}
+
+/*---------时间轴样式 start-------------*/
+a{color:#000;text-decoration:none;}
+a:hover {cursor:pointer;text-decoration:none;}
+a{blr:expression(this.onFocus=this.blur())}
+*:focus{outline:0;}
+ol,ul,li {list-style:none;}
+span,i{display:inline-block;font-style:normal;}
+.event_box{position:absolute;min-height:92px;z-index: 9999999;top:  55px;left: 700px;}
+.event_box .parHd {width:100%; display:inline-block;height:92px;overflow:hidden;}
+.parHd  ul{width:100%;text-align:center;margin:0 auto;padding-top:25px !important;}
+.parHd .tempWrap{margin:0 auto;}
+.parHd .tempWrap:after{content:'';width:80%;height:1px;background:#580000;position:absolute;/* top:33%;*//* right:-140%;*/right:10%;top:35%;/* margin-top:-0.5px;*/z-index:10;}
+.parHd li.no_line:before{display:none;}
+.parHd li{display:inline-block;cursor:pointer;padding-top:20px;font-size:13px;color:#000;margin:0 6px;position:relative;}
+.parHd li span{content:'';background:url(../com/resource/dot_ico.png) no-repeat;width:24px;height:24px;position:absolute;z-index:20;top:-12px;left:50%;margin-left:-12px;}
+.parBd{text-align:center;margin-top:60px;}
+.parBd p{line-height:180%;font-size:16px;width:80%;margin:0 auto;}
+div#listBox {width:100%;}
+.parHd li.act span{display:block;overflow:hidden;background:url(../com/resource/cat.png) no-repeat;top:-12px;z-index:21;}
+.parHd li.clone span{display:none;}
+/*---------时间轴样式 end-------------*/

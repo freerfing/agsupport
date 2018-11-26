@@ -1,0 +1,61 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="charset" content="utf-8">
+	<script src="lib/3rdparty/jquery/jquery/jquery-1.9.1.min.js"></script>
+	<title>广州水务一体化平台</title>
+</head>
+<body>
+<script>
+	(function() {
+
+		var getQueryStringArgs, stringArgs, appLoginUrl, appUrl, isTest = true;
+
+		getQueryStringArgs = function() {
+			var
+				qs = (location.search.length > 0 ? location.search.substring(1) : ''),
+				items = qs.length ? qs.split('&') : [],
+				args = {}, item = null, name = null, value = null,
+				i = 0, len = items.length;
+			for(i = 0; i < len; i++) {
+				item = items[i].split('=');
+				name = decodeURIComponent(item[0]);
+				value = decodeURIComponent(item[1]);
+
+				if(name.length) {
+					args[name] = value;
+				}
+			}
+
+			return args;
+		};
+
+		stringArgs	= getQueryStringArgs();
+		appLoginUrl = stringArgs['appLoginUrl'];
+		appUrl = stringArgs['appUrl'];
+		if(!appUrl) {
+			throw new Error('应用URL地址不能为空.');
+		}
+
+		if(appLoginUrl) {
+			$.ajax({
+				//xhrFields: { withCredentials: true },
+				url: appLoginUrl,
+				type: 'post',
+				dataType:'json',
+				data: {loginName: stringArgs['loginName'], password: stringArgs['password']},
+				success: function (data) {
+					//window.open(appUrl);
+					location.href = appUrl;
+				},
+				error: function () {
+				}
+			});
+		} else {
+			location.href = appUrl;
+		}
+
+	}());
+</script>
+</body>
+</html>

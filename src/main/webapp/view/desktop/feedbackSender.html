@@ -1,0 +1,47 @@
+<div class="feedbackSender-container" data-bind="feedbackSenderInitHandler">
+	<table style="width: 100%;">
+		<tr>
+			<td style="text-align: center;">问题类型：</td>
+			<td style="text-align: left;">
+				<input type="radio" name="ftype" value="0" data-bind="checked: $root.ftype">&nbsp;应用故障
+				<span class="space-indent">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<input type="radio" checked="true" name="ftype" value="1" data-bind="checked: $root.ftype">&nbsp;优化建议
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;">标&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;题：</td>
+			<td style="text-align: left;">
+				<input type="text" name="ftitle" maxlength="120" style="width: 80%" data-bind="textInput: $root.ftitle" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;">问题描述：</td>
+			<td style="text-align: left;">
+				<textarea name="content" rows="8" maxlength="400" style="width: 80%; resize: none;" data-bind="textInput: $root.content, event: {keyup: contentChange, keydown: contentChange, change: contentChange }" />
+				<p class="content-tips" data-bind="html: $root.contentHtmlTips()"></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="text-align: left;">
+				<div id="uploadImgs" style="padding-left: 56px;">
+					<!--ko foreach: {data:$root.fileInfos, as:'fileInfo'}-->
+					<div class="imgContainer" style="position: relative; float: left; margin-right: 16px;" data-bind="event: { mouseover: $root.enableFileRemove, mouseout: $root.disableFileRemove}">
+						<div class="removeImgContainer" style="display: none; position: absolute; width: 100%; text-align: center; background-color: grey; color: #F60; cursor: pointer; bottom: 0; left: 0;" data-bind="click: $root.removeFile">移除图片</div>
+						<img style="width: auto; height: auto; max-width: 150px; max-height: 105px;" data-bind="attr: {src: fileInfo.url}">
+					</div>
+					<!--/ko-->
+					<span>
+						<img src="view/app/homePage/icon/upload_icon.png" style="height: 51px; width: 51px;" title="点击上传图片" id="feedback_upload_btn">
+						<span style="color: red;">&lt;&lt;&nbsp;点左边图标上传截图</span>
+					</span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="text-align: center;">
+				<button class="btn btn-primary btn-sm" style="margin-right: 10px;" data-bind="click: $root.saveFeedback">反馈</button>
+				<button class="btn btn-default btn-sm" style="margin-right: 10px;" data-bind="click: $root.clickReturnBtn">返回</button>
+			</td>
+		</tr>
+	</table>
+</div>

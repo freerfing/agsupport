@@ -1,0 +1,130 @@
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>系统授权</title>
+	<!--<script src="/awater/lib/3rdparty/jquery/jquery/jquery-1.9.1.min.js" ></script>-->
+    <!--&lt;!&ndash;flexslider&ndash;&gt;-->
+    <!--<script src="/awater/lib/3rdparty/flexslider/jquery.flexslider.js" ></script>-->
+    <!--<script src="/awater/lib/3rdparty/flexslider/jquery.easing.js" ></script>-->
+    <!--<script src="/awater/lib/3rdparty/flexslider/jquery.mousewheel.js" ></script>-->
+    <!--<link rel="stylesheet" href="/awater/lib/3rdparty/flexslider/flexslider.css"/>-->
+    <!--<style>-->
+        <!--html, body-->
+        <!--{-->
+            <!--width: 100%;-->
+            <!--height: 100%;-->
+            <!--padding: 0;-->
+            <!--margin: 0;-->
+            <!--overflow: hidden;-->
+        <!--}-->
+    <!--</style>-->
+    <!--<script type="text/javascript">-->
+        <!--function init() {-->
+        	  <!--$('#slider').flexslider({-->
+                <!--animation: "slide",-->
+                <!--directionNav: true, //左右滚动控件-->
+                <!--controlNav: false, //底部控件-->
+                <!--mousewheel: true,-->
+                <!--slideshow: false,-->
+                <!--itemWidth: "100%",-->
+                <!--sync: "#carousel",-->
+                <!--start: function (slider) {-->
+                <!--}-->
+            <!--});-->
+        <!--}-->
+
+        <!--function initImage() {//初始化图片的高度-->
+            <!--$("#slider").find('.system').each(function (index, val) {-->
+                <!--$(val).height($("#slider").height()).css("backgroundSize", "100% " + $("#slider").height() + "px");-->
+            <!--});-->
+        <!--}-->
+    <!--</script>-->
+    <script type="text/javascript" src="lib/jquery/jquery.js"></script>
+    <script type="text/javascript" src="lib/echarts/echarts.min.js"></script>
+    <script type="text/javascript" src="lib/echarts/dark.js"></script>
+    <script type="text/javascript" src="lib/layer.js" ></script>
+    <script type="text/javascript" src="lib/init.js"></script>
+</head>
+<!--<body onload="init();initImage()">-->
+
+    <!--<div id="slider" class="flexslider" style="width: 100%; height: 100%">-->
+        <!--<ul class="slides">-->
+            <!--<li>-->
+                <!--&lt;!&ndash;排水中心admin/admin&ndash;&gt;-->
+                <!--<div class="system" style="background-image: url('images/page1.png')">-->
+                    <!--<div class="mask pszxmask">-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 42.7%; left: 44.7%; width: 13.4%; height: 2.7%">-->
+                        <!--<input class="loginName" value="" type="text" style="width: 100%; height: 100%;-->
+                            <!--border: none; background: none" />-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 45%; left: 44.7%; width: 13.4%; height: 2.7%;">-->
+                        <!--<input class="password" value="" type="password" style="width: 100%; height: 100%;-->
+                            <!--border: none; background: none" />-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 47.8%; left: 44.9%; width: 5.5%; height: 2.7%;-->
+                        <!--cursor: pointer" onclick="login(systemList.pszx.loginAction,systemList.pszx.indexUrl,true,systemList.pszx.name)">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--&lt;!&ndash;排水监测站xxzx/swjxxzx!&ndash;&gt;-->
+                <!--<div class="system" style="background-image: url('images/page2.png')">-->
+                    <!--<div class="mask psjczmask">-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 44.5%; left: 49%; width: 10%; height: 2.7%">-->
+                        <!--<input class="loginName" value="" type="text" style="width: 100%; height: 100%;-->
+                            <!--border: none; background: none" />-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 47%; left: 49%; width: 10%; height: 2.7%;">-->
+                        <!--<input class="password" value="" type="password" style="width: 100%; height: 100%;-->
+                            <!--border: none; background: none" />-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 49.5%; left: 52.2%; width: 6.2%; height: 2.7%;-->
+                        <!--cursor: pointer" onclick="login(systemList.psjcz.loginAction,systemList.psjcz.indexUrl,false,systemList.psjcz.name)">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--&lt;!&ndash;三防办gzsf/gzsf87590388&ndash;&gt;-->
+                <!--<div class="system" style="background-image: url('images/page3.png')">-->
+                    <!--<div class="mask sfbmask">-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 46.4%; left: 47%; width: 8%; height: 2.7%">-->
+                        <!--<input class="loginName" value="" type="text" style="width: 100%; height: 100%;-->
+                            <!--border: none; background: none" />-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 47%; left: 47%; width: 9%; height: 2.7%;">-->
+                        <!--<input class="password" value="" type="password" style="width: 100%;-->
+                            <!--height: 100%; border: none; background: none" />-->
+                    <!--</div>-->
+                    <!--<div style="position: relative; top: 48.8%; left: 47%; width: 4.3%; height: 2.3%;-->
+                        <!--cursor: pointer" onclick="login(systemList.sfb.loginAction,systemList.sfb.indexUrl,false,systemList.sfb.name)">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</li>-->
+
+        <!--</ul>-->
+    <!--</div>-->
+
+<!--</body>-->
+<body style="height:100%;padding:0px;margin:0px;">
+<div style="height:100%">
+    <div style="float:left;width:50%;height:33.3%;" id="sq">
+    </div>
+    <div style="float:left;width:50%;height:33.3%;"  id="yld">
+    </div>
+    <div style="float:left;width:50%;height:33.3%;"  id="sz">
+    </div>
+    <div style="float:left;width:50%;height:33.3%;"  id="yq">
+    </div>
+    <div style="float:left;width:50%;height:33.3%;"  id="hzz">
+    </div>
+    <div style="float:left;width:50%;height:33.3%;"  id="gw">
+    </div>
+</div>
+
+</body>
+</html>

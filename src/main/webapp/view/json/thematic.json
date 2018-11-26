@@ -1,0 +1,31 @@
+[
+	{
+		"name": "geocodesearch",
+		"title": "综合查询",
+		"text": "居民、房屋、兴趣点等"
+	},
+	{
+		"name": "district",
+		"title": "区划",
+		"text": "查看区划图层"
+	},
+	{
+		"name": "hotarea",
+		"title": "热区",
+		"text": "查看热区图层",
+		"thematicName": "hotarea",
+		"displayLevel": 6
+	},
+	{
+		"name": "road",
+		"title": "道路",
+		"text": "查看道路图层",
+		"thematicName": "road",
+		"displayLevel": 5
+	},
+	{
+		"name": "video",
+		"title": "视频",
+		"text": "查看视频"
+	}
+]
