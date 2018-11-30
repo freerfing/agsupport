@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>菜单目录</title>
+  <link rel="stylesheet" href="../lib/layui/css/layui.css">
+  <script src="../lib/layui/layui.js"></script>
+</head>
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+
+        <div class="layui-btn-group test-table-operate-btn" style="padding: 10px 10px 0 10px;">
+          <button class="layui-btn layui-btn-normal" data-type="add">新增</button>
+          <button class="layui-btn layui-btn-danger" data-type="del">批量删除</button>
+        </div>
+        <div class="layui-layout-body" style="padding: 0 10px 10px 10px">
+          <table lay-even class="layui-hide" id="menuTable" lay-size="md" lay-filter="menuTable"></table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+<script>
+  var $, treeGrid = null, layer = null, ptable = null;
+  layui.config({ base: '../lib/layui/extend/' }).extend({ treeGrid: 'treeGrid' })
+    .use([ 'jquery', 'treeGrid', 'layer' ], function() {
+        $ = layui.jquery;
+        treeGrid = layui.treeGrid;
+        layer = layui.layer;
+        ptable = treeGrid.render({
+          id: 'menuTable',
+          elem: '#menuTable',
+          idField:'id',
+          url:'data2.json',
+          cellMinWidth: 150,
+          treeId:'id',
+          treeUpId:'pId',
+          treeShowName:'name',
+          cols: [[
+              { field: 'name', width: 300, title: '水果名称' },
+              { field: 'id', width :150, title: 'id' },
+              { field: 'pId', title: 'pid' },
+              { width: 200, title: '操作', align:'center',/*toolbar: '#barDemo'*/ templet: function(d) {
+                      return String()
+                        + '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add">添加</a>'
+                        + '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                  }
+              }
+          ]],
+          page: false
+        });
+
+        treeGrid.on('tool(menuTable)', function (obj) {
+            if(obj.event === 'del') {
+                del(obj);
+            } else if(obj.event==="add") {
+                add(obj.data);
+            }
+        });
+      }
+    );
+
+  function del(obj) {
+      layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除，此操作不能撤销！", { icon: 3, title:'提示' },
+          function(index) {
+              obj.del();
+              layer.close(index);
+          }, function (index) {
+              layer.close(index);
+          }
+      );
+  }
+
+
+  var i=1000;
+
+  function add(pObj) {
+      var param={};
+      param.name='水果'+Math.random();
+      param.id=++i;
+      param.pId=pObj?pObj.id:0;
+      treeGrid.addRow('menuTable', pObj?pObj.LAY_TABLE_INDEX+1:0,param);
+  }
+
+</script>
+</body>
+</html>

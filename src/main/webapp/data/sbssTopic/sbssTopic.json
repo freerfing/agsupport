@@ -51,7 +51,7 @@
             "hasMap": true,
             "hover": false,
             "view": "",
-            "enabled": false,
+            "enabled": true,
             "dirLayerId": "",
             "layerTable":  "0",
             "serviceUrl": "http://10.194.170.71/proxy/b62dd31eeef19bdc/4dfa4360488bfc42"
