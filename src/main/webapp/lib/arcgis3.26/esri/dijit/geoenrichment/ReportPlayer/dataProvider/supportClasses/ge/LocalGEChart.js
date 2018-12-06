@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/geoenrichment/ReportPlayer/dataProvider/supportClasses/ge/LocalGEChart",["dojo/_base/declare","./LocalGEBase","../AreaDataUtil"],function(d,e,f){return d(e,{_cacheData:!0,_areaIdToFeatureCache:null,constructor:function(b,a,c,d){c?(c=f.combineAreaDataObjectCalculators(a,b,{removeDuplicates:!0}),a={},a[b]={data:c.thisAreas[0],comparisonLevels:c.comparisonLevels}):a=a[d||0];this._initGE(null,a,b)},getFieldValueAt:function(b,a){this._areaIdToFeatureCache||(this._areaIdToFeatureCache=
+[],this.getData().features.forEach(function(a){a.attributes.StdGeographyID&&(this._areaIdToFeatureCache[a.attributes.StdGeographyID]=a)},this));return(a=this._areaIdToFeatureCache[a])&&a.attributes[b]||0}})});

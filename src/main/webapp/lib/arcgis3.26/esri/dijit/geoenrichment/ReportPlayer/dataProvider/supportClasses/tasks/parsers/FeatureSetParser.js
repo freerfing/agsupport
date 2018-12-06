@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/geoenrichment/ReportPlayer/dataProvider/supportClasses/tasks/parsers/FeatureSetParser",["./AttrUtil"],function(l){var g={ID_FIELDS:["ID","AREA_ID"],parse:function(c,m,h){if(!c||!c.features.length)return[];var d=[],f={},n=0;c.features.forEach(function(a){var b=a.attributes[g.ID_FIELDS[0]]||a.attributes[g.ID_FIELDS[1]];if(b){void 0===f[b]&&(f[b]=n++);var c={},e;for(e in a.attributes){var k=h?h(e):e;k&&(c[k]=a.attributes[e])}l.cleanUpAttrs(c);a={name:m,attrs:c,areaIndex:f[b]}}else a=
+null;a&&(b=d[a.areaIndex]=d[a.areaIndex]||{},b[a.name]?b[a.name].comparisonLevels.push(a.attrs):b[a.name]={data:a.attrs,comparisonLevels:[]})});console.log("FeatureSetPareser.js \x3d\x3e areaData:");console.log(d);return d}};return g});

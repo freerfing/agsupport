@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/analysis/nls/hu/FindPointClusters",{clustersLabel:"Klaszterek keres\u00e9se a(z) ${inputLayerName} r\u00e9teghez.",chooseLayerLabel:"V\u00e1lassza ki a r\u00e9teget, amelyhez meg szeretn\u00e9 tal\u00e1lni a klasztereket",minClusterPtsLabel:"A pontok minim\u00e1lis sz\u00e1ma a klaszterk\u00e9nt t\u00f6rt\u00e9n\u0151 \u00e9rtelmez\u00e9shez",limitSearchLabel:"Keres\u00e9si tartom\u00e1ny korl\u00e1toz\u00e1sa erre (opcion\u00e1lis):",limitSearchReqLabel:"Keres\u00e9si tartom\u00e1ny korl\u00e1toz\u00e1sa erre:",
+outputLayerName:"Klaszterek keres\u00e9se a(z) ${inputLayerName} r\u00e9teghez",itemDescription:"A Pontklaszterek keres\u00e9se f\u00fcggv\u00e9ny futtat\u00e1s\u00e1b\u00f3l l\u00e9trehozott vektoros r\u00e9teg a(z) ${inputLayerName} r\u00e9teghez.",itemTags:"Elemz\u00e9s v\u00e9geredm\u00e9nye, Pontklaszterek keres\u00e9se, ${inputLayerName}",itemSnippet:"Pontklaszterek keres\u00e9se f\u00fcggv\u00e9ny alapj\u00e1n l\u00e9trehozott vektoros r\u00e9teg"});

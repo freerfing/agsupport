@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/geoenrichment/ReportPlayer/core/conversion/portalToEditorUtils/metadata/DemographicCalculatorsParser",["esri/dijit/geoenrichment/utils/JsonXmlConverter","./VariableScriptCollector","../../../../_devConfig"],function(e,g,h){return{parseDemographicCalculators:function(k,f,b){e.queryJson(k,"DataCollections").forEach(function(a){var d=e.queryJson(a,"ComparisonLevel");if(h.emulateErrors.metadataParseError)throw Error("Error test: something crashed during the parsing of the metadata!");
+var c;if(b.variableProvider.isPlayerOnly||d.length)c=g.getObjects(a);d.length&&(a={calculatorName:a.attributes.Name,levels:d.map(function(a){return a.attributes.Name}),variableObjects:c.variableObjects},f&&(f.metadata.comparisonCalculatorsHash[a.calculatorName]=a));b.variableProvider.isPlayerOnly&&(c.variableObjects.forEach(function(a){b.variableProvider.addVariable(a)}),c.scriptObjects.forEach(function(a){b.variableProvider.addScriptVariable(a)}))})}}});

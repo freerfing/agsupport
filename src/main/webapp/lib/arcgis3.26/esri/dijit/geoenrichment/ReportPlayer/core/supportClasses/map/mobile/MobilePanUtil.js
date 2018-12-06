@@ -1,0 +1,4 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/geoenrichment/ReportPlayer/core/supportClasses/map/mobile/MobilePanUtil",["dojo/on"],function(d){return{setUpMapPan:function(a,e){e&&a.__container&&d(a.__container,"touchstart",function(b){var c=b.clientX,f=b.clientY,g=d(a.__container,"touchmove",function(a){var b=a.clientX;a=a.clientY;e(c-b,f-a);c=b;f=a});d.once(a.__container,"touchend, touchcancel",function(a){g.remove()})});a._fixedPan=function(b,c){return a._extentUtil(null,{dx:.5*b,dy:.5*c})}}}});

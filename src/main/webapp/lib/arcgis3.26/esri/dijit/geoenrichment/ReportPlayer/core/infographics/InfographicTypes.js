@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/geoenrichment/ReportPlayer/core/infographics/InfographicTypes",["dojo/_base/lang"],function(g){var b={STATIC:"static",ATTACHMENTS:"attachments",AREA_DETAILS:"areaDetails",INTERESTING_FACTS:"interestingFacts",LOCATOR_TABLE:"locatorTable",COMPARISON_TABLE:"comparisonTable"},d={AGE_PYRAMID:"AgePyramid",TAPESTRY:"Tapestry",RELATED_VARS:"RelatedVariables",ONE_VAR:"OneVar"},e={},c;for(c in d)e[d[c]]=!0;g.mixin(b,d);var f={};for(c in b)f[b[c]]=!0;b.isDynamic=function(a){return e[a]};b.isSupported=
+function(a){return f[a]};b.fixTapestryNameToWidget=function(a){return"TapestryNEW"===a?"Tapestry":a};b.fixTapestryNameToData=function(a){return"Tapestry"===a?"TapestryNEW":a};b.supportsMultiFeature=function(a){return"OneVar"===a||a===b.COMPARISON_TABLE||a===b.LOCATOR_TABLE||a===b.ATTACHMENTS||a===b.AREA_DETAILS};b.supportsComparison=function(a){return a&&"Tapestry"!==a};return b});

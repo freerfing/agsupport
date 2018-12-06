@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/geoenrichment/ReportPlayer/playerSupports/_KeyboardSwipeNavigationSupport","dojo/_base/declare dojo/on dojo/keys dojox/gesture/swipe ../ReportPlayerState esri/dijit/geoenrichment/utils/MouseUtil".split(" "),function(h,d,e,k,l,m){return h(null,{_initKeyboardSwipeNavigation:function(){var f=this;if(this.allowKeyboardNavigation)this.own(d(window,"keyup",function(a){var b=f.getCurrentReportContainer();b&&m.isMouseOver(f.domNode)&&(a.keyCode===e.RIGHT_ARROW?b.showNextSlide():a.keyCode===
+e.LEFT_ARROW&&b.showPreviousSlide())}));else if(this.allowSwipeNavigation){var g=!0,c=0;this.own(d(document.body,k,function(a){var b=f.getCurrentReportContainer();g&&b&&(c+=a.dx,10<Math.abs(c)&&(g=!1,setTimeout(function(){g=!0},200),b[0>c?"showNextSlide":"showPreviousSlide"](),c=0),setTimeout(function(){c=0},100))}))}this.showCloseButton&&this.own(d(window,"keyup",function(a){this.getWaitingPromise()||l.isViewingDataDrillingZoom||a.keyCode===e.ESCAPE&&this._onClose()}.bind(this)))}})});

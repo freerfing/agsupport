@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/geoenrichment/utils/DnDUtil",["dojo/on","./DeviceUtil"],function(f,l){var d={addNoDragClickHandler:function(c,k,a){return l.isMobileDevice()?d._addMobile(c,k,a):d._addPC(c,k,a)},_addPC:function(c,k,a){var g=a&&a.tolerance||0,e,b,h=f(c,"mousedown",function(a){b&&b.remove();var c=a.clientX,h=a.clientY,d;e=f(document.body,"mousemove",function(a){var b=a.clientY;if(0<Math.abs(a.clientX-c)||0<Math.abs(b-h))d=!0});b=f.once(document.body,"mouseup",function(a){e.remove();var b=a.clientX,
+f=a.clientY;!d&&Math.abs(b-c)<=g&&Math.abs(f-h)<=g&&k(a)})});return{remove:function(){e&&e.remove();b&&b.remove();h&&h.remove()}}},_addMobile:function(c,d,a){var g=a&&a.tolerance||30,e,b;e=f(c,"touchstart",function(a){b&&b.remove();b=f.once(c,"touchend",function(b){Math.abs(a.clientX-b.clientX)<g&&Math.abs(a.clientY-b.clientY)<g&&d(b)})});return{remove:function(){e&&e.remove();b&&b.remove()}}}};return d});

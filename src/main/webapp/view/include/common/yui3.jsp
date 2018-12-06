@@ -1,1 +1,0 @@
-<script type="text/javascript" src="<c:url value='/lib/3rdparty/yui/3.2.0/simpleyui/simpleyui.js'/>"></script>

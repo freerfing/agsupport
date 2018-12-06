@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See http://js.arcgis.com/3.26/esri/copyright.txt for details.
+//>>built
+define("esri/dijit/geoenrichment/ReportPlayer/core/charts/utils/plots/_TouchPlotEvents",["dojo/_base/declare","dojo/on","esri/dijit/geoenrichment/utils/DeviceUtil","esri/dijit/geoenrichment/utils/MouseUtil"],function(b,f,g,h){var k=0,c={};return b(null,{_connectSingleEvent:function(a,b){if(g.isMobileDevice()){var d=this;a.eventMask._maskId=k++;switch(b){case "onmouseover":var e=function(){a.eventMask._touchOutsideHandle&&a.eventMask._touchOutsideHandle.remove();a.eventMask._touchOutsideHandle=f(document.body,
+"touchstart",function(b){h.isMouseOver(a.eventMask.rawNode,{event:b})||(a.eventMask._touchOutsideHandle&&a.eventMask._touchOutsideHandle.remove(),a.type="onmouseout",d.raiseEvent(a),delete c[a.eventMask._maskId])})};this._shapeEvents.push({shape:a.eventMask,handle:a.eventMask.connect("touchstart",this,function(b){Object.keys(c).forEach(function(a){var b=c[a];b.eventMask._touchOutsideHandle&&b.eventMask._touchOutsideHandle.remove();b.type="onmouseout";d.raiseEvent(b);delete c[a]});a.type="onmouseover";
+this.raiseEvent(a);c[a.eventMask._maskId]=a})});a.eventMask.connect("touchend",this,e);a.eventMask.connect("touchcancel",this,e)}}else this.inherited(arguments)}})});
