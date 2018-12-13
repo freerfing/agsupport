@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!-- xml配置对于NULL值默认作为字符串来处理 -->
+		<setting name="jdbcTypeForNull" value="VARCHAR"/>
+		<!-- 使用LOG4J2打印语句 -->
+		<setting name="logImpl" value="LOG4J2"/>
+	</settings>
+
+	<typeAliases>
+		<!-- 存放domain对象 -->
+		<package name="com.augurit.gzsw.domain"/>
+	</typeAliases>
+
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper">
+			<property name="dialect" value="oracle"/>
+			<property name="offsetAsPageNum" value="true"/>
+			<property name="rowBoundsWithCount" value="true"/>
+			<!-- true表示 pageSize=0时候，返回全部 -->
+			<property name="pageSizeZero" value="true"/>
+		</plugin>
+	</plugins>
+
+</configuration>

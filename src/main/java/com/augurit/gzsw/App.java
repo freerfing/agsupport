@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11NioProtocol;
+import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -29,9 +30,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-@SpringBootApplication(
-		exclude = {MongoAutoConfiguration.class}
-)
+@SpringBootApplication
 @EnableWebMvc
 @EnableScheduling
 @EnableAsync
@@ -57,12 +56,12 @@ public class App extends WebMvcConfigurerAdapter {
 	}
 
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		logger.debug("初始化 EasyUI 分页请求参数处理器");
+		//logger.debug("初始化 EasyUI 分页请求参数处理器");
 		//argumentResolvers.add(new EasyuiPageArgumentResolver());
 	}
 
 	public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-		logger.debug("注册统一的异常处理Bean");
+		//logger.debug("注册统一的异常处理Bean");
 		//exceptionResolvers.add(this.registerExceptionResolver());
 	}
 

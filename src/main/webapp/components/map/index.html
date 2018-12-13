@@ -1,0 +1,150 @@
+<!-- 水务一张图 -->
+<div class="map-container" data-bind="initMapHandler">
+	<!-- 地图左侧菜单 -->
+	<div class="map-menu-container">
+		<div id="side">
+			<div id="sidebar" data-bind="click:$root.sidebarClick">
+				<a></a>
+			</div>
+			<ul id="map-menu" class="map-menu">
+				<!--ko foreach: mapMenus-->
+				<li data-bind="event: { click:$root.menuClick, mouseenter: $root.hoverMapMenu, mouseleave: $root.leaveMapMenu }, attr:{ name: id }, css:{ hover: hoverable }">
+					<a>
+						<div class="map-menu-item">
+							<!--ko if: visible() && hoverIconUrl-->
+							<img data-bind="attr: { src: hoverIconUrl } ">
+							<!--/ko-->
+							<!--ko if: !visible() && normalIconUrl-->
+							<img data-bind="attr: { src: normalIconUrl } ">
+							<!--/ko-->
+						</div>
+						<div class="map-menu-item" style="padding-left: 4px;" data-bind="text:name, attr:{ title: name }"></div>
+					</a>
+				</li>
+				<!--/ko-->
+			</ul>
+		</div>
+		<div id="menu-panel" data-bind="visible: $root.currentMapMenu().visible && $root.currentMapMenu().visible()">
+			<!--ko foreach: mapMenus-->
+			<div data-bind="visible:visible, event: { mouseenter: $root.hoverMapMenuPanel, mouseleave: $root.leaveMapMenuPanel }, attr:{ id: id }" class="menu-panel-container">
+
+			</div>
+			<!--/ko-->
+		</div>
+	</div>
+
+	<!-- 地图右侧内容 -->
+	<div class="map-content-container">
+		<!-- 地图容器 -->
+		<div id="map-wrapper"></div>
+		<!-- 地图组件 -->
+		<div id="widgets_toolbar">
+			<ul>
+				<li class="tool_btn_coordinate_transformation_li" id="tool_btn_coordinate_transformation"></li>
+				<li><a class="tool_btn_curtain" id="tool_curtain_btn" title="卷帘"><div style="height: 30px;margin-top: 5px;border-right: 1px solid #d9d9d9;"></div></a></li>
+				<li class="toolbar_tool_btn_li" id="tool_btn" ></li>
+				<li class="toolbar_layer_btn_li" id="toolbar_layer_btn_li" ></li>
+				<li class="tool_btn_space_li" id="tool_btn_space" ></li>
+			</ul>
+		</div>
+	</div>
+
+
+</div>
+
+<style>
+	.map-container {
+		width: 100%;
+		height: 100%;
+	}
+
+	.map-menu-container {
+		float: left;
+		width: 40px;
+		height: 100%;
+		background-color: #fff;
+	}
+
+	.map-content-container {
+		height: 100%;
+	}
+
+	#side {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	#sidebar {
+		flex: 0 0 35px;
+		box-shadow: 3px 0 0 #e8f1ff;
+		background: #55bbed;
+	}
+
+	#sidebar a {
+		padding: 5px;
+		text-align: center;
+		display: block;
+		width: 40px;
+		height: 35px;
+		background: url(styles/imgs/map/list.png) no-repeat 7px 10px;
+	}
+
+	.map-menu {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		background: #F1F7FE right repeat-y;
+	}
+
+	.map-menu li {
+		flex: 1;
+	}
+
+	.map-menu li a {
+		height: 100%;
+		color: #333;
+		display: flex;
+		flex-direction: column;
+		border-bottom: 1px solid #d9d9d9;
+		font-size: 16px;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.map-menu li a .map-menu-item {
+		width: 24px;
+	}
+
+	.map-menu li a:hover, .map-menu .hover a {
+		color: #fff;
+		background: #299fdb;
+	}
+
+	#menu-panel {
+		width: 264px;
+		position: absolute;
+		top: 0;
+		left: 40px;
+		bottom: 0;
+		padding: 0px;
+		overflow: auto;
+		border-right: 1px solid #d9d9d9;
+		text-align: left;
+		background: #fff;
+		z-index: 1000;
+	}
+
+	.menu-panel-container {
+		width: 100%;
+		height: 100%;
+		border: none;
+		overflow: hidden;
+		overflow-y: auto;
+	}
+
+	#map-wrapper {
+		height: 100%;
+		overflow: hidden;
+	}
+</style>

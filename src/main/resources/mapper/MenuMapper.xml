@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.base.menu.mapper.MenuMapper">
+    <select id="listMenus" resultType="Menu">
+        select ID id, NAME name, URL url, HOVER_ICON_URL hoverIconUrl, NORMAL_ICON_URL normalIconUrl,
+          PATH path, AUTHORIZE_CODE authorizeCode, DISP_ORDER dispOrder, IS_DISPLAY isDisplay,
+          REMARK remark, PID pid
+        from A_MENU
+    </select>
+</mapper>

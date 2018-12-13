@@ -1,0 +1,101 @@
+<!-- 整个项目的框架页面 -->
+<div data-bind="initDesktopHander">
+	<!-- 菜单及用户信息 -->
+	<div class="desktop-head">
+		<div class="desktop-head-top desktop_head_top_bg_color clearfix">
+
+			<!-- 用户信息 -->
+			<ul class="desktop-head-top-user clearfix">
+				<li>
+					<a class="loginuser" data-bind="click:$root.clickUserNameBtn, text: loginUser().userName "></a>
+				</li>
+				<li>
+					<a class="message" data-bind="click:$root.clickSmsBtn;">短信平台</a>
+				</li>
+				<li>
+					<a class="exit" data-bind="click:$root.clickQuitBtn;">退出</a>
+				</li>
+			</ul>
+
+			<!-- 一级菜单 -->
+			<ul id="desktop-head-top-menu" class="basic_color">
+				<!--ko foreach: menus-->
+				<li  data-bind="attr:{ name: id }, css:{ menuSelected: visible }, click:$root.menuClick">
+					<div data-bind="text: name, attr:{ title: name };"></div>
+				</li>
+				<!--/ko-->
+			</ul>
+		</div>
+	</div>
+
+	<!-- 菜单对应容器 -->
+	<!--ko foreach: menus-->
+	<div data-bind="visible:visible, attr:{ id: id }" class="desktop-body"></div>
+	<!--/ko-->
+</div>
+
+<style>
+	.desktop-head {
+		height: 74px;
+	}
+
+	.desktop-body {
+		position: absolute;
+		top: 74px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
+	}
+
+	.desktop-head-top-user {
+		float: right;
+		height: 60px;
+		margin-top: 7px;
+	}
+
+	.desktop-head-top-user li {
+		float: left;
+		padding: 10px;
+	}
+
+	.desktop-head-top-user li a {
+		padding-left: 24px;
+		height: 20px;
+		line-height: 20px;
+		display: inline-block;
+		margin-top: 10px;
+	}
+
+	#desktop-head-top-menu {
+		float: right;
+		display: inline-block;
+		margin-top: 46px;
+		margin-right: 50px;
+		box-shadow: 0 0 5px #ccc;
+		webkit-box-shadow: 0 0 5px #ccc;
+	}
+
+	#desktop-head-top-menu li {
+		display: block;
+		float: left;
+		padding: 0 25px;
+		height: 28px;
+		line-height: 28px;
+		background: #f5f5f5;
+		font-size: 14px;
+		font-weight: bold;
+		border-right: 1px solid #dadada;
+	}
+
+	#desktop-head-top-menu li:hover {
+		cursor: pointer;
+		background-color: #f8c806;
+		color: #666;
+	}
+
+	#desktop-head-top-menu li.menuSelected {
+		background-color: #f8c806;
+	}
+</style>
+

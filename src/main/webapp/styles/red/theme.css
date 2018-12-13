@@ -1,0 +1,7 @@
+.basic_bg_color {
+	background-color: #E4393C;
+}
+
+.desktop_head_top_bg_color {
+	background: #E4393C url(img/desktop/bg_top.jpg) left center no-repeat;
+}

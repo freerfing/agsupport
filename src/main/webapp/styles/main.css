@@ -1,0 +1,44 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+}
+
+a {
+	cursor: pointer;
+}
+
+.durandal-wrapper {
+	height: 100%;
+}
+
+#app-container {
+	height:100%;
+	width:100%;
+	overflow:hidden;
+	font:12px/180% Microsoft YaHei,Arial,Helvetica,sans-serif;
+}
+
+.clearfix {
+	zoom: 1;
+}
+
+.clearfix:after {
+	clear: both;
+	content: '';
+	display: block;
+	width: 0;
+	height: 0;
+	visibility: hidden;
+}
+
+ul, li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}

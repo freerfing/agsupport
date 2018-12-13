@@ -1,0 +1,42 @@
+.basic_color {
+	color: #0173AB;
+}
+
+.basic_bg_color {
+	background-color: #057CCF;
+}
+
+.desktop_head_top_bg_color {
+	background: #057CCF url(img/desktop/bg_top.jpg) left center no-repeat;
+}
+
+.desktop-head-top-user li a {
+	color: #b9e8ff;
+}
+
+.desktop-head-top-user li a.loginuser {
+	background: url(img/desktop/loginuser.png) no-repeat 0 0;
+}
+
+.desktop-head-top-user li a.loginuser:hover {
+	background: url(img/desktop/loginuser_h.png) no-repeat 0 0;
+	color: #fff;
+}
+
+.desktop-head-top-user li a.message {
+	background: url(img/desktop/message.png) no-repeat 0 0;
+	color: #fff;
+}
+
+.desktop-head-top-user li a.message:hover {
+	background: url(img/desktop/message_h.png) no-repeat 0 0;
+}
+
+.desktop-head-top-user li a.exit {
+	background: url(img/desktop/exit.png) no-repeat 0 0;
+}
+
+.desktop-head-top-user li a.exit:hover {
+	background: url(img/desktop/exit_h.png) no-repeat 0 0;
+	color: #fff;
+}

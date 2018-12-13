@@ -1,0 +1,98 @@
+{
+	"code": "200",
+	"msg": "响应成功",
+	"content": {
+		"loginUser": {
+			"id": "1",
+			"loginName": "agcomadmin",
+			"userName": "超级管理员"
+		},
+		"menus": [
+			{
+				"id": "1",
+				"name": "首页",
+				"visible": true,
+				"url": "http://10.194.170.78/awater/view/app/homePage/homePage.html"
+			},
+			{
+				"children": [
+					{
+						"children": [
+							{
+								"children": [
+									{
+										"id": "2-1-1-1",
+										"name": "气象预报",
+										"url": "http://10.194.170.2/gzsfweb/HUST/QX_TianQiYuBao.aspx"
+									}
+								],
+								"id": "2-1-1",
+								"name": "气象信息"
+							},
+							{
+								"children": [
+									{
+										"id": "2-1-2-1",
+										"name": "污水处理厂进出水口",
+										"url": "模块ID"
+									}
+								],
+								"id": "2-1-2",
+								"name": "水质信息"
+							}
+						],
+						"id": "2-1",
+						"name": "监测监控",
+						"hoverIconUrl": "http://127.0.0.1/awater/styles/common/img/map/bico01_h.png",
+						"normalIconUrl": "http://127.0.0.1/awater/styles/common/img/map/bico01.png"
+					},
+					{
+						"id": "2-2",
+						"name": "工程&bull;设施",
+						"hoverIconUrl": "http://127.0.0.1/awater/styles/common/img/map/bico02_h.png",
+						"normalIconUrl": "http://127.0.0.1/awater/styles/common/img/map/bico02.png"
+					},
+					{
+						"id": "2-3",
+						"name": "专题图层",
+						"hoverIconUrl": "http://127.0.0.1/awater/styles/common/img/map/bico03_h.png",
+						"normalIconUrl": "http://127.0.0.1/awater/styles/common/img/map/bico03.png"
+					},
+					{
+						"id": "2-4",
+						"name": "四标四实",
+						"hoverIconUrl": "http://127.0.0.1/awater/styles/common/img/map/bico01_h.png",
+						"normalIconUrl": "http://127.0.0.1/awater/styles/common/img/map/bico01.png"
+					}
+				],
+				"id": "2",
+				"name": "水务一张图",
+				"visible": false,
+				"url": "components/map/index"
+			},
+			{
+				"id": "3",
+				"name": "资源服务目录",
+				"visible": false,
+				"url": "components/serv/index"
+			},
+			{
+				"id": "4",
+				"name": "综合信息展示",
+				"visible": false,
+				"url": "http://10.194.170.78/awater/view/app/resourceContainer/resourceContainer.html"
+			},
+			{
+				"id": "5",
+				"name": "后台管理",
+				"visible": false,
+				"url": "http://10.194.170.78/agsupport/"
+			}
+		],
+		"settings": {
+			"coor": "WGS84",
+			"theme": "common",
+			"mapSubMenuDisplayMode": "hover"
+		}
+	}
+}

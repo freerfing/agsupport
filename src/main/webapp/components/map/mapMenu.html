@@ -1,0 +1,64 @@
+<!-- 地图菜单子目录项面板 -->
+<div class="map-subMenu-container" data-bind="mapSubMenuInitHandler">
+	<div class="subMenuPanel">
+		<!--ko foreach: mapSubMenus-->
+		<div class="subMenuContent">
+			<div class="subMenu-wrapper" data-bind="click: $root.toggleSubMenu, attr:{ name: id };" style="positon: relative;">
+				<div data-bind="text: name, attr:{ title: name };" style="cursor: pointer;"></div>
+				<div class="subMenu-item-icon" data-bind="css: { 'subMenu-item-icon-hidden': hiddenItems }, click: $root.toggleSubMenu, clickBubble: false, attr: { id: 'subMenu-item-icon-' + id }"></div>
+			</div>
+
+			<!-- 子菜单的items集合 -->
+			<div class="clearfix" data-bind="attr: { id: id }, visible: !hiddenItems()">
+				<!--ko foreach: { data:subMenuItems, as:'subMenuItem' }-->
+				<a class="subMenu-item" data-bind="click: $root.clickSubMenuItem, attr:{ name: subMenuItem.id }">
+					<div data-bind="text: subMenuItem.name, attr:{ title: subMenuItem.name }"></div>
+				</a>
+				<!--/ko-->
+			</div>
+		</div>
+		<!--/ko-->
+	</div>
+</div>
+
+<style>
+	.subMenuContent {
+		padding: 10px 6px;
+		border-bottom: 1px solid #dedede;
+	}
+
+	.subMenu-wrapper {
+		margin-bottom: 6px;
+		font-size: 14px;
+		color: #333;
+		font-weight: 700;
+		position: relative;
+	}
+
+	.subMenu-item-icon {
+		position: absolute;
+		top: 5px;
+		right: 10px;
+		cursor: pointer;
+		width: 12px;
+		height: 12px;
+		font-size: 14px;
+		background: url(styles/common/img/map/arrow_d.png) 0 4px no-repeat;
+	}
+
+	.subMenu-item-icon-hidden {
+		background: url(styles/common/img/map/arrow_r.png) 2px 1px no-repeat;
+	}
+
+	.subMenu-item {
+		display: block;
+		float: left;
+		padding: 2px 8px;
+		border: 1px solid #dedede;
+		margin: 3px;
+		font-size: 13px;
+		color: #333;
+		text-decoration: none;
+	}
+</style>
+
