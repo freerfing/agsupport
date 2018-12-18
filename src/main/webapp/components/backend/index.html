@@ -1,0 +1,112 @@
+<!-- 整个后台管理页面 -->
+<div data-bind="initBackEndHander">
+	<!-- 后台菜单列表 -->
+	<div class="desktop-head">
+		<ul class="layui-nav layui-nav-tree layui-inline" lay-filter="demo" style="margin-right: 10px;">
+			<li class="layui-nav-item layui-nav-itemed">
+				<a href="javascript:;">默认展开</a>
+				<dl class="layui-nav-child">
+					<dd><a href="javascript:;">选项一</a></dd>
+					<dd><a href="javascript:;">选项二</a></dd>
+					<dd><a href="javascript:;">选项三</a></dd>
+					<dd><a href="">跳转项</a></dd>
+				</dl>
+			</li>
+			<li class="layui-nav-item">
+				<a href="javascript:;">解决方案</a>
+				<dl class="layui-nav-child">
+					<dd><a href="">移动模块</a></dd>
+					<dd><a href="">后台模版</a></dd>
+					<dd><a href="">电商平台</a></dd>
+				</dl>
+			</li>
+			<li class="layui-nav-item"><a href="">云市场</a></li>
+			<li class="layui-nav-item"><a href="">社区</a></li>
+		</ul>
+	</div>
+
+	<div>
+		<div class="layui-tab layui-tab-card">
+			<ul class="layui-tab-title">
+				<li class="layui-this">网站设置</li>
+				<li>用户管理</li>
+				<li>权限分配</li>
+				<li>商品管理</li>
+				<li>订单管理</li>
+			</ul>
+			<div class="layui-tab-content" style="height: 100px;">
+				<div class="layui-tab-item layui-show">1</div>
+				<div class="layui-tab-item">2</div>
+				<div class="layui-tab-item">3</div>
+				<div class="layui-tab-item">4</div>
+				<div class="layui-tab-item">5</div>
+				<div class="layui-tab-item">6</div>
+			</div>
+	</div>
+</div>
+
+<style>
+	.desktop-head {
+		height: 74px;
+	}
+
+	.desktop-body {
+		position: absolute;
+		top: 74px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
+	}
+
+	.desktop-head-top-user {
+		float: right;
+		height: 60px;
+		margin-top: 7px;
+	}
+
+	.desktop-head-top-user li {
+		float: left;
+		padding: 10px;
+	}
+
+	.desktop-head-top-user li a {
+		padding-left: 24px;
+		height: 20px;
+		line-height: 20px;
+		display: inline-block;
+		margin-top: 10px;
+	}
+
+	#desktop-head-top-menu {
+		float: right;
+		display: inline-block;
+		margin-top: 46px;
+		margin-right: 50px;
+		box-shadow: 0 0 5px #ccc;
+		webkit-box-shadow: 0 0 5px #ccc;
+	}
+
+	#desktop-head-top-menu li {
+		display: block;
+		float: left;
+		padding: 0 25px;
+		height: 28px;
+		line-height: 28px;
+		background: #f5f5f5;
+		font-size: 14px;
+		font-weight: bold;
+		border-right: 1px solid #dadada;
+	}
+
+	#desktop-head-top-menu li:hover {
+		cursor: pointer;
+		background-color: #f8c806;
+		color: #666;
+	}
+
+	#desktop-head-top-menu li.menuSelected {
+		background-color: #f8c806;
+	}
+</style>
+

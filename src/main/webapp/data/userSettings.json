@@ -92,7 +92,8 @@
 		"settings": {
 			"coor": "WGS84",
 			"theme": "common",
-			"mapSubMenuDisplayMode": "hover"
+			"mapSubMenuDisplayMode": "hover",
+			"baseMap": ""
 		}
 	}
 }
