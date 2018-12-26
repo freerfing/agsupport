@@ -56,6 +56,10 @@ define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery"], 
 			utils.sendPost(awater.loginUserSettingsUrl, {}, function(data) {
 				var index, menus = $.extend(true, [], data.content.menus);
 				if(data.code === "200") {
+					// 赋值
+					awater.loginUser = data.content.loginUser;
+					awater.settings = data.content.settings;
+					awater.menus = data.content.menus;
 					modal.loginUser(data.content.loginUser);
 					// 初始化菜单配置
 					for(index=0; index<menus.length; index++) {

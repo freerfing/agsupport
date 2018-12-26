@@ -1195,6 +1195,12 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function(exports){
                 ,data: $.extend(params, options.where)
                 ,dataType: 'json'
                 ,success: function(res){
+                    // 如果配置了options.parseData方法，需要调用
+                    // 修改时间：2018-12-24
+                    if(typeof options.parseData === 'function') {
+                        res = options.parseData(res);
+                    }
+
                     that.resetData(res.data);
                     res.data=table.getDataList(options.id);
                     if(res[response.statusName] != response.statusCode){

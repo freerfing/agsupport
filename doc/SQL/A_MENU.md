@@ -61,6 +61,6 @@ VALUES('2-1-1-3', '雷达图', 'http://10.194.170.78/awater/view/app/watermap/to
 INSERT INTO A_MENU(ID, NAME, URL, HOVER_ICON_URL, NORMAL_ICON_URL, PATH, AUTHORIZE_CODE, DISP_ORDER, IS_DISPLAY, REMARK, PID)
 VALUES('2-1-1-4', '台风路径', 'http://typhoon.weather.com.cn/gis/typhoon_full.shtml', null, null, '/水务一张图/监测监控/气象信息/台风路径', null, 1003, '1', null, '2-1-1');
 INSERT INTO A_MENU(ID, NAME, URL, HOVER_ICON_URL, NORMAL_ICON_URL, PATH, AUTHORIZE_CODE, DISP_ORDER, IS_DISPLAY, REMARK, PID)
-VALUES('2-1-2-1', '水质信息', null, null, null, '/水务一张图/监测监控/水质信息/污水处理厂进出水口', null, 1004, '1', null, '2-1-2');
+VALUES('2-1-2-1', '污水处理厂进出水口', null, null, null, '/水务一张图/监测监控/水质信息/污水处理厂进出水口', null, 1004, '1', null, '2-1-2');
 
 ```

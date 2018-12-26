@@ -2,10 +2,83 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.augurit.gzsw.base.menu.mapper.MenuMapper">
-    <select id="listMenus" resultType="Menu">
-        select ID id, NAME name, URL url, HOVER_ICON_URL hoverIconUrl, NORMAL_ICON_URL normalIconUrl,
-          PATH path, AUTHORIZE_CODE authorizeCode, DISP_ORDER dispOrder, IS_DISPLAY isDisplay,
-          REMARK remark, PID pid
-        from A_MENU
-    </select>
+  <select id="listMenus" resultType="Menu">
+    SELECT ID id, NAME name, URL url, HOVER_ICON_URL hoverIconUrl, NORMAL_ICON_URL normalIconUrl,
+      PATH path, AUTHORIZE_CODE authorizeCode, DISP_ORDER dispOrder, IS_DISPLAY isDisplay,
+      REMARK remark, PID pid
+    FROM A_MENU
+    ORDER BY DISP_ORDER
+  </select>
+
+  <select id="listChildMenus" resultType="Menu">
+    SELECT ID id, NAME name, URL url, HOVER_ICON_URL hoverIconUrl, NORMAL_ICON_URL normalIconUrl,
+      PATH path, AUTHORIZE_CODE authorizeCode, DISP_ORDER dispOrder, IS_DISPLAY isDisplay,
+      REMARK remark, PID pid
+    FROM A_MENU
+    <if test="isCascade">
+      START WITH PID = #{parentId}
+      CONNECT BY PRIOR ID = PID
+    </if>
+    <if test="!isCascade">
+      WHERE PID = #{parentId}
+    </if>
+    ORDER BY DISP_ORDER
+  </select>
+
+  <update id="updateMenu" parameterType="Menu">
+    UPDATE A_MENU
+    <set>
+      <if test="name != null">
+        NAME = #{name},
+      </if>
+      <if test="url != null">
+        URL = #{url},
+      </if>
+      <if test="hoverIconUrl != null">
+        HOVER_ICON_URL = #{hoverIconUrl},
+      </if>
+      <if test="normalIconUrl != null">
+        NORMAL_ICON_URL = #{normalIconUrl},
+      </if>
+      <if test="path != null">
+        PATH = #{path},
+      </if>
+      <if test="authorizeCode != null">
+        AUTHORIZE_CODE = #{authorizeCode},
+      </if>
+      <if test="dispOrder != null">
+        DISP_ORDER = #{dispOrder},
+      </if>
+      <if test="isDisplay != null">
+        IS_DISPLAY = #{isDisplay},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark},
+      </if>
+    </set>
+    WHERE ID = #{id}
+  </update>
+
+  <insert id="saveMenu" parameterType="Menu">
+    INSERT INTO A_MENU(ID, NAME, URL, HOVER_ICON_URL, NORMAL_ICON_URL, PATH, AUTHORIZE_CODE, DISP_ORDER, IS_DISPLAY, REMARK, PID)
+    VALUES(#{id}, #{name}, #{url}, #{hoverIconUrl}, #{normalIconUrl}, #{path}, #{authorizeCode}, #{dispOrder}, #{isDisplay}, #{remark}, #{pid})
+  </insert>
+
+  <delete id="delMenus" parameterType="Menu">
+    DELETE FROM A_MENU
+    WHERE ID IN
+    <foreach collection="ids" open="(" separator="," close=")" item="id">#{id}</foreach>
+  </delete>
+
+  <select id="getMaxDispOrder" resultType="Integer">
+    SELECT MAX(DISP_ORDER) maxDispOrder FROM A_MENU
+  </select>
+
+  <select id="getMenuById" resultType="Menu">
+    SELECT ID id, NAME name, URL url, HOVER_ICON_URL hoverIconUrl, NORMAL_ICON_URL normalIconUrl,
+      PATH path, AUTHORIZE_CODE authorizeCode, DISP_ORDER dispOrder, IS_DISPLAY isDisplay,
+      REMARK remark, PID pid
+    FROM A_MENU
+    WHERE ID = #{id}
+  </select>
 </mapper>

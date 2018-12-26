@@ -1,0 +1,19 @@
+```
+-- 角色表
+CREATE TABLE A_ROLE (
+	ID VARCHAR2(32),
+	NAME VARCHAR2(256),
+	PHOTO VARCHAR(512),
+	REMARK VARCHAR2(512)
+);
+
+COMMENT ON TABLE A_ROLE IS '角色表';
+COMMENT ON COLUMN A_ROLE.ID IS '角色ID';
+COMMENT ON COLUMN A_ROLE.NAME IS '角色名称';
+COMMENT ON COLUMN A_ROLE.PHOTO IS '角色图标';
+COMMENT ON COLUMN A_ROLE.REMARK IS '备注';
+
+INSERT INTO A_ROLE(ID, NAME, PHOTO, REMARK) VALUES('1', '超级管理员', null, '对整个平台的运行维护进行管理，分配权限、配置数据等');
+INSERT INTO A_ROLE(ID, NAME, PHOTO, REMARK) VALUES('2', '普通用户（水务局）', null, '水务局内部普通用户，可进首页，浏览一张图，申请服务资源，预览水务综合信息');
+
+```

@@ -1,5 +1,4 @@
-define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery", "components/map/index"], function (app, composition, ko, utils, $, parent) {
-	var map;
+define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery", "components/map/index", "layui"], function (app, composition, ko, utils, $, parent) {
 	var modal = {
 		mapSubMenus: ko.observableArray([]),// 如监测监控中的气象信息、水质信息等
 		toggleSubMenu: function(subMenu) {
@@ -7,7 +6,42 @@ define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery", "
 			return false;
 		},
 		clickSubMenuItem: function(selectedSubMenuItem) {
-			// TODO 点击子菜单ITEM项处理
+			var layer;
+			if(selectedSubMenuItem.isSelected()) {
+				// 取消选择
+				selectedSubMenuItem.isSelected(false);
+				layer = map.getLayer(selectedSubMenuItem.id);
+				if(layer) {
+					map.removeLayer(layer);
+				}
+			} else {
+				// 点击选中
+				selectedSubMenuItem.isSelected(true);
+				utils.sendPost('http://127.0.0.1/awater/map/submenu/listItemInfo', { submenuItemId: selectedSubMenuItem.id }, function(data) {
+					if(data.code === "200") {
+						if(data.content[0].type === '1') {
+							require(["esri/layers/FeatureLayer"], function(FeatureLayer) {
+								layer = new FeatureLayer(data.content[0].mapUrl + '/0', { id : selectedSubMenuItem.id });
+								map.addLayer(layer);
+							});
+						} else {
+							layui.use(['layer'], function(layer) {
+								layer.open({
+									title: selectedSubMenuItem.name,
+									type: 2,
+									content: selectedSubMenuItem.url,
+									area: ['1040px', "500px"],
+									end: function() {
+										selectedSubMenuItem.isSelected(false);
+									}
+								});
+							});
+						}
+					}
+				});
+			}
+
+			return false;
 		},
 	};
 
@@ -16,20 +50,7 @@ define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery", "
 			this.initMapSubMenus();// 初始化地图二级菜单和对应的子列表数据
 		},
 		initMapSubMenus: function() {
-			var currentMapMenu = parent.currentMapMenu(), currentSubMenus, mapSubMenus = [], index, mapSubMenu;
-			if(currentMapMenu.children && currentMapMenu.children.length > 0) {
-				currentSubMenus = currentMapMenu.children;
-				for(index=0; index<currentSubMenus.length; index++) {
-					mapSubMenu = currentSubMenus[index];
-					mapSubMenus.push({
-						id: mapSubMenu.id,
-						name: mapSubMenu.name,
-						hiddenItems: ko.observable(false),// 默认全部隐藏
-						subMenuItems: ko.observableArray(mapSubMenu.children || [])
-					});
-				}
-			}
-			modal.mapSubMenus(mapSubMenus);
+			modal.mapSubMenus(parent.currentMapMenu().children);
 		},
 
 	});

@@ -12,6 +12,7 @@ require.config({
 	],
 	paths: {
 		text: 'lib/require/text',
+		css: 'lib/require/css',
 		jquery: 'lib/jquery/jquery.min',
 		knockout: 'lib/knockout/knockout-3.4.2',
 		layui: 'lib/layui/layui',
@@ -25,13 +26,12 @@ require.config({
 		layui: {
 			deps: ['css!lib/layui/css/layui.css'],
 			init: function() {
-				alert('初始化layui');
 				// layui的全局化配置
 				this.layui.config({
-					dir: './lib/layui/',// layui.js所在路径
+					dir: 'lib/layui/',// layui.js所在路径
 					version: false,// 默认值，为true表示浏览器不缓存
 					debug: false,
-					base: './lib/layui/extend'
+					base: 'lib/layui/extend'
 				});
 			}
 		},

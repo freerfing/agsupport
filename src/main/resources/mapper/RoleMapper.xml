@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.base.role.mapper.RoleMapper">
+  <select id="listRoles" resultType="Role">
+    SELECT ID id, NAME name, PHOTO photo, REMARK remark
+    FROM A_ROLE
+  </select>
+
+  <update id="updateRole" parameterType="Role">
+    UPDATE A_ROLE
+    <set>
+      <if test="name != null">
+        NAME = #{name},
+      </if>
+      <if test="photo != null">
+        PHOTO = #{photo},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark},
+      </if>
+    </set>
+    WHERE ID = #{id}
+  </update>
+
+  <insert id="saveRole" parameterType="Role">
+    INSERT INTO A_ROLE(ID, NAME, PHOTO, REMARK)
+    VALUES(#{id}, #{name}, #{photo}, #{remark})
+  </insert>
+
+  <delete id="delRoles" parameterType="Role">
+    DELETE FROM A_ROLE
+    WHERE ID IN
+    <foreach collection="ids" open="(" separator="," close=")" item="id">#{id}</foreach>
+  </delete>
+
+</mapper>

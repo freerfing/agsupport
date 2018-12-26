@@ -8,5 +8,6 @@ public interface IMenu {
 	List<Menu> listMenus(String roleId) throws Exception;
 	void saveMenu(Menu menu) throws Exception;
 	void updateMenu(Menu menu) throws Exception;
-	void delMenu(String id) throws Exception;
+	void delMenus(List<String> ids) throws Exception;
+	List<Menu> listChildMenus(String parentId, boolean isCascade) throws Exception;
 }
