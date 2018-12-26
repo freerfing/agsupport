@@ -93,7 +93,7 @@
 			"coor": "WGS84",
 			"theme": "common",
 			"mapSubMenuDisplayMode": "hover",
-			"baseMap": ""
+			"baseMap": "http://10.194.170.121/arcgis/rest/services/WGS84/base_image_qp/MapServer"
 		}
 	}
 }

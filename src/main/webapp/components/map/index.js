@@ -1,5 +1,4 @@
 define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery"], function (app, composition, ko, utils, $) {
-	var map;
 	var modal = {
 		mapMenus: ko.observableArray([]),// 如监测监控、工程设施、专题图层、四标四实
 		currentMapMenu: ko.observable({}),// 当前地图菜单对象信息
@@ -73,21 +72,44 @@ define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery"], 
 		},
 		// 初始化菜单配置
 		initMapMenus: function() {
-			var index, mapMenus = $.extend(true, [], awater.currentMenu.children);
-			modal.mapSubMenuDisplayMode(awater.loginUser.settings.mapSubMenuDisplayMode);
+			var index, mapMenus = $.extend(true, [], awater.currentMenu.children), mapMenu;
+			modal.mapSubMenuDisplayMode(awater.settings.mapSubMenuDisplayMode);
 			for(index=0; index<mapMenus.length; index++) {
-				mapMenus[index].hoverable = ko.observable(false);
-				mapMenus[index].visible = ko.observable(false);
+				mapMenu = mapMenus[index];
+				this.initSubmenus(mapMenu);
+				mapMenu.hoverable = ko.observable(false);
+				mapMenu.visible = ko.observable(false);
+
 				if(modal.mapSubMenuDisplayMode() === 'click' && index === 0) {
 					// 如果通过点击方式，默认加载第一项子菜单项数据
-					mapMenus[index].hoverable(true);
-					mapMenus[index].visible(true);
-					modal.currentMapMenu(mapMenus[index]);
+					mapMenu.hoverable(true);
+					mapMenu.visible(true);
+					modal.currentMapMenu(mapMenu);
 				}
 			}
 			modal.mapMenus(mapMenus);
 			if(modal.mapSubMenuDisplayMode() === 'click') {
 				app.setRoot("components/map/mapMenu", null, modal.currentMapMenu().id);
+			}
+		},
+		initSubmenus: function(mapMenu) {
+			// 初始化地图子菜单和子菜单项
+			var subIndex, submenu;
+			if(mapMenu.children && mapMenu.children.length > 0) {
+				for(subIndex=0; subIndex<mapMenu.children.length; subIndex++) {
+					submenu = mapMenu.children[subIndex];
+					this.initSubmenuItems(submenu);
+					submenu.hiddenItems = ko.observable(false);// 默认隐藏
+					submenu.subMenuItems = ko.observableArray(submenu.children || []);
+				}
+			}
+		},
+		initSubmenuItems: function(submenu) {
+			var itemIndex;
+			if(submenu.children) {
+				for(itemIndex=0; itemIndex<submenu.children.length; itemIndex++) {
+					submenu.children[itemIndex].isSelected = ko.observable(false);
+				}
 			}
 		},
 		loadBaseMap: function() {
@@ -98,7 +120,7 @@ define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery"], 
 					$('#map-wrapper_zoom_slider').get(0).style.visibility = "collapse";
 				});
 
-				var baseLayer = new ArcGISTiledMapServiceLayer("http://10.194.170.121/arcgis/rest/services//basemap/base_image_qp/MapServer", {
+				var baseLayer = new ArcGISTiledMapServiceLayer(awater.settings.baseMap, {
 					"opacity" : 1
 				});
 

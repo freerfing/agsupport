@@ -1,6 +1,6 @@
 package com.augurit.gzsw.domain;
 
-public class SubmenuItemRef {
+public class SubmenuItemInfo {
 	private String id;
 	private String name;
 	private String type;

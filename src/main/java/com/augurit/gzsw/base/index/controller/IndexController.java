@@ -11,7 +11,7 @@ public class IndexController {
 
 	@RequestMapping({"/index.do"})
 	public ModelAndView index() throws Exception {
-		return new ModelAndView("/index");
+		return new ModelAndView("/client/index");
 	}
 
 	// 获取登录用户环境相关信息

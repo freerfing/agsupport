@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.map.menu.mapper.SubmenuItemInfoMapper">
+    <select id="listItemInfos" resultType="SubmenuItemInfo">
+      SELECT ID id, NAME name, TYPE type, URL url, MAP_URL mapUrl
+      FROM A_SUBMENU_ITEM_INFO
+      WHERE 1=1
+      <if test="@org.apache.commons.collections.CollectionUtils@isNotEmpty(subMenuItemIds)">
+        AND id IN (
+          SELECT RID
+          FROM A_SUBMENU_ITEM_INFO_REF
+          WHERE MID IN
+          <foreach collection="subMenuItemIds" item="subMenuItemId" open="(" close=")" separator=",">
+            #{subMenuItemId}
+          </foreach>
+        )
+      </if>
+    </select>
+
+    <insert id="saveItemInfo" parameterType="SubmenuItemInfo">
+      INSERT INTO A_SUBMENU_ITEM_INFO(ID, NAME, TYPE, URL, MAP_URL)
+      VALUES(#{id}, #{name}, #{type}, #{url},  #{mapUrl})
+    </insert>
+
+    <update id="updItemInfo" parameterType="SubmenuItemInfo">
+      UPDATE A_SUBMENU_ITEM_INFO
+      SET 1=1
+      <if test="name != null and name != ''">
+        and NAME = #{name}
+      </if>
+      <if test="type != null and type != ''">
+        and TYPE = #{type}
+      </if>
+      <if test="url != null and url != ''">
+        and URL = #{url}
+      </if>
+      <if test="mapUrl != null and mapUrl != ''">
+        and MAP_URL = #{mapUrl}
+      </if>
+      WHERE ID = #{id}
+    </update>
+
+    <delete id="delItemInfo">
+      DELETE FROM A_SUBMENU_ITEM_INFO
+      WHERE ID IN 
+      <foreach collection="ids" open="(" separator="," close=")" item="id">#{id}</foreach>
+    </delete>
+</mapper>

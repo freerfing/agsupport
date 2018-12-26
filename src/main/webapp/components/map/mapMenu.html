@@ -11,7 +11,7 @@
 			<!-- 子菜单的items集合 -->
 			<div class="clearfix" data-bind="attr: { id: id }, visible: !hiddenItems()">
 				<!--ko foreach: { data:subMenuItems, as:'subMenuItem' }-->
-				<a class="subMenu-item" data-bind="click: $root.clickSubMenuItem, attr:{ name: subMenuItem.id }">
+				<a class="subMenu-item" data-bind="click: $root.clickSubMenuItem, attr:{ name: subMenuItem.id }, css: { 'submenu-item-selected': isSelected }">
 					<div data-bind="text: subMenuItem.name, attr:{ title: subMenuItem.name }"></div>
 				</a>
 				<!--/ko-->
@@ -59,6 +59,17 @@
 		font-size: 13px;
 		color: #333;
 		text-decoration: none;
+	}
+
+	.subMenu-item:hover {
+		border: 1px solid #0092DE;
+		color: #0092DE;
+	}
+
+	.submenu-item-selected {
+		border: 1px solid #0092DE;
+		color: #0092DE;
+		background: url(styles/common/img/map/itemSelected.png) right bottom no-repeat;
 	}
 </style>
 
