@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.augurit.gzsw.manager.user.mapper.OrgMapper">
+
+    <resultMap id="org" type="com.augurit.gzsw.domain.Org">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="orgCode" column="org_code" />
+        <result property="parentOrgCode" column="parent_org_code" />
+        <result property="xpath" column="xpath" />
+        <result property="disporder" column="disporder" javaType="int"/>
+    </resultMap>
+
+    <sql id="allOrgColumns">
+        id,name,org_code,parent_org_code,xpath,disporder
+    </sql>
+
+    <select id="listSubOrgsByOrgCode" resultMap="org" parameterType="java.lang.String">
+        select
+        <include refid="allOrgColumns"/>
+        from A_ORG
+        <where>
+            <if test="orgCode == null">
+              parent_org_code is null
+            </if>
+            <if test="orgCode != null">
+                and parent_org_code = #{orgCode}
+            </if>
+        </where>
+        order by disporder
+    </select>
+
+    <select id="selectById" resultMap="org">
+        select
+        <include refid="allOrgColumns"/>
+        from A_ORG
+        where id = #{id}
+    </select>
+    <insert id="insert">
+        insert into A_ORG
+        (
+        <include refid="allOrgColumns"/>
+        )
+        values (
+        #{id},#{name},#{orgCode},#{parentOrgCode},#{xpath},#{disporder}
+        )
+    </insert>
+
+    <update id="updateById">
+        update A_ORG
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="orgCode != null">
+                org_code = #{orgCode},
+            </if>
+            <if test="parentOrgCode != null">
+                parent_org_code = #{parentOrgCode},
+            </if>
+            <if test="xpath != null">
+                xpath = #{xpath},
+            </if>
+            <if test="disporder != null">
+                disporder = #{disporder},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteByIds" parameterType="java.util.List">
+        delete from A_ORG
+        where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
