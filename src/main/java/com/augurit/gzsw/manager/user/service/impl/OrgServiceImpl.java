@@ -1,5 +1,6 @@
 package com.augurit.gzsw.manager.user.service.impl;
 
+import com.augurit.gzsw.domain.Node;
 import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.Tree;
 import com.augurit.gzsw.manager.user.mapper.OrgMapper;
@@ -83,6 +84,11 @@ public class OrgServiceImpl implements OrgService {
         List<String> ids = findSelfAndSubById(id);
         int success = orgMapper.deleteByIds(ids);
         return success;
+    }
+
+    @Override
+    public List<Node> listOrg() throws Exception {
+        return orgMapper.listOrg();
     }
 
     private List<String> findSelfAndSubById(String id){

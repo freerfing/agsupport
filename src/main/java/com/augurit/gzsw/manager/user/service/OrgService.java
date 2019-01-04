@@ -1,5 +1,6 @@
 package com.augurit.gzsw.manager.user.service;
 
+import com.augurit.gzsw.domain.Node;
 import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.Tree;
 
@@ -27,4 +28,6 @@ public interface OrgService {
     int updateById(Org org);
 
     int deleteSelfAndSubById(String id);
+
+	List<Node> listOrg() throws Exception;
 }

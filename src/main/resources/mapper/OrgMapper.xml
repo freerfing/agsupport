@@ -20,12 +20,14 @@
         <include refid="allOrgColumns"/>
         from A_ORG
         <where>
+            1 = 1
             <if test="orgCode == null">
-              parent_org_code is null
+              and parent_org_code is null
             </if>
             <if test="orgCode != null">
                 and parent_org_code = #{orgCode}
             </if>
+            and rownum = 1
         </where>
         order by disporder
     </select>
@@ -78,4 +80,9 @@
             #{id}
         </foreach>
     </delete>
+
+    <select id="listOrg" resultType="Node">
+        SELECT ORG_CODE id, NAME name, PARENT_ORG_CODE pid, XPATH path, '1' type
+        FROM A_ORG
+    </select>
 </mapper>

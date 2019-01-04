@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -38,21 +39,25 @@ public class UserController {
     @Autowired
     private OrgUserService orgUserService;
 
+    @RequestMapping({"/index.do"})
+    public ModelAndView index() throws Exception {
+        return new ModelAndView("/client/index");
+    }
+
     /**
      * 根据orgId与username或者loginname查询用户
      * @param orgId orgId是必须的,查询机构下的用户
      * @param userName username是在该orgId对应机构下查询该用户信息,可为空，为空查找机构下的用户（用户名或登录名的模糊查找）
      * @param contain false为值列出当前机构下的用户，true除了当前机构下的用户还列出子机构用户
-     * @param pageNum
-     * @param pageSize
+     * @param page
+     * @param limit
      * @return
      * @throws Exception
      */
-    @RequestMapping("listUsers")
-    public ApiResponse listUsersByOrgIdAndName(@RequestParam(required = true) String orgId,String userName,boolean contain, @RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "20") int pageSize)
-            throws Exception{
-        PageHelper.startPage(pageNum, pageSize);
-        List<User> users = userService.listUsersByOrgIdAndName(orgId,userName,contain);
+    @RequestMapping("/listUsers")
+    public ApiResponse listUsersByOrgIdAndName(String orgId, String userName, boolean contain, int page, int limit) throws Exception{
+        PageHelper.startPage(page, limit);
+        List<User> users = userService.listUsersByOrgIdAndName(orgId, userName, contain);
         PageInfo info = new PageInfo(users);
         return new ApiResponse(info);
     }

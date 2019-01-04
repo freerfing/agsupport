@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=11;IE=10;IE=9;IE=8; IE=EDGE" />
     <link rel="stylesheet" type="text/css" href="../lib/layui/css/layui.css" />
+    <link rel="stylesheet" type="text/css" href="../lib/layui/extend/eleTree.css" />
     <link rel="stylesheet" type="text/css" href="../styles/main.css" />
     <script src="../lib/layui/layui.js"></script>
 </head>
@@ -23,24 +24,33 @@
         <table id="roleTable" lay-filter="roleTableFilter"></table>
     </div>
     <div class="layui-col-md7">
-        <div class="layui-tab layui-tab-card">
+        <div class="layui-tab layui-tab-card" lay-filter="rolePanelFilter">
             <ul class="layui-tab-title">
-                <li class="layui-this">基本信息</li>
-                <li>菜单授权</li>
+                <li class="layui-this">菜单授权</li>
                 <li>地图服务授权</li>
                 <li>数据服务授权</li>
-                <li>用户列表</li>
+                <li>用户授权</li>
             </ul>
-            <div class="layui-tab-content">
-                <div class="layui-tab-item layui-show">1</div>
+            <div class="layui-tab-content" style="min-height: 400px;">
+                <div class="layui-tab-item layui-show">
+                    <ul id="menu-authorize-tree"></ul>
+                </div>
                 <div class="layui-tab-item">2</div>
                 <div class="layui-tab-item">3</div>
-                <div class="layui-tab-item">4</div>
-                <div class="layui-tab-item">5</div>
+                <div class="layui-tab-item">
+                    <div class="row">
+                        <div class="layui-col-md7">
+                            <ul id="org-tree"></ul>
+                        </div>
+                        <div class="layui-col-md5">
+                            <table id="userTable"></table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <form id="role_add" class="layui-form" method="post" style="display: none; padding: 16px;">
+    <form id="role_add" class="layui-form" lay-filter="roleFormFilter" method="post" style="display: none; padding: 16px;">
         <div class="layui-form-item">
             <label class="layui-form-label">名称</label>
             <div class="layui-input-block">
@@ -61,12 +71,21 @@
         </div>
     </form>
 <script>
-    layui.config({ base: '../lib/layui/extend' }).use(['jquery', 'layer', 'table', 'form'], function($, layer, table, form) {
+    layui.config({ base: '../lib/layui/extend/' }).use(['jquery', 'layer', 'table', 'form', 'eleTree', 'element'], function($, layer, table, form, eleTree, element) {
 		var $ = layui.$, modal = {
 			saveLayerIndex: undefined,
+			menuTree: undefined,
+			orgTree: undefined,
+			userTable: undefined,
 			checkedIds: [],
 			addRole: function() {
-				var _this = this;
+				form.val("roleFormFilter", {
+					id: '',
+					name: '',
+					photo: '',
+					remark: ''
+				});
+
 				modal.saveLayerIndex = layer.open({
                     type: 1,
                     title: '角色新建',
@@ -125,6 +144,19 @@
 					}
                 }
             },
+            parseToTree: function(parentNode, nodes) {
+                var index;
+				for(index in nodes) {
+					if(nodes[index].pid && nodes[index].pid === parentNode.id) {
+						if(!parentNode.children) {
+							parentNode.children = [];
+                        }
+                        parentNode.children.push(nodes[index]);
+						// 扩展子节点数据内容
+						modal.parseToTree(nodes[index], nodes);
+                    }
+                }
+            },
 		}, roleTable;
 
 		// 页面所有按钮绑定事件
@@ -172,6 +204,129 @@
 		});
 		// 表格绑定事件
         table.on('checkbox(roleTableFilter)', modal.toggleCheckBox);
+        // 初始化tab界面
+        element.on('tab(rolePanelFilter)', function(data) {
+            console.log(data);
+        });
+
+        // 初始化授权界面
+		modal.menuTree = eleTree.render({
+            elem: '#menu-authorize-tree',
+			showCheckbox: true,
+			lazy: false,
+            url: '../menu/listMenus',
+            method: 'get',
+			contentType: 'application/json',
+			defaultCheckedKeys: [],
+			parseData: function(data) {
+				var isSuccess = data.code === '200', ret;
+
+				if(!isSuccess) {
+					ret = {
+						code: 1,
+						msg: data.msg
+					}
+				} else {
+					var rootNodes = [], index;
+					for(index in data.content) {
+						//data.content[index].label = data.content[index].name;
+						if(data.content[index].id === '1' || data.content[index].id === '2') {
+							this.defaultCheckedKeys.push(data.content[index].id);
+                        }
+						if(!data.content[index].pid) {
+							rootNodes.push(data.content[index]);
+						}
+					}
+
+					for(index in rootNodes) {
+						modal.parseToTree(rootNodes[index], data.content);
+					}
+
+					ret = {
+						code: 0,
+						msg: data.msg,
+						count: rootNodes.length,
+						data: rootNodes
+					}
+				}
+
+                return ret;
+            },
+        });
+		modal.orgTree = eleTree.render({
+            elem: '#org-tree',
+			showCheckbox: true,
+			lazy: false,
+            url: '../manager/org/listOrg',
+            method: 'get',
+			contentType: 'application/json',
+			parseData: function(data) {
+				var isSuccess = data.code === '200', ret;
+
+				if(!isSuccess) {
+					ret = {
+						code: 1,
+						msg: data.msg
+					}
+				} else {
+					var rootNodes = [], index;
+					for(index in data.content) {
+						//data.content[index].label = data.content[index].name;
+						if(!data.content[index].pid) {
+							rootNodes.push(data.content[index]);
+						}
+					}
+
+					for(index in rootNodes) {
+						modal.parseToTree(rootNodes[index], data.content);
+					}
+
+					ret = {
+						code: 0,
+						msg: data.msg,
+						count: rootNodes.length,
+						data: rootNodes
+					}
+				}
+
+                return ret;
+            },
+        });
+
+		modal.userTable = table.render({
+			elem: '#userTable',
+			height: 500,
+			url: '../manager/user/listUsers', //数据接口
+			method: 'post',
+			where: {
+				orgId: "idtreeroot",
+				contain: true
+            },
+			//toolbar: '#rool_toolbar',
+			page: false, //开启分页
+			cols: [[ //表头
+				{
+					field: 'id',
+					title: 'ID',
+					width: 40,
+					fixed: 'left',
+					type: 'checkbox'
+				},
+				{
+					field: 'userName',
+					title: '用户名称',
+					width: 200
+				}
+			]],
+			parseData: function(data) {
+				return {
+					code: data.code === '200'? 0 : 1,
+					msg: data.msg,
+					count: data.content.size,
+					data: data.content.list
+				}
+			}
+		});
 
 		// form绑定事件
 		form.on('submit(roleSaveFilter)', function(formData) {

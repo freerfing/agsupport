@@ -40,10 +40,10 @@ public class UserServiceImpl implements UserService {
     private OrgUserService orgUserService;
 
     @Override
-    public List<User> listUsersByOrgIdAndName(String orgId,String userName,boolean contain) {
+    public List<User> listUsersByOrgIdAndName(String orgId, String userName, boolean contain) {
         //为true，列出该机构下的用户及所有子机构下的用户，否则只列出当前目录下的用户
         if (contain){
-            List<User> users = listAllSubUsersByOrgIdAndName(orgId,userName);
+            List<User> users = listAllSubUsersByOrgIdAndName(orgId, userName);
             return users;
         }else{
             return userMapper.listUsersByOrgIdAndName(orgId,userName);
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         return orgUserService.deleteByOrgIdAndUserId(orgId,userId);
     }
 
-    private List<User> listAllSubUsersByOrgIdAndName(String orgId,String userName){
+    private List<User> listAllSubUsersByOrgIdAndName(String orgId, String userName){
         Org org = orgService.selectById(orgId);
         if (null == org){
             return null;

@@ -2,6 +2,7 @@ package com.augurit.gzsw.manager.user.controller;
 
 import com.augurit.gzsw.ApiResponse;
 import com.augurit.gzsw.RespCodeMsgDepository;
+import com.augurit.gzsw.domain.Node;
 import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.Tree;
 import com.augurit.gzsw.manager.user.service.OrgService;
@@ -47,6 +48,12 @@ public class OrgController {
         //如果id为空，则列出所有的机构组织
         List<Tree> treeList = orgService.listAllSubOrgsByOrgCode(orgCode);
         return new ApiResponse<>(treeList);
+    }
+
+    @RequestMapping("listOrg")
+    public ApiResponse listOrg()throws Exception{
+        List<Node> orgs = orgService.listOrg();
+        return new ApiResponse<>(orgs);
     }
 
     //根据id查询当前机构信息

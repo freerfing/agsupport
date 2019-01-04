@@ -50,10 +50,10 @@
 		var modal = {
 			checkedIds: [],
             layerDialogIndex: undefined,
-			addMenuBtnClick: function(title, row) {
+			addMenuBtnClick: function(title, data) {
 				title = (typeof title === 'string')? title : undefined;
-				if(row) {
-					form.val("menuSaveFormFilter", row.data);
+				if(data) {
+					form.val("menuSaveFormFilter", data);
                 } else {
 					// 初始化form信息
 					form.val("menuSaveFormFilter", {
@@ -157,7 +157,7 @@
 				});
             },
 			updateMenu: function(row) {
-				modal.addMenuBtnClick('菜单更新', row);
+				modal.addMenuBtnClick('菜单更新', row.data);
             },
 			clickOperation: function(row) {
 				if(row.event && typeof modal[row.event] === 'function') {

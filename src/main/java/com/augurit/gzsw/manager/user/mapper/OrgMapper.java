@@ -1,5 +1,6 @@
 package com.augurit.gzsw.manager.user.mapper;
 
+import com.augurit.gzsw.domain.Node;
 import com.augurit.gzsw.domain.Org;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,4 +29,5 @@ public interface OrgMapper {
 
     int deleteByIds(List ids);
 
+	List<Node> listOrg() throws Exception;
 }

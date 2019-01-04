@@ -28,7 +28,7 @@
     VALUES(#{id}, #{name}, #{photo}, #{remark})
   </insert>
 
-  <delete id="delRoles" parameterType="Role">
+  <delete id="delRoles">
     DELETE FROM A_ROLE
     WHERE ID IN
     <foreach collection="ids" open="(" separator="," close=")" item="id">#{id}</foreach>

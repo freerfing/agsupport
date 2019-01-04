@@ -1,6 +1,7 @@
 package com.augurit.gzsw.base.role.controller;
 
 import com.augurit.gzsw.ApiResponse;
+import com.augurit.gzsw.DefaultIdGenerator;
 import com.augurit.gzsw.base.role.service.IRole;
 import com.augurit.gzsw.domain.Role;
 import com.google.common.collect.Lists;
@@ -31,6 +32,7 @@ public class RoleController {
 
 	@RequestMapping("/saveRole")
 	public ApiResponse<Object> saveRole(Role role) throws Exception {
+		role.setId(DefaultIdGenerator.getIdForStr());
 		irole.saveRole(role);
 		return new ApiResponse<>(null);
 	}
