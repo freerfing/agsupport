@@ -7,6 +7,12 @@
     FROM A_ROLE
   </select>
 
+  <select id="listRolesByName" resultType="Role">
+    SELECT ID id, NAME name, PHOTO photo, REMARK remark
+    FROM A_ROLE
+    WHERE NAME like '%' ||  '管理员' || '%'
+  </select>
+
   <update id="updateRole" parameterType="Role">
     UPDATE A_ROLE
     <set>

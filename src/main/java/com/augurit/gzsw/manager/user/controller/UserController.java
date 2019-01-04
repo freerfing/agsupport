@@ -49,12 +49,11 @@ public class UserController {
      * @throws Exception
      */
     @RequestMapping("listUsers")
-    public ApiResponse listUsersByOrgIdAndName(@RequestParam(required = true) String orgId,String userName,boolean contain, @RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "20") int pageSize)
+    public ApiResponse listUsersByOrgIdOrName(@RequestParam(required = true) String orgId,String userName,boolean contain, @RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "20") int pageSize)
             throws Exception{
-        PageHelper.startPage(pageNum, pageSize);
-        List<User> users = userService.listUsersByOrgIdAndName(orgId,userName,contain);
-        PageInfo info = new PageInfo(users);
-        return new ApiResponse(info);
+
+        Object users = userService.listUsersByOrgIdOrName(orgId, userName, contain, pageNum, pageSize);
+        return new ApiResponse(users);
     }
 
     @RequestMapping("insert")
@@ -94,7 +93,7 @@ public class UserController {
 //    根据orgId与userId删除用户关系，如何userId为空，则移除orgId对应的所有用户，如果不为空，则删除该关系
     @RequestMapping("delete")
     public ApiResponse delete(String orgId,String userId)throws Exception{
-        int success = userService.delete(orgId,userId);
+        int success = userService.deleteByOrgIdOrUserId(orgId,userId);
         return new ApiResponse(success);
     }
 

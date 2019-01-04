@@ -16,9 +16,9 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 public interface OrgService {
-    List<Tree> listAllSubOrgsByOrgCode(String orgCode);
+    List<Org> listOrgs();
 
-    List<Org> listSubOrgsByOrgCode(String orgCode);
+    List<Org> listChildOrgsById(String id,boolean contain);
 
     Org selectById(String id);
 
@@ -26,5 +26,5 @@ public interface OrgService {
 
     int updateById(Org org);
 
-    int deleteSelfAndSubById(String id);
+    int deleteSelfAndChildById(String id);
 }

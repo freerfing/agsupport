@@ -18,9 +18,9 @@ import java.util.List;
  */
 @Mapper
 public interface OrgUserMapper {
-    List<OrgUser> selectByOrgId(String orgId);
+    List<OrgUser> listByOrgId(String orgId);
 
-    int deleteByOrgIdAndUserId(@Param(value = "orgId") String orgId, @Param(value = "userId") String userId);
+    int deleteByOrgIdOrUserId(@Param(value = "orgId") String orgId, @Param(value = "userId") String userId);
 
     int insert(OrgUser orgUser);
 

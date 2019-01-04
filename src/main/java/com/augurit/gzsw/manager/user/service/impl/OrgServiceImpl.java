@@ -1,7 +1,7 @@
 package com.augurit.gzsw.manager.user.service.impl;
 
+import com.augurit.gzsw.DefaultIdGenerator;
 import com.augurit.gzsw.domain.Org;
-import com.augurit.gzsw.domain.Tree;
 import com.augurit.gzsw.manager.user.mapper.OrgMapper;
 import com.augurit.gzsw.manager.user.service.OrgService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,32 +27,16 @@ public class OrgServiceImpl implements OrgService {
     @Autowired
     private OrgMapper orgMapper;
 
-    /*
-    递归列出该及目录下的所有子目录
-     */
+
     @Override
-    public List<Tree> listAllSubOrgsByOrgCode(String orgCode){
-        List<Org> orgs = orgMapper.listSubOrgsByOrgCode(orgCode);
-        if(CollectionUtils.isEmpty(orgs)){
-            return null;
-        }
-        List<Tree> list = new ArrayList<>();
-        for (Org org : orgs){
-            Tree<Org> tree = new Tree();
-            tree.setSelf(org);
-            tree.setChildren(listAllSubOrgsByOrgCode(org.getOrgCode()));
-            list.add(tree);
-        }
-        System.out.println(list);
-        return list;
+    public List<Org> listOrgs() {
+        List<Org> orgs = orgMapper.listOrgs();
+        return orgs;
     }
 
-    /*
-    仅仅该级目录下的子目录
-     */
     @Override
-    public List<Org> listSubOrgsByOrgCode(String orgCode) {
-        List<Org> orgs = orgMapper.listSubOrgsByOrgCode(orgCode);
+    public List<Org> listChildOrgsById(String id, boolean contain) {
+        List<Org> orgs = orgMapper.listChildOrgsById(id, contain);
         return orgs;
     }
 
@@ -69,8 +53,10 @@ public class OrgServiceImpl implements OrgService {
     @Transactional
     @Override
     public int inert(Org org) {
+        org.setId(DefaultIdGenerator.getIdForStr());
         return orgMapper.insert(org);
     }
+
     @Transactional
     @Override
     public int updateById(Org org) {
@@ -79,27 +65,18 @@ public class OrgServiceImpl implements OrgService {
 
     @Transactional
     @Override
-    public int deleteSelfAndSubById(String id) {
-        List<String> ids = findSelfAndSubById(id);
+    public int deleteSelfAndChildById(String id) {
+        List<String> ids = new ArrayList<>();
+        ids.add(id);
+        List<Org> orgs = orgMapper.listChildOrgsById(id, true);
+        if (!CollectionUtils.isEmpty(orgs)){
+            for (Org org : orgs){
+                ids.add(org.getId());
+            }
+        }
         int success = orgMapper.deleteByIds(ids);
         return success;
     }
 
-    private List<String> findSelfAndSubById(String id){
-        List<Org> orgs = orgMapper.selectById(id);
-        if (CollectionUtils.isEmpty(orgs)){
-            return null;
-        }
-        List<String> ids = new ArrayList<>();
-        for (Org org : orgs){
-            ids.add(org.getId());
-            List<Org> subOrgs = orgMapper.listSubOrgsByOrgCode(org.getOrgCode());
-            for (Org org1 : subOrgs){
-                //递归调用添加
-                ids.addAll(findSelfAndSubById(org1.getId()));
-            }
-        }
-        return ids;
-    }
 
 }

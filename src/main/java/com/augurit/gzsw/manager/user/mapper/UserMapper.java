@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Mapper
 public interface UserMapper {
-    List<User> listUsersByOrgIdAndName(@Param("orgId") String orgId,@Param("userName") String userName);
+    List<User> listUsersByOrgIdsOrName(@Param("orgIds") List<String> orgIds,@Param("userName") String userName);
 
     int update(User user);
 

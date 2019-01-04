@@ -18,7 +18,9 @@ import java.util.List;
  */
 @Mapper
 public interface OrgMapper {
-    List<Org> listSubOrgsByOrgCode(@Param("orgCode")String orgCode);
+    List<Org> listOrgs();
+
+    List<Org> listChildOrgsById(@Param("id")String id,@Param("contain") Boolean contain);
 
     List<Org> selectById(@Param("id") String id);
 
@@ -26,6 +28,6 @@ public interface OrgMapper {
 
     int updateById(Org org);
 
-    int deleteByIds(List ids);
+    int deleteByIds(List<String> ids);
 
 }

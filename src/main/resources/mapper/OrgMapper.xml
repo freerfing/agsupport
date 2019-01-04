@@ -5,28 +5,33 @@
     <resultMap id="org" type="com.augurit.gzsw.domain.Org">
         <id property="id" column="id" />
         <result property="name" column="name" />
-        <result property="orgCode" column="org_code" />
-        <result property="parentOrgCode" column="parent_org_code" />
+        <result property="pid" column="pid" />
         <result property="xpath" column="xpath" />
         <result property="disporder" column="disporder" javaType="int"/>
     </resultMap>
 
     <sql id="allOrgColumns">
-        id,name,org_code,parent_org_code,xpath,disporder
+        id , name,pid ,xpath,disporder
     </sql>
 
-    <select id="listSubOrgsByOrgCode" resultMap="org" parameterType="java.lang.String">
+    <select id="listOrgs" resultType="org">
         select
         <include refid="allOrgColumns"/>
         from A_ORG
-        <where>
-            <if test="orgCode == null">
-              parent_org_code is null
-            </if>
-            <if test="orgCode != null">
-                and parent_org_code = #{orgCode}
-            </if>
-        </where>
+        order by disporder
+    </select>
+
+    <select id="listChildOrgsById" resultMap="org">
+        select
+        <include refid="allOrgColumns"/>
+        from A_ORG
+        <if test="contain">
+            START WITH pid = #{id}
+            CONNECT BY PRIOR id = pid
+        </if>
+        <if test="!contain">
+            where pid = #{id}
+        </if>
         order by disporder
     </select>
 
@@ -36,30 +41,25 @@
         from A_ORG
         where id = #{id}
     </select>
+
     <insert id="insert">
         insert into A_ORG
         (
         <include refid="allOrgColumns"/>
         )
         values (
-        #{id},#{name},#{orgCode},#{parentOrgCode},#{xpath},#{disporder}
+        #{id},#{name},#{pid},#{xpath},#{disporder}
         )
     </insert>
 
     <update id="updateById">
         update A_ORG
         <set>
-            <if test="id != null">
-                id = #{id},
-            </if>
             <if test="name != null">
                 name = #{name},
             </if>
-            <if test="orgCode != null">
-                org_code = #{orgCode},
-            </if>
-            <if test="parentOrgCode != null">
-                parent_org_code = #{parentOrgCode},
+            <if test="pid != null">
+                pid = #{pid},
             </if>
             <if test="xpath != null">
                 xpath = #{xpath},

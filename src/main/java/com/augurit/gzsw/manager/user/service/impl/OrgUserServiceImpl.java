@@ -30,14 +30,14 @@ public class OrgUserServiceImpl implements OrgUserService {
     private OrgUserMapper orgUserMapper;
 
     @Override
-    public List<OrgUser> selectByOrgId(String orgId) {
-        return orgUserMapper.selectByOrgId(orgId);
+    public List<OrgUser> listByOrgId(String orgId) {
+        return orgUserMapper.listByOrgId(orgId);
     }
 
     @Transactional
     @Override
-    public int deleteByOrgIdAndUserId(String orgId, String userId) {
-       return orgUserMapper.deleteByOrgIdAndUserId(orgId,userId );
+    public int deleteByOrgIdOrUserId(String orgId, String userId) {
+       return orgUserMapper.deleteByOrgIdOrUserId(orgId,userId );
     }
 
     @Transactional
@@ -59,7 +59,7 @@ public class OrgUserServiceImpl implements OrgUserService {
             return 0;
         }
         //根据用户机构查询已按照disporder排序的用户
-        List<OrgUser> orgUsers = orgUserMapper.selectByOrgId(orgId);
+        List<OrgUser> orgUsers = orgUserMapper.listByOrgId(orgId);
         //被移动用户原本的排名
         int fromDisporder = 0;
         //目标位置的用户原本的排名

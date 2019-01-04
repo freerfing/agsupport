@@ -7,14 +7,14 @@
         org_id orgId,user_id userId,disporder disporder
     </sql>
 
-    <select id="selectByOrgId" resultType="OrgUser">
+    <select id="listByOrgId" resultType="OrgUser">
         select
          <include refid="orgUserColumns"/>
          from A_ORG_USER where org_id = #{orgId} order by disporder
     </select>
 
     <!--根据orgId与userId删除用户关系，如何userId为空，则移除orgId对应的所有用户，如果不为空，则删除该关系-->
-    <delete id="deleteByOrgIdAndUserId">
+    <delete id="deleteByOrgIdOrUserId">
         delete from A_ORG_USER where org_id = #{orgId}
         <if test="userId != null">
             and user_id = #{userId}
@@ -23,7 +23,7 @@
 
     <insert id="insert">
         insert into A_ORG_USER(
-        <include refid="orgUserColumns"/>
+        org_id,user_id ,disporder
         )
         values (#{orgId},#{userId},#{disporder})
     </insert>

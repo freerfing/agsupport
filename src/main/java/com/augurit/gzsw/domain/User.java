@@ -28,7 +28,6 @@ public class User {
     //机构信息
     private String orgId;
     private String orgName;
-    private String orgCode;
     private String xpath;
 
     public String getUserId() {
@@ -149,14 +148,6 @@ public class User {
 
     public void setOrgName(String name) {
         this.orgName = name;
-    }
-
-    public String getOrgCode() {
-        return orgCode;
-    }
-
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode;
     }
 
     public String getXpath() {

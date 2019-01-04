@@ -5,7 +5,7 @@
 
     <!--查询出所有字段 A_ORG t1,A_ORG_USER t2,A_USER t3-->
     <sql id="allUserColumns">
-      t1.id orgId,t1.name orgName,t1.org_code orgCode,t1.xpath xpath,t3.id userId,t3.login_name loginName,t3.password password,
+      t1.id orgId,t1.name orgName,t1.xpath xpath,t3.id userId,t3.login_name loginName,t3.password password,
       t3.user_name userName,t3.is_active active,t3.sex sex,t3.tel tel,t3.office_tel officeTel,t3.email email,
       t3.job job,t3.fax fax,t3.qq qq,t2.disporder disporder
     </sql>
@@ -14,12 +14,15 @@
         id,login_name,password,user_name,is_active,sex,tel,office_tel,email,job,fax,qq
     </sql>
 
-    <!--根据机构orgId，用户名或者登录名查询用户，机构id是必须的，用户或登录名可以为空-->
-    <select id="listUsersByOrgIdAndName" resultType="User" >
+    <!--根据机构orgIds集合，用户名或者登录名查询用户，机构id是必须的，用户名或登录名可以为空-->
+    <select id="listUsersByOrgIdsOrName" resultType="User" >
       select
         <include refid="allUserColumns"/>
         from (A_ORG t1 inner join A_ORG_USER t2 on t1.id=t2.org_id) inner join A_USER t3 on t2.user_id = t3.id
-        where t1.id=#{orgId}
+        where t1.id in
+        <foreach collection="orgIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
         <if test="userName != null">
             and (t3.user_name like '%' ||  #{userName} || '%'
             or

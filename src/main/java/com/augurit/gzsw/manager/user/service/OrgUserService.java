@@ -16,9 +16,9 @@ import java.util.List;
  */
 public interface OrgUserService {
 
-    List<OrgUser> selectByOrgId(String orgId);
+    List<OrgUser> listByOrgId(String orgId);
 
-    int deleteByOrgIdAndUserId(String orgId,String userId);
+    int deleteByOrgIdOrUserId(String orgId,String userId);
 
     int insert(OrgUser orgUser);
 

@@ -2,6 +2,7 @@ package com.augurit.gzsw.manager.user.service;
 
 import com.augurit.gzsw.domain.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -16,11 +17,12 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 public interface UserService {
-    List<User> listUsersByOrgIdAndName(String orgId,String userName,boolean contain);
+
+    Object listUsersByOrgIdOrName(String orgId, String userName,boolean contain, int pageNum, int pageSize);
 
     int insert(User user) throws JsonProcessingException;
 
     int update(User user,String newOrgId) throws JsonProcessingException;
 
-    int delete(String orgId,String userId);
+    int deleteByOrgIdOrUserId(String orgId,String userId);
 }
