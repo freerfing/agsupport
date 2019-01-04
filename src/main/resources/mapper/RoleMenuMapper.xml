@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.base.role.mapper.RoleMenuMapper">
+
+    <sql id="MenuColumns">
+        ID id, NAME name, URL url, HOVER_ICON_URL hoverIconUrl, NORMAL_ICON_URL normalIconUrl,
+        PATH path, AUTHORIZE_CODE authorizeCode, DISP_ORDER dispOrder, IS_DISPLAY isDisplay,
+        REMARK remark, PID pid
+    </sql>
+
+    <select id="listMenuByRoleIdOrMenuName" resultType="Menu">
+        select
+        t1.ID id, t1.NAME name, t1.URL url, t1.HOVER_ICON_URL hoverIconUrl, t1.NORMAL_ICON_URL normalIconUrl,
+        t1.PATH path, t1.AUTHORIZE_CODE authorizeCode, t1.DISP_ORDER dispOrder, t1.IS_DISPLAY isDisplay,
+        t1.REMARK remark, t1.PID pid
+        from A_MENU t1 inner join A_ROLE_MENU t2 on t2.menu_id = t1.id
+        where t2.role_id = #{roleId}
+        <if test="menuName != null">
+            and t1.name like '%' ||  #{menuName} || '%'
+        </if>
+    </select>
+
+    <insert id="bindRoleMenu">
+
+        insert all
+        <foreach collection="roleIds" item="roleId"  separator=" ">
+            <foreach collection="menuIds" item="menuId" separator=" ">
+                into A_ROLE_MENU(role_id,menu_id) values (#{roleId},#{menuId})
+            </foreach>
+        </foreach>
+        select 1 from dual
+
+    </insert>
+
+    <delete id="releaseRoleMenu">
+        delete from A_ROLE_MENU
+        where role_id in
+        <foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+        and
+        menu_id in
+        <foreach collection="menuIds" item="menuId" open="(" close=")" separator=",">
+            #{menuId}
+        </foreach>
+    </delete>
+
+</mapper>

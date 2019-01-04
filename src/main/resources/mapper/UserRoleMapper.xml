@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.base.role.mapper.UserRoleMapper">
+
+    <sql id="userRoleColumns">
+        role_id roleId,user_id userId,flag flag
+    </sql>
+
+
+    <select id="listByRoleIdOrUserName" resultType="java.util.Map">
+        select t1.role_id roleId,t2.id userId,t2.user_name userName,t2.login_name loginName,t1.flag flag
+        from A_USER_ROLE t1 inner join A_USER t2 on t1.user_id = t2.id
+        where t1.role_id = #{roleId}
+        <if test="userName != null">
+          and
+         (t2.user_name like '%' ||  #{userName} || '%'
+          or
+          t2.login_name like '%' ||  #{userName} || '%')
+        </if>
+    </select>
+
+    <delete id="deleteByRoleIdsAndUserIds">
+        delete from A_USER_ROLE
+        where role_id in
+        <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and
+        user_id in
+        <foreach collection="userIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insertByRoleIdsAndUserIds" useGeneratedKeys="false">
+        insert all
+        <foreach collection="roleIds" item="roleId"  separator=" ">
+            <foreach collection="userIds" item="userId" separator=" ">
+              into A_USER_ROLE(role_id,user_id) values (#{roleId},#{userId})
+            </foreach>
+        </foreach>
+        select 1 from dual
+    </insert>
+</mapper>

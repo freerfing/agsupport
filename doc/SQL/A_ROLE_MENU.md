@@ -1,0 +1,11 @@
+```
+    ---角色菜单表
+    CREATE TABLE A_ROLE_MENU
+       (	
+    	ROLE_ID VARCHAR2(36 CHAR), 
+    	MENU_ID VARCHAR2(36 CHAR)
+    	);
+    
+    
+    insert into A_ROLE_MENU(ROLE_ID,MENU_ID) SELECT ROLE_ID,MENU_ID FROM AGSUPPORT.AG_ROLE_MENU;
+```
