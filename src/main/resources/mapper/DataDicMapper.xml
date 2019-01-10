@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.base.data.dic.mapper.DataDicMapper">
+
+    <sql id="allColumns">
+      id id,
+      name name,
+      value value ,
+      pid pid,
+      xpath xpath,
+      disp_order dispOrder,
+      note note
+    </sql>
+
+    <select id="listByPidOrIdOrName" resultType="DataDic">
+        select
+        <include refid="allColumns"/>
+        from A_DATA_DIC
+        where pid = #{pid}
+        <if test="name != null">
+            and name like '%' ||  #{name} || '%'
+        </if>
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        order by disp_order
+    </select>
+
+    <insert id="insert" parameterType="DataDic">
+        insert into A_DATA_DIC (id,name,value,pid,xpath,disp_order,note)
+        values (#{id},#{name},#{value},#{pid},#{xpath},#{dispOrder},#{note})
+    </insert>
+    <update id="updateById" parameterType="DataDic">
+      update A_DATA_DIC
+      <set>
+          <if test="name != null">
+              name = #{name},
+          </if>
+          <if test="value != null">
+              value = #{value},
+          </if>
+          <if test="pid != null">
+              pid = #{pid},
+          </if>
+          <if test="xpath != null">
+              xpath = #{xpath},
+          </if>
+          <if test="dispOrder != null">
+              disp_order = #{dispOrder},
+          </if>
+          <if test="note != null">
+              note = #{note},
+          </if>
+      </set>
+      where id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        delete from A_DATA_DIC
+        where
+        id in
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+        or
+        pid in
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
