@@ -1,5 +1,7 @@
 package com.augurit.gzsw.domain;
 
+import java.util.List;
+
 public class Menu {
 	private String id;
 	private String name;
@@ -12,6 +14,7 @@ public class Menu {
 	private String isDisplay;
 	private String remark;
 	private String pid;
+	private List<Menu> children;
 
 	public String getId() {
 		return id;
@@ -99,6 +102,14 @@ public class Menu {
 
 	public void setPid(String pid) {
 		this.pid = pid;
+	}
+
+	public List<Menu> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<Menu> children) {
+		this.children = children;
 	}
 
 	@Override

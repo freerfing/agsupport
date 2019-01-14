@@ -26,4 +26,5 @@ public interface UserMapper {
 
     List<User> listUsers(@Param("orgIds") List<String> orgIds) throws Exception;
 
+    User getUser(@Param("id") String id) throws Exception;
 }

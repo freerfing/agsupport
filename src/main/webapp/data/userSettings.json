@@ -11,7 +11,7 @@
 			{
 				"id": "1",
 				"name": "首页",
-				"visible": true,
+				"isDisplay": true,
 				"url": "http://10.194.170.78/awater/view/app/homePage/homePage.html"
 			},
 			{
@@ -67,25 +67,25 @@
 				],
 				"id": "2",
 				"name": "水务一张图",
-				"visible": false,
+				"isDisplay": false,
 				"url": "components/map/index"
 			},
 			{
 				"id": "3",
 				"name": "资源服务目录",
-				"visible": false,
+				"isDisplay": false,
 				"url": "components/serv/index"
 			},
 			{
 				"id": "4",
 				"name": "综合信息展示",
-				"visible": false,
+				"isDisplay": false,
 				"url": "http://10.194.170.78/awater/view/app/resourceContainer/resourceContainer.html"
 			},
 			{
 				"id": "5",
 				"name": "后台管理",
-				"visible": false,
+				"isDisplay": false,
 				"url": "http://10.194.170.78/agsupport/"
 			}
 		],

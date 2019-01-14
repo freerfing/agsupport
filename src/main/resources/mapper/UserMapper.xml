@@ -80,4 +80,11 @@
             #{orgId}
         </foreach>
     </select>
+
+    <select id="getUser" resultType="User">
+        select id, login_name loginName, password, user_name userName, is_active active,
+          sex, tel, office_tel officeTel, email, job, fax, qq
+        from A_USER
+        where id = #{id}
+    </select>
 </mapper>

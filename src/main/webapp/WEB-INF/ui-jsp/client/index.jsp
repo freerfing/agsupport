@@ -12,7 +12,7 @@
     <script>
 		// 定义整个应用项目的全局变量
 		var map, awater = {
-			loginUserSettingsUrl: 'http://127.0.0.1/awater/data/userSettings.json',
+			loginUserSettingsUrl: 'getUserSettings',
 			loginUser: {
 				id: '',
 				loginName: '',

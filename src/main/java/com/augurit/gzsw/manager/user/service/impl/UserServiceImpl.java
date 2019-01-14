@@ -89,6 +89,11 @@ public class UserServiceImpl implements UserService {
         return success;
     }
 
+    @Override
+    public User getUser(String id) throws Exception  {
+        return userMapper.getUser(id);
+    }
+
     @Transactional
     @Override
     public int delete(String orgId, String userId) throws Exception {

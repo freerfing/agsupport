@@ -18,6 +18,8 @@ import java.util.List;
 public interface UserService {
     List<User> listUsersByOrgIdAndName(String orgId,String userName,boolean contain) throws Exception;
 
+    User getUser(String id) throws Exception;
+
     int insert(User user) throws Exception;
 
     int update(User user,String newOrgId) throws Exception;
