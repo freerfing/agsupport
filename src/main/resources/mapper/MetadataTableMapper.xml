@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.base.data.metadata.mapper.MetadataTableMapper">
+
+    <sql id="allColumns">
+        id id,
+        name name,
+        cname cname,
+        databaseid databaseId,
+        modify_time modifyTime,
+        priid priId,
+        dirLayerid dirLayerId,
+        distfield distField,
+        layerconfig layerConfig,
+        searchfield searchField,
+        groupfield groupField,
+        sumfield sumField,
+        fieldunit fieldUnit
+    </sql>
+
+    <select id="selectById" resultType="MetadataTable">
+        select
+        <include refid="allColumns"/>
+        from A_METADATA_TABLE
+        where id = #{id}
+    </select>
+
+    <select id="listByDatabaseIdOrName" resultType="MetadataTable">
+        select
+        <include refid="allColumns"/>
+        from A_METADATA_TABLE
+        where databaseid = #{databaseId}
+        <if test="name!=null">
+            and
+            (name like '%' ||  #{name} || '%'
+            or
+            cname like '%' ||  #{name} || '%')
+        </if>
+
+    </select>
+
+    <update id="updateById" parameterType="MetadataTable">
+        update A_METADATA_TABLE
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="cname != null">
+                cname = #{cname},
+            </if>
+            <if test="databaseId != null">
+                databaseid = #{databaseId},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime},
+            </if>
+            <if test="priId != null">
+                priid = #{priId},
+            </if>
+            <if test="dirLayerId != null">
+                dirLayerid = #{dirLayerId},
+            </if>
+            <if test="distField != null">
+                distfield = #{distField},
+            </if>
+            <if test="layerConfig != null">
+                layerconfig = #{layerConfig},
+            </if>
+            <if test="searchField != null">
+                searchfield = #{searchField},
+            </if>
+            <if test="groupField != null">
+                groupfield = #{groupField},
+            </if>
+            <if test="sumField != null">
+                sumfield = #{sumField},
+            </if>
+            <if test="fieldUnit != null">
+                fieldunit = #{fieldUnit},
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="MetadataTable">
+        insert into A_METADATA_TABLE(
+        id ,
+        name,
+        cname ,
+        databaseid ,
+        modify_time ,
+        priid ,
+        dirLayerid ,
+        distfield ,
+        layerconfig ,
+        searchfield ,
+        groupfield ,
+        sumfield ,
+        fieldunit
+        )
+        values
+        (#{id},#{name},#{cname},#{databaseId},#{modifyTime},#{priId}, #{dirLayerId},
+        #{distField},#{layerConfig},#{searchField},#{groupField},#{sumField},#{fieldUnit})
+    </insert>
+
+    <delete id="deleteByIds">
+
+        delete from A_METADATA_TABLE
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </delete>
+
+    <delete id="deleteByDBIds">
+
+        delete from A_METADATA_TABLE
+        where databaseid in
+        <foreach collection="dbIds" item="dbId" open="(" close=")" separator=",">
+            #{dbId}
+        </foreach>
+
+    </delete>
+</mapper>

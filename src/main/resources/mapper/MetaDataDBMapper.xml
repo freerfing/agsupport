@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.base.data.metadata.mapper.MetadataDBMapper">
+
+    <sql id="allColumns">
+        id id,
+        name name,
+        cname cname,
+        url url,
+        create_time createTime,
+        modify_time modifyTime
+    </sql>
+
+    <select id="selectById" resultType="MetadataDB">
+        select
+        <include refid="allColumns"/>
+        from A_METADATA_DB
+        where id = #{id}
+    </select>
+
+    <select id="listOrByName" resultType="MetadataDB">
+        select
+        <include refid="allColumns"/>
+        from A_METADATA_DB
+        <where>
+            <if test="name!=null">
+                name like '%' ||  #{name} || '%'
+                or
+                cname like '%' ||  #{name} || '%'
+            </if>
+        </where>
+    </select>
+
+    <update id="updateById" parameterType="MetadataDB">
+        update A_METADATA_DB
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="cname != null">
+                cname = #{cname},
+            </if>
+            <if test="url != null">
+                url = #{url},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="MetadataDB">
+        insert into A_METADATA_DB(
+        id,name,cname,url,create_time,modify_time
+        )
+        values
+        (#{id},#{name},#{cname},#{url},#{createTime},#{modifyTime})
+    </insert>
+
+    <delete id="deleteByIds">
+
+        delete from A_METADATA_DB
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+
+    </delete>
+</mapper>

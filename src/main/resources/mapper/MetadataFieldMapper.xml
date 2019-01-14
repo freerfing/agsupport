@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.base.data.metadata.mapper.MetadataFieldMapper">
+
+    <sql id="allColumns">
+        id id,
+        name name,
+        cname cname,
+        description description,
+        type type,
+        constraint constraint,
+        unit unit,
+        dd dd,
+        editable editable,
+        visible visible,
+        tableid tableId,
+        disporder disporder,
+        prikey priKey
+    </sql>
+
+    <select id="selectById" resultType="MetadataField">
+        select
+        <include refid="allColumns"/>
+        from A_METADATA_Field
+        where id = #{id}
+    </select>
+
+    <select id="listByTableIdOrName" resultType="MetadataField">
+        select
+        <include refid="allColumns"/>
+        from A_METADATA_Field
+        where tableid = #{tableId}
+        <if test="name!=null">
+            and
+            (name like '%' ||  #{name} || '%'
+            or
+            cname like '%' ||  #{name} || '%')
+        </if>
+        order by disporder
+    </select>
+
+    <update id="updateById" parameterType="MetadataField">
+        update A_METADATA_Field
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="cname != null">
+                cname = #{cname},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="constraint != null">
+                constraint = #{constraint},
+            </if>
+            <if test="unit != null">
+                unit = #{unit},
+            </if>
+            <if test="dd != null">
+                dd = #{dd},
+            </if>
+            <if test="editable != null">
+                editable = #{editable},
+            </if>
+            <if test="visible != null">
+                visible = #{visible},
+            </if>
+            <if test="tableId != null">
+                tableId = #{tableId},
+            </if>
+            <if test="disporder != null">
+                disporder = #{disporder},
+            </if>
+            <if test="priKey != null">
+                prikey = #{priKey},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="MetadataField">
+        insert into A_METADATA_FIELD(
+        id ,
+        name ,
+        cname ,
+        description ,
+        type ,
+        constraint ,
+        unit ,
+        dd ,
+        editable ,
+        visible ,
+        tableid ,
+        disporder ,
+        prikey
+        )
+        values
+        (#{id},#{name},#{cname},#{description},#{type},#{constraint}, #{unit},
+        #{dd},#{editable},#{visible},#{tableId},#{disporder},#{priKey})
+    </insert>
+
+    <delete id="deleteByIds">
+
+        delete from A_METADATA_Field
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </delete>
+    <delete id="deleteByTableIds">
+
+        delete from A_METADATA_Field
+        where tableid in
+        <foreach collection="tableIds" item="tableId" open="(" close=")" separator=",">
+            #{tableId}
+        </foreach>
+
+    </delete>
+
+</mapper>
