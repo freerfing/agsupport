@@ -38,14 +38,7 @@
                 <div class="layui-tab-item">2</div>
                 <div class="layui-tab-item">3</div>
                 <div class="layui-tab-item">
-                    <div class="row">
-                        <div class="layui-col-md7">
-                            <ul id="org-tree"></ul>
-                        </div>
-                        <div class="layui-col-md5">
-                            <table id="userTable"></table>
-                        </div>
-                    </div>
+                    <ul id="org-user-tree"></ul>
                 </div>
             </div>
         </div>
@@ -72,12 +65,12 @@
     </form>
 <script>
     layui.config({ base: '../lib/layui/extend/' }).use(['jquery', 'layer', 'table', 'form', 'eleTree', 'element'], function($, layer, table, form, eleTree, element) {
-		var $ = layui.$, modal = {
+		var modal = {
 			saveLayerIndex: undefined,
 			menuTree: undefined,
-			orgTree: undefined,
-			userTable: undefined,
+			orgUserTree: undefined,
 			checkedIds: [],
+            checkedOrgUserStatus: [],
 			addRole: function() {
 				form.val("roleFormFilter", {
 					id: '',
@@ -121,6 +114,34 @@
 					});
 				});
             },
+			saveRole: function() {
+				var index, ary = [], checkStatus = table.checkStatus('roleTable'), menuCheckStatus = modal.menuTree.getChecked(false, true);
+				if(checkStatus.data.length < 1) {
+					layer.msg('需要选中角色才能保存', { icon: 2, time: 3000 });
+                }
+                debugger
+				for(index in menuCheckStatus) {
+					ary.push(menuCheckStatus[index].key);
+                }
+
+				$.ajax({
+					type: 'POST',
+					contentType: "application/x-www-form-urlencoded",
+					dataType: "json",
+					url: "bindRoleMenu",
+					data: { roleId: checkStatus.data[0].id, menuIds: ary.join(',') },
+					success: function (resp) {
+						if(resp.code != '200') {
+							layer.msg(resp.msg || '授权失败', { icon: 2, time: 3000 });
+						} else {
+							layer.msg('授权成功', { icon: 1, time: 2000 });
+						}
+					},
+					error: function(xhr, errorMsg, error) {
+						layer.msg('授权失败', { icon: 2, time: 3000 });
+					}
+				});
+            },
 			closeDialog: function() {
 				layer.close(modal.saveLayerIndex);
             },
@@ -157,6 +178,44 @@
                     }
                 }
             },
+            initRoleMenuTree: function(obj) {
+				$.ajax({
+					type: 'POST',
+					contentType: "application/x-www-form-urlencoded",
+					dataType: "json",
+					url: "listMenuCheckStatus",
+					data: { roleId: obj.data.id },
+					success: function (resp) {
+						if(resp.code != '200') {
+							layer.msg(resp.msg || '载入数据失败', { icon: 2, time: 3000 });
+						} else {
+							modal.menuTree.setNormalChecked(resp.content);
+						}
+					},
+					error: function(xhr, errorMsg, error) {
+						layer.msg('载入数据失败', { icon: 2, time: 3000 });
+					}
+				});
+            },
+            initOrgUserStatus: function() {
+				$.ajax({
+					type: 'POST',
+					contentType: "application/x-www-form-urlencoded",
+					dataType: "json",
+					url: "listMenuCheckStatus",
+					data: { roleId: obj.data.id },
+					success: function (resp) {
+						if(resp.code != '200') {
+							layer.msg(resp.msg || '载入数据失败', { icon: 2, time: 3000 });
+						} else {
+							modal.orgUserTree.setNormalChecked(resp.content, true);
+						}
+					},
+					error: function(xhr, errorMsg, error) {
+						layer.msg('载入数据失败', { icon: 2, time: 3000 });
+					}
+				});
+            }
 		}, roleTable;
 
 		// 页面所有按钮绑定事件
@@ -180,7 +239,7 @@
 					title: 'ID',
 					width: 40,
 					fixed: 'left',
-					type: 'checkbox'
+					type: 'radio'
 				},
 				{
 					field: 'name',
@@ -204,6 +263,10 @@
 		});
 		// 表格绑定事件
         table.on('checkbox(roleTableFilter)', modal.toggleCheckBox);
+        table.on('row(roleTableFilter)', function(obj) {
+        	modal.initRoleMenuTree(obj);
+        	modal.initOrgUserStatus(obj);
+        });
         // 初始化tab界面
         element.on('tab(rolePanelFilter)', function(data) {
             console.log(data);
@@ -213,6 +276,7 @@
 		modal.menuTree = eleTree.render({
             elem: '#menu-authorize-tree',
 			showCheckbox: true,
+			defaultExpandAll: true,
 			lazy: false,
             url: '../menu/listMenus',
             method: 'get',
@@ -229,10 +293,6 @@
 				} else {
 					var rootNodes = [], index;
 					for(index in data.content) {
-						//data.content[index].label = data.content[index].name;
-						if(data.content[index].id === '1' || data.content[index].id === '2') {
-							this.defaultCheckedKeys.push(data.content[index].id);
-                        }
 						if(!data.content[index].pid) {
 							rootNodes.push(data.content[index]);
 						}
@@ -253,15 +313,16 @@
                 return ret;
             },
         });
-		modal.orgTree = eleTree.render({
-            elem: '#org-tree',
+		modal.orgUserTree = eleTree.render({
+            elem: '#org-user-tree',
 			showCheckbox: true,
+			defaultExpandAll: true,
 			lazy: false,
-            url: '../manager/org/listOrg',
-            method: 'get',
+            url: '../manager/user/listOrgUsers?roleId=' + 1,
+            method: 'post',
 			contentType: 'application/json',
 			parseData: function(data) {
-				var isSuccess = data.code === '200', ret;
+				var isSuccess = data.code === '200', ret, index, traverse;
 
 				if(!isSuccess) {
 					ret = {
@@ -269,64 +330,30 @@
 						msg: data.msg
 					}
 				} else {
-					var rootNodes = [], index;
-					for(index in data.content) {
-						//data.content[index].label = data.content[index].name;
-						if(!data.content[index].pid) {
-							rootNodes.push(data.content[index]);
-						}
-					}
-
-					for(index in rootNodes) {
-						modal.parseToTree(rootNodes[index], data.content);
-					}
-
 					ret = {
 						code: 0,
 						msg: data.msg,
-						count: rootNodes.length,
-						data: rootNodes
+						count: data.content.length,
+						data: data.content
+					};
+
+					traverse = function(node) {
+						var index;
+						modal.checkedOrgUserStatus.push({ val: node.id, checkedStatus: node.checkedStatus });
+						if(node.children && node.children.length > 0) {
+							for(index in node.children) {
+								traverse(node.children[index]);
+                            }
+                        }
+                    };
+
+					for(index in data.content) {
+						traverse(data.content[index]);
 					}
 				}
-
-                return ret;
+				return ret;
             },
         });
-
-		modal.userTable = table.render({
-			elem: '#userTable',
-			height: 500,
-			url: '../manager/user/listUsers', //数据接口
-			method: 'post',
-			where: {
-				orgId: "idtreeroot",
-				contain: true
-            },
-			//toolbar: '#rool_toolbar',
-			page: false, //开启分页
-			cols: [[ //表头
-				{
-					field: 'id',
-					title: 'ID',
-					width: 40,
-					fixed: 'left',
-					type: 'checkbox'
-				},
-				{
-					field: 'userName',
-					title: '用户名称',
-					width: 200
-				}
-			]],
-			parseData: function(data) {
-				return {
-					code: data.code === '200'? 0 : 1,
-					msg: data.msg,
-					count: data.content.size,
-					data: data.content.list
-				}
-			}
-		});
 
 		// form绑定事件
 		form.on('submit(roleSaveFilter)', function(formData) {

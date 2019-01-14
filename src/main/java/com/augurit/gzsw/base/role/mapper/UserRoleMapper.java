@@ -20,7 +20,7 @@ import java.util.List;
 public interface UserRoleMapper {
 
     List listByRoleIdOrUserName(@Param("roleId") String roleId, @Param("userName") String userName)throws Exception;
-
+    List listUserIds(@Param("roleId") String roleId) throws Exception;
     int deleteByRoleIdsAndUserIds(@Param("roleIds") List<String> roleIds,@Param("userIds") List<String> userIds)throws Exception;
 
     int insertByRoleIdsAndUserIds(@Param("roleIds") List<String> roleIds,@Param("userIds") List<String> userIds)throws Exception;

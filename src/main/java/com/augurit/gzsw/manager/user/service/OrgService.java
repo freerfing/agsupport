@@ -17,17 +17,8 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 public interface OrgService {
-    List<Tree> listAllSubOrgsByOrgCode(String orgCode);
-
-    List<Org> listSubOrgsByOrgCode(String orgCode);
-
-    Org selectById(String id);
-
-    int inert(Org org);
-
-    int updateById(Org org);
-
-    int deleteSelfAndSubById(String id);
-
-	List<Node> listOrg() throws Exception;
+    List<Org> listOrgs() throws Exception;
+    void saveOrg(Org org) throws Exception;
+    void updOrg(Org org) throws Exception;
+    void delOrgs(String id) throws Exception;
 }

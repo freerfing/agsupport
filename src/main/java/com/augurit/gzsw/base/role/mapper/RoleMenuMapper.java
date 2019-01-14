@@ -22,7 +22,7 @@ public interface RoleMenuMapper {
     //根据roleId 和 menuName进行查询，menuName可为空
     List<Menu> listMenuByRoleIdOrMenuName(@Param("roleId") String roleId, @Param("menuName") String menuName)throws Exception;
 
-    int bindRoleMenu(@Param("roleIds") List<String> roleIds,@Param("menuIds") List<String> menuIds)throws Exception;
+    int bindRoleMenu(@Param("roleId") String roleIds,@Param("menuIds") List<String> menuIds)throws Exception;
 
     int releaseRoleMenu(@Param("roleIds") List<String> roleIds,@Param("menuIds") List<String>menuIds) throws Exception;
 }

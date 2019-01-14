@@ -16,11 +16,11 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 public interface UserService {
-    List<User> listUsersByOrgIdAndName(String orgId,String userName,boolean contain);
+    List<User> listUsersByOrgIdAndName(String orgId,String userName,boolean contain) throws Exception;
 
-    int insert(User user) throws JsonProcessingException;
+    int insert(User user) throws Exception;
 
-    int update(User user,String newOrgId) throws JsonProcessingException;
+    int update(User user,String newOrgId) throws Exception;
 
-    int delete(String orgId,String userId);
+    int delete(String orgId,String userId) throws Exception;
 }

@@ -1,6 +1,7 @@
 package com.augurit.gzsw.manager.user.controller;
 
 import com.augurit.gzsw.ApiResponse;
+import com.augurit.gzsw.DefaultIdGenerator;
 import com.augurit.gzsw.RespCodeMsgDepository;
 import com.augurit.gzsw.domain.Node;
 import com.augurit.gzsw.domain.Org;
@@ -32,59 +33,31 @@ public class OrgController {
     @Autowired
     private OrgService orgService;
 
-    /*
-    根据当前id列出所有的子机构组织
-     */
-    @RequestMapping("listOrgs")
-    public ApiResponse listOrgsById(String id)throws Exception{
-        String orgCode = null;
-        //如果id不为空，则列出该id所在机构的子机构组织
-        if (!StringUtils.isEmpty(id)){
-            Org org = orgService.selectById(id);
-            if (null != org ){
-                orgCode = org.getOrgCode();
-            }
-        }
-        //如果id为空，则列出所有的机构组织
-        List<Tree> treeList = orgService.listAllSubOrgsByOrgCode(orgCode);
-        return new ApiResponse<>(treeList);
-    }
-
-    @RequestMapping("listOrg")
-    public ApiResponse listOrg()throws Exception{
-        List<Node> orgs = orgService.listOrg();
+    @RequestMapping("/listOrgs")
+    public ApiResponse listOrgs() throws Exception{
+        List<Org> orgs = orgService.listOrgs();
         return new ApiResponse<>(orgs);
     }
 
-    //根据id查询当前机构信息
-    @RequestMapping("search")
-    public ApiResponse select(String id)throws Exception{
-        Org org = orgService.selectById(id);
-        return new ApiResponse(org);
-    }
     //新建机构
-    @RequestMapping("insertOrg")
-    public ApiResponse insert(Org org)throws Exception{
-        org.setId(UUID.randomUUID().toString());
-        org.setOrgCode(UUID.randomUUID().toString());
-        int success = orgService.inert(org);
-        return new ApiResponse(success);
+    @RequestMapping("/saveOrg")
+    public ApiResponse saveOrg(Org org)throws Exception{
+        org.setId(DefaultIdGenerator.getIdForStr());
+        orgService.saveOrg(org);
+        return new ApiResponse(null);
     }
 
-    @RequestMapping("update")
-    public ApiResponse updateById(Org org)throws Exception{
-        int success = orgService.updateById(org);
-        return new ApiResponse(success);
+    @RequestMapping("/updOrg")
+    public ApiResponse updOrg(Org org) throws Exception{
+        orgService.updOrg(org);
+        return new ApiResponse(null);
     }
 
     //删除当前id所在机构及其所有子机构
-    @RequestMapping("delete")
-    public ApiResponse deleteSelfAndSubById(String id)throws Exception{
-        if (null == id || "".equals(id)) {
-            return new ApiResponse(RespCodeMsgDepository.REQUEST_PARAMS_DATA_ERROR,"参数不能为空");
-        }
-        int success = orgService.deleteSelfAndSubById(id);
-        return new ApiResponse(success);
+    @RequestMapping("/delOrgs")
+    public ApiResponse delOrgs(String id) throws Exception{
+        orgService.delOrgs(id);
+        return new ApiResponse(null);
     }
 
 }

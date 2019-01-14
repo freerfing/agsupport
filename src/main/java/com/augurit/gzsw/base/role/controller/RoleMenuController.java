@@ -22,7 +22,7 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 @RestController
-@RequestMapping("role")
+@RequestMapping("/roleMenu")
 public class RoleMenuController {
 
     @Autowired
@@ -39,9 +39,9 @@ public class RoleMenuController {
     //根据角色集合roleIds与菜单集合menuIds进行绑定，不可为空(菜单授权)
     @Transactional
     @RequestMapping("bindRoleMenu")
-    public ApiResponse bindRoleMenu(@RequestParam(value = "roleIds") List<String> roleIds,@RequestParam(value = "menuIds") List<String> menuIds) throws Exception{
+    public ApiResponse bindRoleMenu(String roleId, @RequestParam(value = "menuIds") List<String> menuIds) throws Exception{
 
-        int success = roleMenuService.bindRoleMenu(roleIds, menuIds);
+        int success = roleMenuService.bindRoleMenu(roleId, menuIds);
         return new ApiResponse(success);
     }
 

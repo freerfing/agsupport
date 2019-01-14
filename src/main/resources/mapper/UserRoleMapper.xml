@@ -20,6 +20,12 @@
         </if>
     </select>
 
+    <select id="listUserIds" resultType="string">
+        select user_id
+        from A_USER_ROLE
+        where role_id = #{roleId}
+    </select>
+
     <delete id="deleteByRoleIdsAndUserIds">
         delete from A_USER_ROLE
         where role_id in

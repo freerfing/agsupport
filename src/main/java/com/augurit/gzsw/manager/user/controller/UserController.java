@@ -1,6 +1,12 @@
 package com.augurit.gzsw.manager.user.controller;
 
+import com.augurit.gzsw.ApiException;
 import com.augurit.gzsw.ApiResponse;
+import com.augurit.gzsw.RespCodeMsgDepository;
+import com.augurit.gzsw.base.role.service.IRole;
+import com.augurit.gzsw.base.role.service.UserRoleService;
+import com.augurit.gzsw.domain.Node;
+import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.User;
 import com.augurit.gzsw.manager.user.service.OrgService;
 import com.augurit.gzsw.manager.user.service.OrgUserService;
@@ -8,6 +14,13 @@ import com.augurit.gzsw.manager.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <b><code>UserController</code></b>
@@ -29,6 +43,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/manager/user")
 public class UserController {
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserService userService;
@@ -37,11 +52,40 @@ public class UserController {
     private OrgService orgService;
 
     @Autowired
+    private UserRoleService userRoleService;
+
+    @Autowired
     private OrgUserService orgUserService;
 
     @RequestMapping({"/index.do"})
     public ModelAndView index() throws Exception {
         return new ModelAndView("/client/index");
+    }
+
+    @RequestMapping("/listOrgUsers")
+    public ApiResponse listOrgUsers(String roleId) throws Exception {
+        if(StringUtils.isBlank(roleId)) {
+            log.error("角色ID不能为空");
+            throw new ApiException(RespCodeMsgDepository.REQUEST_PARAMS_DATA_ERROR, null);
+        }
+
+        List<Org> orgs = orgService.listOrgs();
+        List<Node> roots = Lists.newArrayList();
+        List<Org> willRemoved = Lists.newArrayList();
+        for(Org org : orgs) {
+            if(StringUtils.isEmpty(org.getPid())) {
+                willRemoved.add(org);
+                roots.add(new Node(org));
+            }
+        }
+        orgs.removeAll(willRemoved);
+        willRemoved.clear();
+
+        for(Node root : roots) {
+            traverse(root, orgs);
+        }
+
+        return new ApiResponse(roots);
     }
 
     /**
@@ -103,5 +147,38 @@ public class UserController {
         return new ApiResponse(success);
     }
 
+    private void traverse(Node parent, List<Org> orgs) throws Exception {
+        List<Node> children = Lists.newArrayList();
+
+        if("1".equals(parent.getType())) {
+            List<Org> willRemoved = Lists.newArrayList();
+            for(Org org : orgs) {
+                if(parent.getId().equals(org.getPid())) {
+                    Node child = new Node(org);
+                    children.add(child);
+                    willRemoved.add(org);
+                }
+            }
+
+            orgs.removeAll(willRemoved);
+            for(Node child : children) {
+                traverse(child, orgs);
+            }
+
+            if(CollectionUtils.isEmpty(children)) {
+                List<User> users = userService.listUsersByOrgIdAndName(parent.getId(), null, false);
+                if(!CollectionUtils.isEmpty(users)) {
+                    for(User user : users) {
+                        if("1".equals(user.getActive())) {// 有效用户才加入到列表中
+                            Node child = new Node(user);
+                            children.add(child);
+                        }
+                    }
+                }
+            }
+
+            parent.setChildren(children);
+        }
+    }
 
 }

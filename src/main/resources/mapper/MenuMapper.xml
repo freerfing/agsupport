@@ -3,11 +3,21 @@
 
 <mapper namespace="com.augurit.gzsw.base.menu.mapper.MenuMapper">
   <select id="listMenus" resultType="Menu">
-    SELECT ID id, NAME name, URL url, HOVER_ICON_URL hoverIconUrl, NORMAL_ICON_URL normalIconUrl,
-      PATH path, AUTHORIZE_CODE authorizeCode, DISP_ORDER dispOrder, IS_DISPLAY isDisplay,
-      REMARK remark, PID pid
-    FROM A_MENU
-    ORDER BY DISP_ORDER
+    <if test="roleId != null">
+      SELECT b.ID id, b.NAME name, b.URL url, b.HOVER_ICON_URL hoverIconUrl, b.NORMAL_ICON_URL normalIconUrl,
+        b.PATH path, b.AUTHORIZE_CODE authorizeCode, b.DISP_ORDER dispOrder, b.IS_DISPLAY isDisplay,
+        b.REMARK remark, b.PID pid
+      FROM A_ROLE_MENU a inner join A_MENU b on a.MENU_ID=b.ID
+      WHERE a.ROLE_ID = #{roleId}
+      ORDER BY b.DISP_ORDER
+    </if>
+    <if test="roleId == null">
+      SELECT ID id, NAME name, URL url, HOVER_ICON_URL hoverIconUrl, NORMAL_ICON_URL normalIconUrl,
+        PATH path, AUTHORIZE_CODE authorizeCode, DISP_ORDER dispOrder, IS_DISPLAY isDisplay,
+        REMARK remark, PID pid
+      FROM A_MENU
+      ORDER BY DISP_ORDER
+    </if>
   </select>
 
   <select id="listChildMenus" resultType="Menu">

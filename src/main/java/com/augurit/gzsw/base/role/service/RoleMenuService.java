@@ -18,7 +18,7 @@ public interface RoleMenuService {
 
     List<Menu> listMenuByRoleIdOrMenuName(String roleId,String menuName) throws Exception;
 
-    int bindRoleMenu(List<String> roleIds,List<String> menuIds) throws Exception;
+    int bindRoleMenu(String roleId,List<String> menuIds) throws Exception;
 
     int releaseRoleMenu(List<String> roleIds,List<String> menuIds) throws Exception;
 }

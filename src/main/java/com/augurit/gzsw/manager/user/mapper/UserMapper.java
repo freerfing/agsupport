@@ -24,4 +24,6 @@ public interface UserMapper {
 
     int insert(User user);
 
+    List<User> listUsers(@Param("orgIds") List<String> orgIds) throws Exception;
+
 }

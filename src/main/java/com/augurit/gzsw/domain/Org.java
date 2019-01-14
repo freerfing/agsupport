@@ -13,8 +13,7 @@ package com.augurit.gzsw.domain;
 public class Org {
     private String id;
     private String name;
-    private String orgCode;
-    private String parentOrgCode;
+    private String pid;
     private String xpath;
     private int disporder;
 
@@ -34,20 +33,12 @@ public class Org {
         this.name = name;
     }
 
-    public String getOrgCode() {
-        return orgCode;
+    public String getPid() {
+        return pid;
     }
 
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode;
-    }
-
-    public String getParentOrgCode() {
-        return parentOrgCode;
-    }
-
-    public void setParentOrgCode(String parentOrgCode) {
-        this.parentOrgCode = parentOrgCode;
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 
     public String getXpath() {

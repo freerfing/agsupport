@@ -5,6 +5,9 @@ import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.Tree;
 import com.augurit.gzsw.manager.user.mapper.OrgMapper;
 import com.augurit.gzsw.manager.user.service.OrgService;
+import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,84 +31,32 @@ public class OrgServiceImpl implements OrgService {
     @Autowired
     private OrgMapper orgMapper;
 
-    /*
-    递归列出该及目录下的所有子目录
-     */
     @Override
-    public List<Tree> listAllSubOrgsByOrgCode(String orgCode){
-        List<Org> orgs = orgMapper.listSubOrgsByOrgCode(orgCode);
-        if(CollectionUtils.isEmpty(orgs)){
-            return null;
+    public List<Org> listOrgs() throws Exception {
+        return orgMapper.listOrgs();
+    }
+
+    @Override
+    public void saveOrg(Org org) throws Exception {
+        orgMapper.saveOrg(org);
+    }
+
+    @Override
+    public void updOrg(Org org) throws Exception {
+        orgMapper.updOrg(org);
+    }
+
+    @Override
+    public void delOrgs(String id) throws Exception {
+        if(Strings.isNullOrEmpty(id)) {
+            return;
         }
-        List<Tree> list = new ArrayList<>();
-        for (Org org : orgs){
-            Tree<Org> tree = new Tree();
-            tree.setSelf(org);
-            tree.setChildren(listAllSubOrgsByOrgCode(org.getOrgCode()));
-            list.add(tree);
-        }
-        System.out.println(list);
-        return list;
-    }
 
-    /*
-    仅仅该级目录下的子目录
-     */
-    @Override
-    public List<Org> listSubOrgsByOrgCode(String orgCode) {
-        List<Org> orgs = orgMapper.listSubOrgsByOrgCode(orgCode);
-        return orgs;
-    }
-
-    @Override
-    public Org selectById(String id) {
-        List<Org> orgs = orgMapper.selectById(id);
-        if (!CollectionUtils.isEmpty(orgs)){
-            return orgs.get(0);
-        }
-        return null;
-    }
-
-
-    @Transactional
-    @Override
-    public int inert(Org org) {
-        return orgMapper.insert(org);
-    }
-    @Transactional
-    @Override
-    public int updateById(Org org) {
-        return orgMapper.updateById(org);
-    }
-
-    @Transactional
-    @Override
-    public int deleteSelfAndSubById(String id) {
-        List<String> ids = findSelfAndSubById(id);
-        int success = orgMapper.deleteByIds(ids);
-        return success;
-    }
-
-    @Override
-    public List<Node> listOrg() throws Exception {
-        return orgMapper.listOrg();
-    }
-
-    private List<String> findSelfAndSubById(String id){
-        List<Org> orgs = orgMapper.selectById(id);
-        if (CollectionUtils.isEmpty(orgs)){
-            return null;
-        }
-        List<String> ids = new ArrayList<>();
-        for (Org org : orgs){
+        List<Org> orgs = orgMapper.listMineAndDescends(id);
+        List<String> ids = Lists.newArrayList();
+        for(Org org : orgs) {
             ids.add(org.getId());
-            List<Org> subOrgs = orgMapper.listSubOrgsByOrgCode(org.getOrgCode());
-            for (Org org1 : subOrgs){
-                //递归调用添加
-                ids.addAll(findSelfAndSubById(org1.getId()));
-            }
         }
-        return ids;
+        orgMapper.delOrgs(ids);
     }
-
 }

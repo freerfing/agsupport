@@ -31,8 +31,8 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/listMenus")
-	public ApiResponse<List> listMenus() throws Exception {
-		List<Menu> menus = iMenu.listMenus(null);
+	public ApiResponse<List> listMenus(String roleId) throws Exception {
+		List<Menu> menus = iMenu.listMenus(roleId);
 		return new ApiResponse<>(menus);
 	}
 

@@ -19,15 +19,9 @@ import java.util.List;
  */
 @Mapper
 public interface OrgMapper {
-    List<Org> listSubOrgsByOrgCode(@Param("orgCode")String orgCode);
-
-    List<Org> selectById(@Param("id") String id);
-
-    int insert(Org org);
-
-    int updateById(Org org);
-
-    int deleteByIds(List ids);
-
-	List<Node> listOrg() throws Exception;
+    List<Org> listOrgs() throws Exception;
+    List<Org> listMineAndDescends(@Param("id") String id) throws Exception;
+    void saveOrg(Org org) throws Exception;
+    void updOrg(Org org) throws Exception;
+    void delOrgs(@Param("ids") List<String> ids) throws Exception;
 }

@@ -18,7 +18,7 @@ public interface UserRoleService {
 
     //如果userName为空查询roleId对应的所有用户信息
     List listByRoleIdOrUserName(String roleId,String userName) throws Exception;
-
+    List<String> listUserIds(String roleId) throws Exception;
     int deleteByRoleIdsAndUserIds(List<String> roleIds,List<String> userIds) throws Exception;
 
     int insertByRoleIdsAndUserIds(List<String> roleIds,List<String> userIds) throws Exception;

@@ -22,12 +22,9 @@
     </select>
 
     <insert id="bindRoleMenu">
-
         insert all
-        <foreach collection="roleIds" item="roleId"  separator=" ">
-            <foreach collection="menuIds" item="menuId" separator=" ">
-                into A_ROLE_MENU(role_id,menu_id) values (#{roleId},#{menuId})
-            </foreach>
+        <foreach collection="menuIds" item="menuId" separator=" ">
+            into A_ROLE_MENU(role_id,menu_id) values (#{roleId},#{menuId})
         </foreach>
         select 1 from dual
 

@@ -32,9 +32,9 @@ public class RoleMenuServiceImpl implements RoleMenuService {
     }
 
     @Override
-    public int bindRoleMenu(List<String> roleIds, List<String> menuIds) throws Exception {
+    public int bindRoleMenu(String roleId, List<String> menuIds) throws Exception {
 
-        return roleMenuMapper.bindRoleMenu(roleIds, menuIds);
+        return roleMenuMapper.bindRoleMenu(roleId, menuIds);
     }
 
     @Override
