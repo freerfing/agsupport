@@ -30,31 +30,36 @@ public class OrgUserServiceImpl implements OrgUserService {
     private OrgUserMapper orgUserMapper;
 
     @Override
-    public List<OrgUser> selectByOrgId(String orgId) {
+    public List<OrgUser> selectByOrgId(String orgId)throws Exception  {
         return orgUserMapper.selectByOrgId(orgId);
+    }
+
+    @Override
+    public List<String> listUserId(List orgIds) throws Exception {
+        return orgUserMapper.listUserId(orgIds);
     }
 
     @Transactional
     @Override
-    public int deleteByOrgIdAndUserId(String orgId, String userId) {
+    public int deleteByOrgIdAndUserId(String orgId, String userId)throws Exception  {
        return orgUserMapper.deleteByOrgIdAndUserId(orgId,userId );
     }
 
     @Transactional
     @Override
-    public int insert(OrgUser orgUser) {
+    public int insert(OrgUser orgUser)throws Exception  {
         return orgUserMapper.insert(orgUser);
     }
 
     @Transactional
     @Override
-    public int update(OrgUser orgUser, String newOrgId) {
+    public int update(OrgUser orgUser, String newOrgId)throws Exception  {
         return orgUserMapper.update(orgUser,newOrgId );
     }
 
     @Transactional
     @Override
-    public int updateDisporder(String orgId, String fromUserId, String toUserId) {
+    public int updateDisporder(String orgId, String fromUserId, String toUserId) throws Exception {
         if (StringUtils.isEmpty(fromUserId) || StringUtils.isEmpty(toUserId)) {
             return 0;
         }

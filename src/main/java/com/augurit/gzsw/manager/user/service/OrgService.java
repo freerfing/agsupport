@@ -3,6 +3,7 @@ package com.augurit.gzsw.manager.user.service;
 import com.augurit.gzsw.domain.Node;
 import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.Tree;
+import org.aspectj.weaver.ast.Or;
 
 import java.util.List;
 
@@ -17,7 +18,9 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 public interface OrgService {
+    List<Org> listMineAndDescends(String id) throws Exception;
     List<Org> listOrgs() throws Exception;
+    List<Org> listOrgsByUserId(String userId) throws Exception;
     void saveOrg(Org org) throws Exception;
     void updOrg(Org org) throws Exception;
     void delOrgs(String id) throws Exception;

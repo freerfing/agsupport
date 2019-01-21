@@ -1,9 +1,6 @@
 package com.augurit.gzsw.manager.user.controller;
 
-import com.augurit.gzsw.ApiException;
 import com.augurit.gzsw.ApiResponse;
-import com.augurit.gzsw.RespCodeMsgDepository;
-import com.augurit.gzsw.base.role.service.IRole;
 import com.augurit.gzsw.base.role.service.UserRoleService;
 import com.augurit.gzsw.domain.Node;
 import com.augurit.gzsw.domain.Org;
@@ -14,21 +11,19 @@ import com.augurit.gzsw.manager.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <b><code>UserController</code></b>
@@ -63,17 +58,13 @@ public class UserController {
     }
 
     @RequestMapping("/listOrgUsers")
-    public ApiResponse listOrgUsers(String roleId) throws Exception {
-        if(StringUtils.isBlank(roleId)) {
-            log.error("角色ID不能为空");
-            throw new ApiException(RespCodeMsgDepository.REQUEST_PARAMS_DATA_ERROR, null);
-        }
+    public ApiResponse listOrgUsers() throws Exception {
 
         List<Org> orgs = orgService.listOrgs();
         List<Node> roots = Lists.newArrayList();
         List<Org> willRemoved = Lists.newArrayList();
-        for(Org org : orgs) {
-            if(StringUtils.isEmpty(org.getPid())) {
+        for (Org org : orgs) {
+            if (StringUtils.isEmpty(org.getPid())) {
                 willRemoved.add(org);
                 roots.add(new Node(org));
             }
@@ -81,7 +72,7 @@ public class UserController {
         orgs.removeAll(willRemoved);
         willRemoved.clear();
 
-        for(Node root : roots) {
+        for (Node root : roots) {
             traverse(root, orgs);
         }
 
@@ -89,71 +80,91 @@ public class UserController {
     }
 
     /**
-     * 根据orgId与username或者loginname查询用户
-     * @param orgId orgId是必须的,查询机构下的用户
+     * 根据orgId与username查询用户，并设置用户在orgId下对应的机构列表
+     *
+     * @param orgId    orgId是必须的,查询机构下的用户，不重复
      * @param userName username是在该orgId对应机构下查询该用户信息,可为空，为空查找机构下的用户（用户名或登录名的模糊查找）
-     * @param contain false为值列出当前机构下的用户，true除了当前机构下的用户还列出子机构用户
      * @param page
      * @param limit
      * @return
      * @throws Exception
      */
     @RequestMapping("/listUsers")
-    public ApiResponse listUsersByOrgIdAndName(String orgId, String userName, boolean contain, int page, int limit) throws Exception{
+    public ApiResponse listUsersByOrgIdAndName(String orgId, String userName, int page, int limit) throws Exception {
+
+        List<Org> orgs = orgService.listMineAndDescends(orgId);
+        List<String> orgIds = orgs.stream().map(Org::getId).collect(Collectors.toList());
         PageHelper.startPage(page, limit);
-        List<User> users = userService.listUsersByOrgIdAndName(orgId, userName, contain);
+        //获取不重复用户
+        List<User> users = userService.listUsers(orgIds, userName);
+        for (User user : users) {
+            List<Org> orgList = orgService.listOrgsByUserId(user.getUserId());
+            for (Org org : orgList) {
+                if (orgIds.contains(org.getId())) {
+                    List<Org> containOrgs = user.getOrgs();
+                    if (CollectionUtils.isEmpty(containOrgs)) {
+                        containOrgs = new ArrayList<>();
+                        containOrgs.add(org);
+                    } else {
+                        containOrgs.add(org);
+                    }
+                    user.setOrgs(containOrgs);
+                }
+            }
+        }
         PageInfo info = new PageInfo(users);
         return new ApiResponse(info);
     }
 
     @RequestMapping("insert")
-    public ApiResponse insert(User user)throws Exception{
+    public ApiResponse insert(User user, String orgId) throws Exception {
 
-        int success = userService.insert(user);
+        int success = userService.insert(user, orgId);
         return new ApiResponse(success);
     }
 
     /**
      * 修改用户信息
+     *
      * @param user
      * @param newOrgId 可以为空，为空时表示不修改机构编码
      * @return
      * @throws Exception
      */
     @RequestMapping("update")
-    public ApiResponse update(User user,String newOrgId)throws Exception{
-        int success = userService.update(user,newOrgId);
+    public ApiResponse update(User user, String oldOrgId, String newOrgId) throws Exception {
+        int success = userService.update(user, oldOrgId, newOrgId);
         return new ApiResponse(success);
     }
 
     /**
-     * @param orgId 用户所属组织机构id
-     * @param fromUserId  被移动的用户id
-     * @param toUserId 目标位置用户的id
+     * @param orgId      用户所属组织机构id
+     * @param fromUserId 被移动的用户id
+     * @param toUserId   目标位置用户的id
      * @return
      * @throws JsonProcessingException
      */
 //    修改顺序
     @RequestMapping("updateDisporder")
-    public ApiResponse updateDisporder(String orgId,String fromUserId,String toUserId) throws JsonProcessingException {
+    public ApiResponse updateDisporder(String orgId, String fromUserId, String toUserId) throws Exception {
         int success = orgUserService.updateDisporder(orgId, fromUserId, toUserId);
         return new ApiResponse(success);
     }
 
-//    根据orgId与userId删除用户关系，如何userId为空，则移除orgId对应的所有用户，如果不为空，则删除该关系
+    //    根据orgId与userId删除用户关系，如何userId为空，则移除orgId对应的所有用户，如果不为空，则删除该关系
     @RequestMapping("delete")
-    public ApiResponse delete(String orgId,String userId)throws Exception{
-        int success = userService.delete(orgId,userId);
+    public ApiResponse delete(String orgId, String userId) throws Exception {
+        int success = userService.delete(orgId, userId);
         return new ApiResponse(success);
     }
 
     private void traverse(Node parent, List<Org> orgs) throws Exception {
         List<Node> children = Lists.newArrayList();
 
-        if("1".equals(parent.getType())) {
+        if ("1".equals(parent.getType())) {
             List<Org> willRemoved = Lists.newArrayList();
-            for(Org org : orgs) {
-                if(parent.getId().equals(org.getPid())) {
+            for (Org org : orgs) {
+                if (parent.getId().equals(org.getPid())) {
                     Node child = new Node(org);
                     children.add(child);
                     willRemoved.add(org);
@@ -161,15 +172,17 @@ public class UserController {
             }
 
             orgs.removeAll(willRemoved);
-            for(Node child : children) {
+            for (Node child : children) {
                 traverse(child, orgs);
             }
 
-            if(CollectionUtils.isEmpty(children)) {
-                List<User> users = userService.listUsersByOrgIdAndName(parent.getId(), null, false);
-                if(!CollectionUtils.isEmpty(users)) {
-                    for(User user : users) {
-                        if("1".equals(user.getActive())) {// 有效用户才加入到列表中
+            if (CollectionUtils.isEmpty(children)) {
+                List<String> orgIds = new ArrayList<>();
+                orgIds.add(parent.getId());
+                List<User> users = userService.listUsers(orgIds, null);
+                if (!CollectionUtils.isEmpty(users)) {
+                    for (User user : users) {
+                        if ("1".equals(user.getActive())) {// 有效用户才加入到列表中
                             Node child = new Node(user);
                             children.add(child);
                         }

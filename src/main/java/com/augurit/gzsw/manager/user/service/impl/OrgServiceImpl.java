@@ -32,8 +32,18 @@ public class OrgServiceImpl implements OrgService {
     private OrgMapper orgMapper;
 
     @Override
+    public List<Org> listMineAndDescends(String id) throws Exception {
+        return orgMapper.listMineAndDescends(id);
+    }
+
+    @Override
     public List<Org> listOrgs() throws Exception {
         return orgMapper.listOrgs();
+    }
+
+    @Override
+    public List<Org> listOrgsByUserId(String userId) throws Exception {
+        return orgMapper.listOrgsByUserId(userId);
     }
 
     @Override

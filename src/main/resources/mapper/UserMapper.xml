@@ -3,29 +3,31 @@
 
 <mapper namespace="com.augurit.gzsw.manager.user.mapper.UserMapper">
 
-    <!--查询出所有字段 A_ORG t1,A_ORG_USER t2,A_USER t3-->
-    <sql id="allUserColumns">
-      t1.id orgId,t1.name orgName,t1.xpath xpath,t3.id userId,t3.login_name loginName,t3.password password,
-      t3.user_name userName,t3.is_active active,t3.sex sex,t3.tel tel,t3.office_tel officeTel,t3.email email,
-      t3.job job,t3.fax fax,t3.qq qq,t2.disporder disporder
-    </sql>
 
     <sql id="userColumns">
-        id,login_name,password,user_name,is_active,sex,tel,office_tel,email,job,fax,qq
+        t1.id userId,t1.login_name loginName,t1.password password,t1.user_name userName,
+        t1.is_active active,t1.sex sex,t1.tel tel,t1.office_tel officeTel,t1.email email,
+        t1.job job,t1.fax fax,t1.qq qq
     </sql>
 
-    <!--根据机构orgId，用户名或者登录名查询用户，机构id是必须的，用户或登录名可以为空-->
-    <select id="listUsersByOrgIdAndName" resultType="User" >
-      select
-        <include refid="allUserColumns"/>
-        from (A_ORG t1 inner join A_ORG_USER t2 on t1.id=t2.org_id) inner join A_USER t3 on t2.user_id = t3.id
-        where t1.id=#{orgId}
+    <!--根据机构orgIds，用户名或者登录名查询不重复用户，机构id是必须的，用户或登录名可以为空-->
+    <select id="listUsers" resultType="User">
+        select
+        <include refid="userColumns"/>
+        from A_USER t1 inner join
+        (select user_id,ORG_ID,DISPORDER, row_number() OVER(PARTITION BY user_id ORDER BY DISPORDER) ds from A_ORG_USER) t2
+        on t2.user_id = t1.id
+        where t2.ds = 1 and
+        t2.org_id in
+        <foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
+            #{orgId}
+        </foreach>
         <if test="userName != null">
-            and (t3.user_name like '%' ||  #{userName} || '%'
+            and (t1.user_name like '%' ||  #{userName} || '%'
             or
-            t3.login_name like '%' ||  #{userName} || '%')
+            t1.login_name like '%' ||  #{userName} || '%')
         </if>
-      order by t2.disporder
+        order by t2.disporder
     </select>
 
     <update id="update">
@@ -61,25 +63,87 @@
         </set>
         where id = #{userId}
     </update>
-
     <insert id="insert">
-        insert into A_USER(
-        <include refid="userColumns"/>
-        )
-        values (#{userId},#{loginName},#{password},#{userName},#{active},#{sex},#{tel},#{officeTel},
-        #{email},#{job},#{fax},#{qq})
+        insert into A_USER
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="userId != null">
+                id,
+            </if>
+            <if test="loginName != null">
+                login_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="active != null">
+                is_active,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="tel != null">
+                tel,
+            </if>
+            <if test="officeTel != null">
+                office_tel,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="job != null">
+                job,
+            </if>
+            <if test="fax != null">
+                fax,
+            </if>
+            <if test="qq != null">
+                qq,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="loginName != null">
+                #{loginName}
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="userName != null">
+                #{userName},
+            </if>
+            <if test="active != null">
+                #{active},
+            </if>
+            <if test="sex != null">
+                #{sex},
+            </if>
+            <if test="tel != null">
+                #{tel},
+            </if>
+            <if test="officeTel != null">
+                #{officeTel},
+            </if>
+            <if test="email != null">
+                #{email},
+            </if>
+            <if test="job != null">
+                #{job},
+            </if>
+            <if test="fax != null">
+                #{fax},
+            </if>
+            <if test="qq != null">
+                #{qq},
+            </if>
+        </trim>
     </insert>
 
-    <select id="listUsers">
-        SELECT b.id userId, b.login_name loginName, b.user_name userName,
-          b.is_active active, b.sex sex, b.tel tel, b.office_tel officeTel, b.email email,
-          b.job job, b.fax fax, b.qq qq
-        FROM A_ORG_USER a inner join A_USER b on a.USER_ID = b.ID
-        WHERE a.ORG_ID IN
-        <foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
-            #{orgId}
-        </foreach>
-    </select>
 
     <select id="getUser" resultType="User">
         select id, login_name loginName, password, user_name userName, is_active active,

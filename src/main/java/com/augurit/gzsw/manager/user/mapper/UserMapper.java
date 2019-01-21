@@ -18,13 +18,11 @@ import java.util.List;
  */
 @Mapper
 public interface UserMapper {
-    List<User> listUsersByOrgIdAndName(@Param("orgId") String orgId,@Param("userName") String userName);
+    List<User> listUsers(@Param("orgIds") List<String> orgIds,@Param("userName") String userName);
 
     int update(User user);
 
     int insert(User user);
-
-    List<User> listUsers(@Param("orgIds") List<String> orgIds) throws Exception;
 
     User getUser(@Param("id") String id) throws Exception;
 }
