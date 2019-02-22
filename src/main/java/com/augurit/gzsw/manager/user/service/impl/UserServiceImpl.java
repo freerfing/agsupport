@@ -90,8 +90,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String id) throws Exception  {
-        return userMapper.getUser(id);
+    public User getUser(String id, String loginName, String tel) throws Exception  {
+        return userMapper.getUser(id, loginName, tel);
     }
 
     @Transactional

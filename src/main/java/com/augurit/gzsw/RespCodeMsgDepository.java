@@ -11,6 +11,11 @@ public enum RespCodeMsgDepository {
 	TOKEN_INVALID("005", "token无效"),
 	LACK_PRIVILEGIER("006", "用户权限不够"),
 	FILE_NOT_EXISTS("007", "文件不存在"),
+	USER_LOGIN_FAIL_1("008", "您提供的凭证有误"),
+	USER_LOGIN_FAIL_2("009", "登录失败，还剩3次锁定账户"),
+	USER_LOGIN_FAIL_3("010", "登录失败，还剩2次锁定账户"),
+	USER_LOGIN_FAIL_4("011", "登录失败，还剩1次锁定账户"),
+	USER_LOGIN_FAIL_5("012", "账户已锁，请联系管理员"),
 	;
 
 	private final String code;
@@ -27,5 +32,16 @@ public enum RespCodeMsgDepository {
 
 	public String getMsg() {
 		return msg;
+	}
+
+	public static RespCodeMsgDepository getLoginFailInstance(int loginFailTimes) {
+		switch (loginFailTimes) {
+			case 1: return USER_LOGIN_FAIL_1;
+			case 2: return USER_LOGIN_FAIL_2;
+			case 3: return USER_LOGIN_FAIL_3;
+			case 4: return USER_LOGIN_FAIL_4;
+			case 5: return USER_LOGIN_FAIL_5;
+			default: return null;
+		}
 	}
 }

@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class ReqAndRespMsgHandler {
 	public static final Logger log = LoggerFactory.getLogger(ReqAndRespMsgHandler.class);
 
-	@Pointcut("execution(* com.augurit.gzsw.*.*.controller.*.*(..)) && !execution(* com.augurit.gzsw.*.*.controller.*.index(..))")
+	@Pointcut("execution(* com.augurit.gzsw.*.*.controller.*.*(..)) && !execution(* com.augurit.gzsw.*.*.controller.*.index(..)) && !execution(* com.augurit.gzsw.*.*.controller.*.login(..))")
 	public void pointCut() { }
 
 	@Around("pointCut()")

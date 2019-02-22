@@ -48,9 +48,26 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">地图URL</label>
+            <label class="layui-form-label">类型</label>
             <div class="layui-input-block">
-                <input type="text" name="mapUrl" class="layui-input" lay-verify="url" placeholder="请输入引入的地图URL" />
+                <input type="radio" name="type" value="0" title="内嵌系统">
+                <input type="radio" name="type" value="1" title="内部模块" checked>
+            </div>
+        </div>
+        <div class="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">系统URL</label>
+                <div class="layui-input-block">
+                    <input type="text" name="url" class="layui-input" lay-verify="urlIfNotEmpty" placeholder="请输入链接的业务URL" />
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">地图URL</label>
+                <div class="layui-input-block">
+                    <input type="text" name="mapUrl" class="layui-input" lay-verify="urlIfNotEmpty" placeholder="请输入引入的地图URL" />
+                </div>
             </div>
         </div>
         <div class="layui-form-item">
@@ -63,15 +80,29 @@
 <script>
     layui.config({ base: '../lib/layui/' }).use(['layer', 'table', 'form'], function(layer, table, form) {
 		var $ = layui.$, modal = {
+			layerDialogIndex: undefined,
 			checkedIds: [],
-			addSubMenuItem: function() {
+			addSubMenuItem: function(title, data) {
 				var _this = this;
-                layer.open({
-                    type: 1,
-                    title: '新增地图子菜单项',
-                    content: $('#subMenu_item_add'),
-                    area: ["600px", "254px"]
-                });
+				title = (typeof title === 'string')? title : undefined;
+				if(data) {
+					form.val("submenuItemSaveFilter", data);
+				} else {
+					// 初始化form信息
+					form.val("submenuItemSaveFilter", {
+						name: '',
+						type: '0',
+						url: '',
+						mapUrl: ''
+					});
+				}
+
+				modal.layerDialogIndex = layer.open({
+					type: 1,
+					title: title || '新增地图子菜单项',
+					content: $('#subMenu_item_add'),
+					area: ["600px", "400px"]
+				});
 			},
 			removeSubMenuItems: function() {
                 if(modal.checkedIds.length < 1) {
@@ -100,7 +131,7 @@
 				});
             },
 			closeDialog: function() {
-				layer.close();
+				layer.close(modal.layerDialogIndex);
             },
             toggleCheckBox: function(row) {
 				var data, index;
@@ -189,7 +220,7 @@
 
 		// form绑定事件
 		form.on('submit(submenuItemSaveFilter)', function(formData) {
-			var data = $.extend({}, formData.field, { type: '1' });
+			var data = $.extend({}, formData.field);
 
 			$.ajax({
 				type: 'POST',
@@ -202,7 +233,8 @@
 						layer.msg(resp.msg, { icon: 2, time: 3000 });
 					} else {
 						layer.msg('保存成功', { icon: 1, time: 2000 });
-						layer.close();
+						subMenuItemTable.reload();
+						layer.close(modal.layerDialogIndex);
                     }
 				},
 				error: function(xhr, errorMsg, error) {

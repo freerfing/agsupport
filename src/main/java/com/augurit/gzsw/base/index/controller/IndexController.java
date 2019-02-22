@@ -38,7 +38,7 @@ public class IndexController {
 		// TODO 获取登录用户信息
 		// 强制切换成超级管理员账号角色
 		String userId = "a2e30447-779d-494f-a764-64894b6b528e", roleId = "1";
-		User loginUser = userService.getUser(userId);
+		User loginUser = userService.getUser(userId, null, null);
 		loginUser.setPassword(null);
 
 		Map<String, Object> settings = Maps.newHashMap();

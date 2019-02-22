@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.manager.user.mapper.UserLockMapper">
+    <sql id="allColumns_user_lock">
+        id id,
+        login_name loginName,
+        user_name userName,
+        mobile mobile,
+        qq qq,
+        is_lock isLock,
+        lock_start_time lockStartTime,
+        lock_end_time lockEndTime,
+        org_path orgPath,
+        fail_login_times failLoginTimes
+    </sql>
+
+    <select id="listUserLock" resultType="UserLock">
+        SELECT <include refid="allColumns_user_lock" />
+        FROM A_USER_LOCK
+        WHERE is_lock = '1'
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(userName)">
+            AND (login_name LIKE concat(concat('%', #{userName}),'%') OR user_name LIKE concat(concat('%', #{userName}),'%'))
+        </if>
+        ORDER BY lock_start_time DESC
+    </select>
+
+    <select id="getUserLock" resultType="UserLock">
+        SELECT <include refid="allColumns_user_lock" />
+        FROM A_USER_LOCK
+        WHERE 1 = 1
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(userLock.id)">
+            AND id = #{userLock.id}
+        </if>
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(userLock.loginName)">
+            AND login_name = #{userLock.loginName}
+        </if>
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(userLock.mobile)">
+            AND mobile = #{userLock.mobile}
+        </if>
+    </select>
+
+    <insert id="saveUserLock">
+        INSERT INTO A_USER_LOCK(id, login_name, user_name, mobile, qq, is_lock,lock_start_time, lock_end_time, org_path, fail_login_times)
+        VALUES(#{userLock.id}, #{userLock.loginName}, #{userLock.userName}, #{userLock.mobile}, #{userLock.qq}, #{userLock.isLock},
+        to_date(#{userLock.lockStartTime},'YYYY-MM-DD HH24:MI:SS'), to_date(#{userLock.lockEndTime},'YYYY-MM-DD HH24:MI:SS'),
+        #{userLock.orgPath}, #{userLock.failLoginTimes})
+    </insert>
+
+    <update id="updateUserLock">
+        UPDATE A_USER_LOCK
+        <set>
+            <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(isLock)">
+                is_lock = #{isLock},
+            </if>
+            <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(lockEndTime)">
+                lock_end_time = to_date(#{lockEndTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="failLoginTimes != 0">
+                fail_login_times = #{failLoginTimes},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="unlockBatchUsers">
+        UPDATE A_USER_LOCK
+        <set>
+            <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(isLock)">
+                is_lock = #{isLock},
+            </if>
+            <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(lockEndTime)">
+                lock_end_time = to_date(#{lockEndTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+        </set>
+        WHERE id IN
+        <foreach collection="ids" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </update>
+
+    <delete id="delUserLock">
+        DELETE FROM A_USER_LOCK WHERE id = #{id}
+    </delete>
+
+</mapper>

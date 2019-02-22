@@ -16,9 +16,9 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 public interface UserService {
-    List<User> listUsersByOrgIdAndName(String orgId,String userName,boolean contain) throws Exception;
+    List<User> listUsersByOrgIdAndName(String orgId, String userName, boolean contain) throws Exception;
 
-    User getUser(String id) throws Exception;
+    User getUser(String id, String loginName, String tel) throws Exception;
 
     int insert(User user) throws Exception;
 
