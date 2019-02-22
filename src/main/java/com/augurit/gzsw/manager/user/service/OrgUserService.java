@@ -16,13 +16,15 @@ import java.util.List;
  */
 public interface OrgUserService {
 
-    List<OrgUser> selectByOrgId(String orgId);
+    List<OrgUser> selectByOrgId(String orgId)throws Exception;
 
-    int deleteByOrgIdAndUserId(String orgId,String userId);
+    List<String> listUserId(List<String> orgIds) throws Exception;
 
-    int insert(OrgUser orgUser);
+    int deleteByOrgIdAndUserId(String orgId,String userId)throws Exception;
 
-    int update(OrgUser orgUser,String newOrgId);
+    int insert(OrgUser orgUser)throws Exception;
 
-    int updateDisporder(String orgId,String fromUserId,String toUserId);
+    int update(OrgUser orgUser, String newOrgId)throws Exception;
+
+    int updateDisporder(String orgId,String fromUserId,String toUserId)throws Exception;
 }

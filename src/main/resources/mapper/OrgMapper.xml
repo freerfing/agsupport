@@ -8,6 +8,13 @@
         order by disporder
     </select>
 
+    <select id="listOrgsByUserId" resultType="Org">
+        select t1.id, t1.name, t1.pid, t1.xpath, t1.disporder
+        from A_ORG t1 inner join A_ORG_USER t2 on t1.id = t2.org_id
+        where t2.user_id = #{userId}
+        order by t1.disporder
+    </select>
+
     <select id="listMineAndDescends" resultType="Org">
         select id, name, pid, xpath, disporder
         from A_ORG

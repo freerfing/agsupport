@@ -1,5 +1,6 @@
 package com.augurit.gzsw.manager.user.mapper;
 
+import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.OrgUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,11 +19,13 @@ import java.util.List;
  */
 @Mapper
 public interface OrgUserMapper {
-    List<OrgUser> selectByOrgId(String orgId);
+    List<OrgUser> selectByOrgId(String orgId)throws Exception;
 
-    int deleteByOrgIdAndUserId(@Param(value = "orgId") String orgId, @Param(value = "userId") String userId);
+    List<String> listUserId(@Param("orgIds") List<String> orgIds) throws Exception;
 
-    int insert(OrgUser orgUser);
+    int deleteByOrgIdAndUserId(@Param(value = "orgId") String orgId, @Param(value = "userId") String userId)throws Exception;
 
-    int update(@Param("orgUser") OrgUser orgUser,@Param(value = "newOrgId") String newOrgId);
+    int insert(OrgUser orgUser)throws Exception;
+
+    int update(@Param("orgUser") OrgUser orgUser,@Param(value = "newOrgId") String newOrgId)throws Exception;
 }

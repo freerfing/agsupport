@@ -53,7 +53,7 @@ public class Org {
         return disporder;
     }
 
-    public void setDisporder(int dispOrder) {
+    public void setDisporder(int disporder) {
         this.disporder = disporder;
     }
 }

@@ -13,6 +13,24 @@
          from A_ORG_USER where org_id = #{orgId} order by disporder
     </select>
 
+    <select id="listUserId" resultType="java.lang.String">
+        select distinct user_id
+        from A_ORG_USER where org_id in
+        <foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
+            #{orgId}
+        </foreach>
+
+        <!--
+        select  user_id from
+        (select user_id,ORG_ID,DISPORDER, row_number() OVER(PARTITION BY user_id ORDER BY DISPORDER) ds from A_ORG_USER) t1
+        where t1.ds =1
+        and t1.ORG_ID in
+        <foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
+            #{orgId}
+        </foreach>
+        ORDER BY t1.DISPORDER
+        -->
+    </select>
     <!--根据orgId与userId删除用户关系，如何userId为空，则移除orgId对应的所有用户，如果不为空，则删除该关系-->
     <delete id="deleteByOrgIdAndUserId">
         delete from A_ORG_USER where org_id = #{orgId}
@@ -23,7 +41,7 @@
 
     <insert id="insert">
         insert into A_ORG_USER(
-        <include refid="orgUserColumns"/>
+        org_id ,user_id ,disporder
         )
         values (#{orgId},#{userId},#{disporder})
     </insert>

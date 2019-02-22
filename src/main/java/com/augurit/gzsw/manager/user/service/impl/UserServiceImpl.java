@@ -5,6 +5,7 @@ import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.OrgUser;
 import com.augurit.gzsw.domain.User;
 import com.augurit.gzsw.manager.user.mapper.OrgMapper;
+import com.augurit.gzsw.manager.user.mapper.OrgUserMapper;
 import com.augurit.gzsw.manager.user.mapper.UserMapper;
 import com.augurit.gzsw.manager.user.service.OrgUserService;
 import com.augurit.gzsw.manager.user.service.UserService;
@@ -34,57 +35,47 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private OrgMapper orgMapper;
-
-    @Autowired
-    private OrgUserService orgUserService;
+    private OrgUserMapper orgUserMapper;
 
     @Override
-    public List<User> listUsersByOrgIdAndName(String orgId, String userName, boolean contain) throws Exception {
-        //为true，列出该机构下的用户及所有子机构下的用户，否则只列出当前目录下的用户
-        if (contain){
-            List<User> users = listAllSubUsersByOrgIdAndName(orgId, userName);
-            return users;
-        }else{
-            return userMapper.listUsersByOrgIdAndName(orgId,userName);
-        }
-
+    public List<User> listUsers(List<String> orgIds, String userName) throws Exception {
+        return userMapper.listUsers(orgIds,userName);
     }
 
     @Transactional
     @Override
-    public int insert(User user) throws Exception {
+    public int insert(User user,String orgId) throws Exception {
         user.setUserId(DefaultIdGenerator.getIdForStr());
         userMapper.insert(user);
         OrgUser orgUser = new OrgUser();
-        orgUser.setOrgId(user.getOrgId());
+        orgUser.setOrgId(orgId);
         orgUser.setUserId(user.getUserId());
         //设置排名，查询该机构下多少个用户，按顺序排名
-        List<OrgUser> orgUserList = orgUserService.selectByOrgId(user.getOrgId());
+        List<OrgUser> orgUserList = orgUserMapper.selectByOrgId(orgId);
         if (CollectionUtils.isEmpty(orgUserList)){
             orgUser.setDisporder(1);
         }
         orgUser.setDisporder(orgUserList.size());
-        return orgUserService.insert(orgUser);
+        return orgUserMapper.insert(orgUser);
     }
 
     @Transactional
     @Override
-    public int update(User user,String newOrgId) throws Exception  {
+    public int update(User user,String oldOrgId,String newOrgId) throws Exception  {
         int success = userMapper.update(user);
         //如果newOrgId为空，则不更新机构编码
-        if (!StringUtils.isEmpty(newOrgId) && !user.getOrgId().equals(newOrgId)){
+        if (!StringUtils.isEmpty(newOrgId) && !oldOrgId.equals(newOrgId)){
             OrgUser orgUser = new OrgUser();
-            orgUser.setOrgId(user.getOrgId());
+            orgUser.setOrgId(oldOrgId);
             orgUser.setUserId(user.getUserId());
             //设置排名，查询该机构下多少个用户，按顺序排名
-            List<OrgUser> orgUserList = orgUserService.selectByOrgId(newOrgId);
+            List<OrgUser> orgUserList = orgUserMapper.selectByOrgId(newOrgId);
             if (CollectionUtils.isEmpty(orgUserList)){
                 orgUser.setDisporder(1);
             }
             //因为用户移到其他机构下，所以排名列在最后
             orgUser.setDisporder(orgUserList.size()+1);
-            orgUserService.update(orgUser,newOrgId);
+            orgUserMapper.update(orgUser,newOrgId);
         }
         return success;
     }
@@ -97,18 +88,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public int delete(String orgId, String userId) throws Exception {
-        return orgUserService.deleteByOrgIdAndUserId(orgId,userId);
+        return orgUserMapper.deleteByOrgIdAndUserId(orgId,userId);
     }
 
-    private List<User> listAllSubUsersByOrgIdAndName(String orgId, String userName) throws Exception {
-        // 1. 查询orgId下所属的后代机构Id
-        List<Org> orgs = orgMapper.listMineAndDescends(orgId);
-        List<String> orgIds = Lists.newArrayList();
-        for(Org org : orgs) {
-            orgIds.add(org.getId());
-        }
-
-        return userMapper.listUsers(orgIds);
-    }
 
 }

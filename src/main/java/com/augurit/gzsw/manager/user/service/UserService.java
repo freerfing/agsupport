@@ -1,8 +1,6 @@
 package com.augurit.gzsw.manager.user.service;
 
 import com.augurit.gzsw.domain.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.List;
 
 /**
@@ -16,13 +14,14 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 public interface UserService {
-    List<User> listUsersByOrgIdAndName(String orgId, String userName, boolean contain) throws Exception;
+
+    List<User> listUsers(List<String> orgIds,String userName) throws Exception;
 
     User getUser(String id, String loginName, String tel) throws Exception;
 
-    int insert(User user) throws Exception;
+    int insert(User user,String orgId) throws Exception;
 
-    int update(User user,String newOrgId) throws Exception;
+    int update(User user,String oldOrgId,String newOrgId) throws Exception;
 
     int delete(String orgId,String userId) throws Exception;
 }

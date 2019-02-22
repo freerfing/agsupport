@@ -1,5 +1,7 @@
 package com.augurit.gzsw.domain;
 
+import java.util.List;
+
 /**
  * <b><code>UserVo</code></b>
  * <p/>
@@ -24,12 +26,13 @@ public class User {
     private String job;
     private String fax;
     private String qq;
-    private int disporder;
-    //机构信息
-    private String orgId;
-    private String orgName;
-    private String orgCode;
-    private String xpath;
+    private List<Org> orgs;
+//    private int disporder;
+//    //机构信息
+//    private String orgId;
+//    private String orgName;
+//    private String orgCode;
+//    private String xpath;
 
     public String getUserId() {
         return userId;
@@ -127,43 +130,12 @@ public class User {
         this.qq = qq;
     }
 
-    public int getDisporder() {
-        return disporder;
+    public List<Org> getOrgs() {
+        return orgs;
     }
 
-    public void setDisporder(int dispOrder) {
-        this.disporder = disporder;
+    public void setOrgs(List<Org> orgs) {
+        this.orgs = orgs;
     }
 
-    public String getOrgId() {
-        return orgId;
-    }
-
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
-    }
-
-    public String getOrgName() {
-        return orgName;
-    }
-
-    public void setOrgName(String name) {
-        this.orgName = name;
-    }
-
-    public String getOrgCode() {
-        return orgCode;
-    }
-
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode;
-    }
-
-    public String getXpath() {
-        return xpath;
-    }
-
-    public void setXpath(String xpath) {
-        this.xpath = xpath;
-    }
 }

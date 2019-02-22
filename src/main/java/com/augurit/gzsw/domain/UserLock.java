@@ -1,5 +1,9 @@
 package com.augurit.gzsw.domain;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
+import org.apache.commons.collections.CollectionUtils;
+
 public class UserLock {
 	private String id;
 	private String loginName;
@@ -21,7 +25,20 @@ public class UserLock {
 			this.userName = user.getUserName();
 			this.mobile = user.getTel();
 			this.qq = user.getQq();
-			this.orgPath = user.getOrgName();
+			if(CollectionUtils.isNotEmpty(user.getOrgs())) {
+				StringBuilder buf = new StringBuilder();
+				for(Org org : user.getOrgs()) {
+					if(!Strings.isNullOrEmpty(org.getName())) {
+						buf.append(org.getName() + ",");
+					}
+				}
+
+				String orgPaths = buf.toString();
+				if(!Strings.isNullOrEmpty(orgPaths) && orgPaths.length() > 1) {
+					this.orgPath = orgPaths.substring(0, orgPaths.length() - 1);
+				}
+			}
+
 		}
 	}
 
