@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.sms.mapper.SMSMapper">
+
+
+    <select id="getSMS" resultType="SMS">
+        select
+        id ,content,type,
+        NVL(to_char(create_time, 'YYYY-MM-DD HH24:MI:SS'), '') createTime,
+		NVL(to_char(send_time, 'YYYY-MM-DD HH24:MI:SS'), '') sendTime,
+		sender_id senderId,
+        random_code randomCode,
+        status
+        from A_SMS
+        where id=#{id}
+    </select>
+
+    <insert id="saveSMS" parameterType="SMS">
+        insert into A_SMS(id,content,type,create_time,send_time,sender_id,random_code,status)
+        values (#{id},#{content},#{type},to_date(#{createTime},'YYYY-MM-DD HH24:MI:SS'),to_date(#{sendTime},'YYYY-MM-DD HH24:MI:SS'),
+        #{senderId},#{randomCode},#{status})
+
+    </insert>
+
+    <update id="updSMS" >
+        update A_SMS
+        <set>
+            <if test="sendTime != null">
+                send_time = to_date(#{sendTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="status != null">
+                status = #{status}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delSMS">
+        delete from A_SMS where id=#{id}
+    </delete>
+
+    <!-- 通过短信id组、发送人ID、模糊发送内容、短信发送状态查找所有的短信记录 -->
+    <select id="listSMSs" resultType="SMS">
+        select id,
+        content,
+        type,
+        NVL(to_char(create_time, 'YYYY-MM-DD HH24:MI:SS'), '') createTime,
+        NVL(to_char(send_time, 'YYYY-MM-DD HH24:MI:SS'), '') sendTime,
+        sender_id senderId,
+        random_code randomCode,
+        status
+        from A_SMS
+        <where>
+            <if test="ids != null">
+                id in
+                <foreach collection="ids" open="(" close=")" separator="," item="id">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="sms.senderId != null" >
+                and sender_id = #{sms.senderId}
+            </if>
+            <if test="sms.content != null" >
+                and content like CONCAT(CONCAT('%', #{sms.content}), '%')
+            </if>
+            <if test="sms.statusType != null" >
+                <if test="sms.statusType == 1">
+                    and (status != '0' )
+                </if>
+                <if test="sms.statusType == 2">
+                    and status = '0'
+                </if>
+            </if>
+        </where>
+        order by send_time desc, create_time desc
+    </select>
+</mapper>

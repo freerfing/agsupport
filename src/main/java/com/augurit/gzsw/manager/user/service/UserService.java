@@ -19,8 +19,11 @@ import java.util.List;
 public interface UserService {
     List<User> listUsers(List<String> orgIds,String userName) throws Exception;
 
-
     User getUser(String id) throws Exception;
+
+    User getUserByUserName(String username) throws Exception;
+
+    List<User> listUsers(List<String> ids)throws Exception;
 
     int insert(User user,String orgId) throws Exception;
 

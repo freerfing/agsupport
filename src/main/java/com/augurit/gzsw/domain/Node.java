@@ -11,6 +11,7 @@ public class Node {
 	private String pid;
 	private String type;
 	private String checkedStatus;
+	private boolean isSelected;
 	private List<Node> children = Lists.newArrayList();
 
 	public Node(Org org) {
@@ -89,5 +90,13 @@ public class Node {
 
 	public void setChildren(List<Node> children) {
 		this.children = children;
+	}
+
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	public void setSelected(boolean selected) {
+		isSelected = selected;
 	}
 }

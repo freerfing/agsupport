@@ -11,6 +11,9 @@ public enum RespCodeMsgDepository {
 	TOKEN_INVALID("005", "token无效"),
 	LACK_PRIVILEGIER("006", "用户权限不够"),
 	FILE_NOT_EXISTS("007", "文件不存在"),
+	SMS_SEND_FAIL("008", "短信发送失败"),
+	SMS_SEND_HAS_FAIL("009", "短信部分失败"),
+	SMS_KEEP_FAIL("010", "短信保存失败"),
 	;
 
 	private final String code;

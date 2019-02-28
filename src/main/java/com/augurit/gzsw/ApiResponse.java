@@ -9,6 +9,11 @@ public class ApiResponse<T> {
 		this.content = content;
 	}
 
+	public ApiResponse(RespCodeMsgDepository depository) {
+		this.code = depository.getCode();
+		this.msg = depository.getMsg();
+	}
+
 	public ApiResponse(RespCodeMsgDepository depository, T content) {
 		this.code = depository.getCode();
 		this.msg = depository.getMsg();

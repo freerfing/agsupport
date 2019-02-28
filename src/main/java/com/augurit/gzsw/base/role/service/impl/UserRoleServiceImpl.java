@@ -36,6 +36,11 @@ public class UserRoleServiceImpl implements UserRoleService {
         return userRoleMapper.listUserIds(roleId);
     }
 
+    @Override
+    public List<UserRole> listByUserId(String userId) throws Exception {
+        return userRoleMapper.listByUserId(userId);
+    }
+
     @Transactional
     @Override
     public int deleteByRoleIdsAndUserIds(List<String> roleIds, List<String> userIds) throws Exception {

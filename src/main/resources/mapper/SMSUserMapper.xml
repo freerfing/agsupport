@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.augurit.gzsw.sms.mapper.SMSUserMapper">
+
+
+    <select id="listSMSUsers" resultType="SMSUser">
+        select
+        t1.sms_id smsId, t1.receiver_id receiverId,t1.phone phone,t1.status status, t1.error_msg errorMsg,t2.user_name receiverName
+        from A_SMS_USER t1 inner join A_USER t2 on t1.receiver_id = t2.id
+        where sms_id=#{smsId}
+        <if test="searchText != null">
+           and ((phone like '%' ||  #{searchText} || '%') or (t2.user_name like '%' ||  #{searchText} || '%'))
+        </if>
+    </select>
+
+    <insert id="saveSMSUser">
+        insert into A_SMS_USER(sms_id,receiver_id,phone,status,error_msg)
+        values (#{smsId},#{receiverId},#{phone},#{status},#{errorMsg})
+    </insert>
+
+    <delete id="delSMSUser">
+        delete from A_SMS_USER
+        where sms_id=#{smsId}
+    </delete>
+
+    <update id="updSMSUser">
+        update A_SMS_USER
+        <set>
+            status = #{status},
+            error_msg = #{errorMsg}
+        </set>
+        <where>
+            sms_id = #{smsId}
+            and receiver_id = #{receiverId}
+            and phone = #{phone}
+        </where>
+    </update>
+</mapper>

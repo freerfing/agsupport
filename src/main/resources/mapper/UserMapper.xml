@@ -30,6 +30,16 @@
         order by t2.disporder
     </select>
 
+    <select id="listUsersByIds" resultType="User">
+        select
+        <include refid="userColumns"/>
+        from A_USER t1
+        where t1.id in
+        <foreach collection="ids" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </select>
+
     <update id="update">
         update A_USER
         <set>
@@ -146,9 +156,17 @@
 
 
     <select id="getUser" resultType="User">
-        select id, login_name loginName, password, user_name userName, is_active active,
+        select id userId, login_name loginName, password, user_name userName, is_active active,
           sex, tel, office_tel officeTel, email, job, fax, qq
         from A_USER
         where id = #{id}
     </select>
+
+    <select id="getUserByUserName" resultType="User">
+        select id, login_name loginName, password, user_name userName, is_active active,
+          sex, tel, office_tel officeTel, email, job, fax, qq
+        from A_USER
+        where user_name = #{userName}
+    </select>
+
 </mapper>

@@ -26,6 +26,13 @@
         where role_id = #{roleId}
     </select>
 
+    <select id="listByUserId" resultType="string">
+        select
+        <include refid="userRoleColumns"/>
+        from A_USER_ROLE
+        where user_id = #{userId}
+    </select>
+
     <delete id="deleteByRoleIdsAndUserIds">
         delete from A_USER_ROLE
         where role_id in
