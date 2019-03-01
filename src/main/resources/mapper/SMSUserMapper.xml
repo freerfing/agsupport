@@ -5,18 +5,26 @@
 
 
     <select id="listSMSUsers" resultType="SMSUser">
+        <!--select-->
+        <!--t1.sms_id smsId, t1.receiver_id receiverId,t1.phone phone,t1.status status, t1.error_msg errorMsg,t2.user_name receiverName-->
+        <!--from A_SMS_USER t1 , A_USER t2 on t1.receiver_id = t2.id-->
+        <!--where sms_id=#{smsId}-->
+        <!--<if test="searchText != null and searchText !=''">-->
+           <!--and ((phone like '%' ||  #{searchText} || '%') or (t2.user_name like '%' ||  #{searchText} || '%'))-->
+        <!--</if>-->
+
         select
-        t1.sms_id smsId, t1.receiver_id receiverId,t1.phone phone,t1.status status, t1.error_msg errorMsg,t2.user_name receiverName
-        from A_SMS_USER t1 inner join A_USER t2 on t1.receiver_id = t2.id
+        sms_id smsId, receiver_id receiverId,user_name receiverName,phone phone,status status, error_msg errorMsg
+        from A_SMS_USER
         where sms_id=#{smsId}
         <if test="searchText != null">
-           and ((phone like '%' ||  #{searchText} || '%') or (t2.user_name like '%' ||  #{searchText} || '%'))
+            and ((phone like '%' ||  #{searchText} || '%') or (user_name like '%' ||  #{searchText} || '%'))
         </if>
     </select>
 
     <insert id="saveSMSUser">
-        insert into A_SMS_USER(sms_id,receiver_id,phone,status,error_msg)
-        values (#{smsId},#{receiverId},#{phone},#{status},#{errorMsg})
+        insert into A_SMS_USER(sms_id,receiver_id,user_name,phone,status,error_msg)
+        values (#{smsId},#{receiverId},#{receiverName},#{phone},#{status},#{errorMsg})
     </insert>
 
     <delete id="delSMSUser">

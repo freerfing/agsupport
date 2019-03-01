@@ -17,6 +17,7 @@ define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery", "
 			} else {
 				// 点击选中
 				selectedSubMenuItem.isSelected(true);
+
 				utils.sendPost('http://127.0.0.1/awater/map/submenu/listItemInfo', { submenuItemId: selectedSubMenuItem.id }, function(data) {
 					if(data.code === "200") {
 						if(data.content[0].type === '1') {

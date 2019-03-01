@@ -42,6 +42,13 @@
       <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
 
+    <!-- 单点登录客户端包 -->
+    <dependency>
+      <groupId>org.jasig.cas.client</groupId>
+      <artifactId>agcom-cas-client-core</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+
     <!-- spring framework -->
     <dependency>
       <groupId>org.springframework</groupId>

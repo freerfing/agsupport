@@ -113,7 +113,7 @@ define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery"], 
 			}
 		},
 		loadBaseMap: function() {
-			require(["esri/map", "esri/layers/ArcGISTiledMapServiceLayer", "dojo/domReady!"], function(Map, ArcGISTiledMapServiceLayer) {
+			require(["esri/map", "esri/layers/ArcGISTiledMapServiceLayer", "esri/layers/ArcGISDynamicMapServiceLayer", "dojo/domReady!"], function(Map, ArcGISTiledMapServiceLayer, ArcGISDynamicMapServiceLayer) {
 				map = new Map("map-wrapper");
 
 				map.on("load", function () {
@@ -123,6 +123,12 @@ define(["durandal/app", "durandal/composition", "knockout", "utils", "jquery"], 
 				var baseLayer = new ArcGISTiledMapServiceLayer(awater.settings.baseMap, {
 					"opacity" : 1
 				});
+
+				/*
+				var outsideBaseLayer = new ArcGISDynamicMapServiceLayer('', {
+					"opacity" : 1
+				});
+				*/
 
 				map.addLayer(baseLayer);
 			});

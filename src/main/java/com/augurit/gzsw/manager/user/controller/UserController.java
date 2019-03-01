@@ -1,27 +1,37 @@
 package com.augurit.gzsw.manager.user.controller;
 
-import com.augurit.gzsw.ApiResponse;
+import com.augurit.agcom.common.CasLoginHelpClient;
+import com.augurit.gzsw.*;
 import com.augurit.gzsw.base.role.service.UserRoleService;
 import com.augurit.gzsw.domain.Node;
 import com.augurit.gzsw.domain.Org;
 import com.augurit.gzsw.domain.User;
+import com.augurit.gzsw.domain.UserLock;
+import com.augurit.gzsw.manager.user.service.IUserLock;
 import com.augurit.gzsw.manager.user.service.OrgService;
 import com.augurit.gzsw.manager.user.service.OrgUserService;
 import com.augurit.gzsw.manager.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +55,9 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private IUserLock iUserLock;
+
+    @Autowired
     private OrgService orgService;
 
     @Autowired
@@ -52,6 +65,8 @@ public class UserController {
 
     @Autowired
     private OrgUserService orgUserService;
+
+    private static final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @RequestMapping({"/index.do"})
     public ModelAndView index() throws Exception {
@@ -115,6 +130,131 @@ public class UserController {
         }
         PageInfo info = new PageInfo(users);
         return new ApiResponse(info);
+    }
+
+    @RequestMapping("/checkLogin/{loginName}/{pwd}")
+    public ApiResponse checkLogin(@PathVariable("loginName") String loginName, @PathVariable("pwd") String pwd) throws Exception {
+        if(Strings.isNullOrEmpty(loginName) || Strings.isNullOrEmpty(pwd)) {
+            return new ApiResponse(RespCodeMsgDepository.REQUEST_PARAMS_DATA_ERROR, null);
+        }
+
+        UserLock param = new UserLock();
+        param.setLoginName(loginName);
+        UserLock lock = iUserLock.getUserLock(param);
+        if(lock != null && "1".equals(lock.getIsLock())) {
+            // 用户已经锁定
+            return new ApiResponse(RespCodeMsgDepository.USER_LOGIN_FAIL_5, null);
+        }
+
+        User loginUser = userService.getUser(null, loginName, null);
+        if(loginUser != null && "1".equals(loginUser.getActive())) {
+            if(pwd.equalsIgnoreCase(loginUser.getPassword())) {
+                if(lock != null) {
+                    iUserLock.delUserLock(lock.getId());
+                }
+                return new ApiResponse(RespCodeMsgDepository.SUCCESS, null);
+            } else {
+                // 密码输入有误
+                if(lock != null) {
+                    boolean isMaxFailedTimes = lock.getFailLoginTimes() >= 4;
+                    iUserLock.updateUserLock(lock.getId(), isMaxFailedTimes ? "1" : "0", null, lock.getFailLoginTimes() + 1);
+                    if(isMaxFailedTimes) {
+                        // 锁定账号
+                        return new ApiResponse(RespCodeMsgDepository.USER_LOGIN_FAIL_5, null);
+                    }
+
+                    return new ApiResponse(RespCodeMsgDepository.getLoginFailInstance(lock.getFailLoginTimes() + 1), null);
+                } else {
+                    lock = new UserLock(loginUser);
+                    lock.setIsLock("0");
+                    lock.setFailLoginTimes(1);
+                    lock.setLockStartTime(format.format(new Date()));
+                    iUserLock.saveUserLock(lock);
+                    return new ApiResponse(RespCodeMsgDepository.USER_LOGIN_FAIL_1, null);
+                }
+            }
+
+        }
+
+        return new ApiResponse(RespCodeMsgDepository.USER_NOT_FOUND, null);
+    }
+
+    @RequestMapping("/checkLoginByMobile")
+    public ApiResponse checkLoginByMobile(String mobile, String verifyCode) throws Exception {
+        if(Strings.isNullOrEmpty(mobile) || Strings.isNullOrEmpty(verifyCode)) {
+            return new ApiResponse(RespCodeMsgDepository.REQUEST_PARAMS_DATA_ERROR, null);
+        }
+
+        UserLock param = new UserLock();
+        param.setMobile(mobile);
+        UserLock lock = iUserLock.getUserLock(param);
+        if(lock != null && "1".equals(lock.getIsLock())) {
+            // 用户已经锁定
+            return new ApiResponse(RespCodeMsgDepository.USER_LOGIN_FAIL_5, null);
+        }
+
+        User loginUser = userService.getUser(null, null, mobile);
+        if(loginUser != null && "1".equals(loginUser.getActive())) {
+            if(verifyCode.equalsIgnoreCase("123456")) {
+                if(lock != null) {
+                    iUserLock.delUserLock(lock.getId());
+                }
+                return new ApiResponse(RespCodeMsgDepository.SUCCESS, loginUser);
+            } else {
+                // 短信验证码输入有误
+                if(lock != null) {
+                    boolean isMaxFailedTimes = lock.getFailLoginTimes() >= 4;
+                    iUserLock.updateUserLock(lock.getId(), isMaxFailedTimes ? "1" : "0", null, lock.getFailLoginTimes() + 1);
+                    if(isMaxFailedTimes) {
+                        // 锁定账号
+                        return new ApiResponse(RespCodeMsgDepository.USER_LOGIN_FAIL_5, null);
+                    }
+
+                    return new ApiResponse(RespCodeMsgDepository.getLoginFailInstance(lock.getFailLoginTimes() + 1), null);
+                } else {
+                    lock = new UserLock(loginUser);
+                    lock.setIsLock("0");
+                    lock.setLockStartTime(format.format(new Date()));
+                    lock.setFailLoginTimes(1);
+                    iUserLock.saveUserLock(lock);
+                    return new ApiResponse(RespCodeMsgDepository.USER_LOGIN_FAIL_1, null);
+                }
+            }
+
+        }
+
+        return new ApiResponse(RespCodeMsgDepository.USER_NOT_FOUND, null);
+    }
+
+	@RequestMapping("/login")
+    public void login(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        User loginUser = userService.getUser(null, CasLoginHelpClient.getLoginName(req), null);
+        if(loginUser != null) {
+            resp.sendRedirect("http://127.0.0.1/awater/index.do");
+        }
+    }
+
+    @RequestMapping("/logout")
+    public void logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        // String loginName = CasLoginHelpClient.getLoginName(req);
+        req.getSession().removeAttribute("_const_cas_assertion_");
+        String awaterIndexUrl = "http://127.0.0.1/awater/index.do";
+        try {
+            String url = CasLoginHelpClient.getCasServerLogoutUrl() + "?service=" + awaterIndexUrl;
+            resp.sendRedirect(url + "&t=" + (new Date()).getTime());
+        } catch (IOException ioException) {
+            log.error("当前账户登出失败", ioException);
+        }
+    }
+
+    @RequestMapping("/getLoginUser")
+    public ApiResponse getLoginUser(HttpServletRequest req) throws Exception {
+        User loginUser = userService.getUser(null, CasLoginHelpClient.getLoginName(req), null);
+        if(loginUser == null) {
+            return new ApiResponse(RespCodeMsgDepository.TOKEN_INVALID, null);
+        }
+
+        return new ApiResponse(loginUser);
     }
 
     @RequestMapping("insert")

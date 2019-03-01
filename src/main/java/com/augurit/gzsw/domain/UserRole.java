@@ -1,5 +1,6 @@
 package com.augurit.gzsw.domain;
 
+
 /**
  * <b><code>UserRole</code></b>
  * <p/>

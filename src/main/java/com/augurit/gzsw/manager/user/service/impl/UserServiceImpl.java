@@ -38,11 +38,14 @@ public class UserServiceImpl implements UserService {
     private OrgUserMapper orgUserMapper;
 
     @Override
+    public User getUser(String id) throws Exception {
+        return userMapper.getUser(id, null, null);
+    }
+
+    @Override
     public List<User> listUsers(List<String> orgIds, String userName) throws Exception {
         return userMapper.listUsers(orgIds,userName);
     }
-
-
 
     @Transactional
     @Override
@@ -83,8 +86,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String id) throws Exception  {
-        return userMapper.getUser(id);
+    public User getUser(String id, String loginName, String tel) throws Exception  {
+        return userMapper.getUser(id, loginName, tel);
     }
 
     @Override

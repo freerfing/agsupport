@@ -1,9 +1,6 @@
 package com.augurit.gzsw.manager.user.service;
 
 import com.augurit.gzsw.domain.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -17,9 +14,13 @@ import java.util.List;
  * @since awater ${PROJECT_VERSION}
  */
 public interface UserService {
-    List<User> listUsers(List<String> orgIds,String userName) throws Exception;
+
 
     User getUser(String id) throws Exception;
+
+    List<User> listUsers(List<String> orgIds,String userName) throws Exception;
+
+    User getUser(String id, String loginName, String tel) throws Exception;
 
     User getUserByUserName(String username) throws Exception;
 

@@ -19,17 +19,15 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    User getUser(String id) throws Exception;
-
     User getUserByUserName(String userName) throws Exception;
 
     List<User> listUsersByIds(@Param("ids")List<String> ids);
-
-    List<User> listUsers(@Param("orgIds") List<String> orgIds,@Param("userName") String userName);
 
     int update(User user);
 
     int insert(User user);
 
+    List<User> listUsers(@Param("orgIds") List<String> orgIds,@Param("userName") String userName);
 
+    User getUser(@Param("id") String id, @Param("loginName") String loginName, @Param("tel") String tel) throws Exception;
 }

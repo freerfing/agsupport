@@ -63,7 +63,10 @@ public class SMSServiceImpl implements SMSService {
         for(SMSSendResults.SMSSendResult result : smsSendResults.getResults()) {
             String mobile = result.getMobile();
             String status = "0";// 保存短信
-
+            String receiverName = null;
+            if (result.getReciever() != null){
+                receiverName = result.getReciever().getUserName();
+            }
             // 用户为空且没有手机号码的情况，一般是不会存在这样的情况
             if(result.getReciever() == null && StringUtils.isEmpty(mobile)) {
                 continue;
@@ -84,6 +87,7 @@ public class SMSServiceImpl implements SMSService {
                 SMSUser smsUser = new SMSUser();
                 smsUser.setSmsId(sms.getId());
                 smsUser.setReceiverId(result.getReciever().getUserId());
+                smsUser.setReceiverName(receiverName);
                 smsUser.setPhone(mobile);
                 smsUser.setStatus(status);
                 smsUser.setErrorMsg(result.getResultMsg());
@@ -119,6 +123,7 @@ public class SMSServiceImpl implements SMSService {
             SMSUser smsUser = new SMSUser();
             smsUser.setSmsId(sms.getId());
             smsUser.setReceiverId(result.getReciever() == null? "": result.getReciever().getUserId());
+            smsUser.setReceiverName(receiverName);
             smsUser.setPhone(mobile);
             smsUser.setStatus(status);
             smsUser.setErrorMsg(StringUtils.defaultIfEmpty(result.getResultMsg(), ""));

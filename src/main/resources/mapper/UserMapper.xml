@@ -156,10 +156,21 @@
 
 
     <select id="getUser" resultType="User">
-        select id userId, login_name loginName, password, user_name userName, is_active active,
-          sex, tel, office_tel officeTel, email, job, fax, qq
-        from A_USER
-        where id = #{id}
+        SELECT id userId, login_name loginName, password, user_name userName, is_active active,
+        sex, tel, office_tel officeTel, email, job, fax, qq
+        FROM A_USER
+        <where>
+            1 = 1
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="loginName != null">
+                AND login_name = #{loginName}
+            </if>
+            <if test="tel != null">
+                AND tel = #{tel}
+            </if>
+        </where>
     </select>
 
     <select id="getUserByUserName" resultType="User">

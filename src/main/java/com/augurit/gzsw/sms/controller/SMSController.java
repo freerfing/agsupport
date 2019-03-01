@@ -1,5 +1,6 @@
 package com.augurit.gzsw.sms.controller;
 
+import com.augurit.agcom.common.CasLoginHelpClient;
 import com.augurit.gzsw.ApiResponse;
 import com.augurit.gzsw.DefaultIdGenerator;
 import com.augurit.gzsw.RespCodeMsgDepository;
@@ -23,8 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -64,18 +68,25 @@ public class SMSController {
      * @param phones
      * @return
      */
-    @RequestMapping("send")
-    public ApiResponse send(SMS sms,String phones)throws Exception{
+    @RequestMapping(value = "send",method = RequestMethod.POST)
+    public ApiResponse send(SMS sms,String phones,HttpServletRequest request)throws Exception{
 
         String nowTimeStr = dateTimeFormatter.format(LocalDateTime.now());
         ObjectMapper object = new ObjectMapper();
         System.out.println(object.writeValueAsString(sms));
         System.out.println(phones);
         try {
-            User sender = userService.getUser(sms.getSenderId());
-            if (null == sender){
-                return new ApiResponse(RespCodeMsgDepository.SMS_SEND_FAIL,"未找到发送人信息");
+            User sender = null;
+            if (StringUtils.isNotBlank(sms.getSenderId())) {
+                sender = userService.getUser(sms.getSenderId());
             }
+            if (null == sender){
+                sender = userService.getUser(null, CasLoginHelpClient.getLoginName(request), null);
+                if (null == sender) {
+                    return new ApiResponse(RespCodeMsgDepository.SMS_SEND_FAIL, "未找到发送人信息");
+                }
+            }
+            sms.setSenderId(sender.getUserId());
             sms.setSender(sender);
         }catch(Exception e){
             logger.error("通过用户ID[" + sms.getSenderId() + "]找不到发送人信息", e);
@@ -154,14 +165,22 @@ public class SMSController {
      * @throws Exception
      */
     @RequestMapping("save")
-    public ApiResponse save(SMS sms,String phones){
+    public ApiResponse save(SMS sms,String phones,HttpServletRequest request){
         String nowTimeStr = dateTimeFormatter.format(LocalDateTime.now());
 
         try {
-            User sender = userService.getUser(sms.getSenderId());
-            if (null == sender){
-                return new ApiResponse(RespCodeMsgDepository.SMS_SEND_FAIL,"未找到发送人信息");
+            User sender = null;
+            if (StringUtils.isNotBlank(sms.getSenderId())) {
+                sender = userService.getUser(sms.getSenderId());
             }
+            if (null == sender){
+                sender = userService.getUser(null, CasLoginHelpClient.getLoginName(request), null);
+                if (null == sender) {
+                    return new ApiResponse(RespCodeMsgDepository.SMS_SEND_FAIL, "未找到发送人信息");
+                }
+            }
+            sms.setSenderId(sender.getUserId());
+            sms.setSender(sender);
         }catch(Exception e){
             logger.error("通过用户ID[" + sms.getSenderId() + "]找不到用户信息", e);
             return new ApiResponse(RespCodeMsgDepository.SMS_SEND_FAIL,"未找到发送人信息");
@@ -197,7 +216,7 @@ public class SMSController {
 
         }catch (Exception e){
             logger.error("保存短信出现异常",e);
-            return new ApiResponse(RespCodeMsgDepository.SMS_KEEP_FAIL,"短信发送失败");
+            return new ApiResponse(RespCodeMsgDepository.SMS_KEEP_FAIL,"短信保存失败");
         }
         return new ApiResponse("保存短信成功");
     }
@@ -224,7 +243,7 @@ public class SMSController {
      * @throws Exception
      */
     @RequestMapping("list")
-    public ApiResponse listSMSs(String ids, SMS sms, Integer pageNum, Integer pageSize, HttpServletRequest request)
+    public ApiResponse listSMSs(String ids, SMS sms, @RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "5")Integer pageSize, HttpServletRequest request)
             throws Exception{
         List<String> smsids = null;
         if(StringUtils.isNotEmpty(ids)) {
@@ -236,8 +255,8 @@ public class SMSController {
         if(StringUtils.isNotEmpty(sms.getSenderId())) {
             sender = userService.getUser(sms.getSenderId());
         } else {
-//            sender = userService.getUserByUserName(CasLoginHelpClient.getLoginName(req));
-//            sms.setSenderId(sender.getUserId());
+            sender = userService.getUser(null,CasLoginHelpClient.getLoginName(request),null);
+            sms.setSenderId(sender.getUserId());
         }
         // 获取正在操作的用户的角色， 判断是否具备查询所有用户短信发送的权限
         List<UserRole> userRoles = userRoleService.listByUserId(sender.getUserId());

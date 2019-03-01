@@ -26,7 +26,7 @@
         where role_id = #{roleId}
     </select>
 
-    <select id="listByUserId" resultType="string">
+    <select id="listByUserId" resultType="UserRole">
         select
         <include refid="userRoleColumns"/>
         from A_USER_ROLE
